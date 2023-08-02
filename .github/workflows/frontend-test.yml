@@ -1,12 +1,6 @@
 name: FrontEnd Test
 
-on:
-  push:
-    branches:
-      - dev
-  pull_request:
-    branches:
-      - dev
+on: [push]
 
 jobs:
   test-frontend:
