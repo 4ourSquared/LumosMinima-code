@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "nome": "Area di Sosta Boschetti",
+        "lampioni": [],
+        "sensori": []
+    },
+    {
+        "id": 2,
+        "nome": "Area Sacro Cuore",
+        "lampioni": [],
+        "sensori": []
+    }
+]

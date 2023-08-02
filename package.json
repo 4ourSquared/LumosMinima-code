@@ -1,0 +1,16 @@
+{
+    "name": "PoC",
+    "version": "1.0.0",
+    "description": "Proof of Concept del Progetto <Lumos Minima>",
+    "scripts": {
+        "start": "cd server && npm install && npm run build && cd .. && docker-compose up"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "formik": "^2.4.2",
+        "mongoose": "^7.3.1",
+        "yup": "^1.2.0"
+    }
+}

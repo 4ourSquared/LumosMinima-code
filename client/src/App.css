@@ -1,0 +1,56 @@
+/* GENERALI */
+
+/* SEZIONE HEADER */
+h1
+{
+  text-align: center;
+  font-size: 3em;
+  background-color: #ffaa00;
+  padding: 0.5em
+}
+
+/* SEZIONE NAV */
+.breadcrumb
+{
+  font-size: 1.5em;
+  border: solid 1px black;
+}
+
+.breadcrumb li{
+  padding-left: 0.5em;
+}
+
+
+/* SEZIONE DEL CONTENUTO - MAIN */
+main
+{
+  border: solid 1px black;
+}
+
+h2
+{
+  padding: 0.2em 0 0.2em 0.5em;
+  border-bottom: 1px dashed black;
+}
+
+.content{
+  padding: 0.5em 0 0.5em 0.8em;
+}
+
+/* TABELLA */
+table{
+  text-align: center;
+}
+
+/* SEZIONE FOOTER */
+footer
+{
+  background-color: #007c7c;
+  color: white;
+  font-style: italic;
+  text-align: center;
+  position: sticky;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}

@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    ports:
+      - 27017:27017
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      args:
+        - TS_CONFIG_FILE=./tsconfig.json
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    volumes:
+      - ./server:/server-dir
+      - ./server/tsconfig.json:/server-dir/tsconfig.json:ro
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/client-dir
+    depends_on:
+      - server

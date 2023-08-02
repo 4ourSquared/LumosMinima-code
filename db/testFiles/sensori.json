@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "iter": "automatica",
+        "IP": "1.1.1.1",
+        "luogo": "Via due carceri",
+        "raggio": 5,
+        "area": 1
+    },
+    {
+        "id": 2,
+        "iter": "automatica",
+        "IP": "1.1.1.2",
+        "luogo": "Via arcieri",
+        "raggio": 3,
+        "area": 2
+    },
+    {
+        "id": 3,
+        "iter": "automatica",
+        "IP": "1.1.1.3",
+        "luogo": "Via le mani dal naso",
+        "raggio": 0,
+        "area": 1
+    }
+]

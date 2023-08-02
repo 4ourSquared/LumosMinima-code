@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "stato": "Attivo",
+        "lum": 5,
+        "luogo": "Piazza Mazzini",
+        "area": 1
+    },
+    {
+        "id": 2,
+        "stato": "Attivo",
+        "lum": 7,
+        "luogo": "Via Crescente",
+        "area": 2
+    },
+    {
+        "id": 3,
+        "stato": "Disattivato",
+        "lum": 8,
+        "luogo": "Navigli",
+        "area": 1
+    }
+]
