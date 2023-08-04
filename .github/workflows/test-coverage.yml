@@ -1,10 +1,10 @@
-name: FrontEnd Test
+name: Test Coverage
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
-  test-frontend:
-    name: Test React Frontend
+  test-coverage:
+    name: Test Coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -26,6 +26,6 @@ jobs:
         working-directory: ./client
         run: npm ci
 
-      - name: Run tests
+      - name: Run test coverage
         working-directory: ./client
-        run: npm test
+        run: npm run coverage
