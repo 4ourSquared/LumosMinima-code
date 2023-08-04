@@ -59,3 +59,5 @@ volumes:
   sonarqube_logs:
   postgresql:
   postgresql_data:
+  client:
+  server:
