@@ -1,12 +1,32 @@
 version: "3.8"
 
 services:
+  sonarqube:
+    image: sonarqube:community
+    depends_on:
+      - db_qube
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - "9000:9000"
+
   db:
     build:
       context: ./db
       dockerfile: Dockerfile
     ports:
       - 27017:27017
+
+  db_qube:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
 
   server:
     build:
@@ -32,3 +52,10 @@ services:
       - ./client:/client-dir
     depends_on:
       - server
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
