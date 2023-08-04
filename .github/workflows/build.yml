@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - 2-actions
 
 jobs:
   build:
