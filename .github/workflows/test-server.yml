@@ -4,4 +4,4 @@ jobs:
   write-to-console:
     runs-on: ubuntu-latest
     steps:
-      - run: curl -v http://localhost:9000
+      - run: ping http://localhost:9000
