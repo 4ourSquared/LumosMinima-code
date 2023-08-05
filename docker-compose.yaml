@@ -52,6 +52,12 @@ services:
       - sonarqube_logs:/opt/sonarqube/logs
     ports:
       - "9000:9000"
+    networks:
+      - sonarqube_network
+
+networks:
+  sonarqube_network:
+    driver: bridge
 
 volumes:
   sonarqube_data:
