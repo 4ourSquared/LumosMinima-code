@@ -1,7 +1,0 @@
-name: test-server
-on: [push]
-jobs:
-  write-to-console:
-    runs-on: ubuntu-latest
-    steps:
-      - run: ping http://localhost:9000
