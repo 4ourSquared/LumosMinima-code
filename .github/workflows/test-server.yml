@@ -1,0 +1,7 @@
+name: test-server
+on: [push]
+jobs:
+  write-to-console:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -v http://localhost:9000
