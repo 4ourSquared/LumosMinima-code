@@ -8,15 +8,6 @@ services:
     ports:
       - 27017:27017
 
-  db_qube:
-    image: postgres:12
-    environment:
-      POSTGRES_USER: sonar
-      POSTGRES_PASSWORD: sonar
-    volumes:
-      - postgresql:/var/lib/postgresql
-      - postgresql_data:/var/lib/postgresql/data
-
   server:
     build:
       context: ./server
@@ -43,25 +34,39 @@ services:
       - server
 
   sonarqube:
-    image: sonarqube:community
+    container_name: sonarqube
+    image: sonarqube
     depends_on:
-      - db_qube
+      - sonarqube-database
+    environment:
+      - SONARQUBE_JDBC_USERNAME=sonarqube
+      - SONARQUBE_JDBC_PASSWORD=sonarpass
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://sonarqube-database:5432/sonarqube
     volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
-      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
     ports:
-      - "9000:9000"
-    networks:
-      - sonarqube_network
+      - 9000:9000
 
-networks:
-  sonarqube_network:
-    driver: bridge
+  sonarqube-database:
+    container_name: sonarqube-database
+    image: postgres:12
+    environment:
+      - POSTGRES_DB=sonarqube
+      - POSTGRES_USER=sonarqube
+      - POSTGRES_PASSWORD=sonarpass
+    volumes:
+      - sonarqube_database:/var/lib/postgresql
+      - sonarqube_database_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
 
 volumes:
+  sonarqube_database_data:
+  sonarqube_bundled-plugins:
+  sonarqube_conf:
   sonarqube_data:
+  sonarqube_database:
   sonarqube_extensions:
-  sonarqube_logs:
-  postgresql:
-  postgresql_data:
