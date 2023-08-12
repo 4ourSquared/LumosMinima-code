@@ -28,7 +28,7 @@ app.use(express_1.default.urlencoded({ extended: false }));
 ------------------------------------------------------------------------------
 */
 const mongoose_1 = __importDefault(require("mongoose"));
-const mongoURI = "mongodb://poc-db-1:27017/lumosminima";
+const mongoURI = "mongodb://lumosminima-code-db-1:27017/lumosminima";
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true
