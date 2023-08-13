@@ -12,6 +12,10 @@ lampRouter.put("/:idA/lampioni/guasti/:idL", async (req: Request, res: Response)
     const idA = req.params.idA;
     const idL = req.params.idL;
 
+    console.log(
+        `Ricevuta richiesta PUT su /api/aree/${idA}/lampioni/guasti/${idL}`
+    );
+
     parseInt(idA, 10);
     parseInt(idL, 10);
 
@@ -53,6 +57,10 @@ lampRouter.put("/:idA/lampioni/guasti/remove/:idL", async (req: Request, res: Re
     const idA = req.params.idA;
     const idL = req.params.idL;
 
+    console.log(
+        `Ricevuta richiesta PUT su /api/aree/${idA}/lampioni/guasti/remove/${idL}`
+    );
+
     parseInt(idA, 10);
     parseInt(idL, 10);
 
@@ -90,6 +98,10 @@ lampRouter.get("/:idA/lampioni/guasti/",
         const idA = req.params.idA;
         parseInt(idA, 10);
 
+        console.log(
+            `Ricevuta richiesta GET su /api/aree/${idA}/lampioni/guasti/`
+        );
+
         try {
             const area = await AreaSchema.findOne({ id: idA });
 
@@ -126,6 +138,10 @@ lampRouter.get("/:idA/lampioni/:idL", async (req: Request, res: Response) => {
     parseInt(idA, 10);
     parseInt(idL, 10);
 
+    console.log(
+        `Ricevuta richiesta GET su /api/aree/${idA}/lampioni/${idL}`
+    );
+
     try {
         const area = await AreaSchema.findOne({ id: idA });
         if (area) {
@@ -148,6 +164,9 @@ lampRouter.get("/:idA/lampioni/:idL", async (req: Request, res: Response) => {
 // RICHIESTA INFORMAZIONI DI TUTTI I LAMPIONI DELL'AREA
 lampRouter.get("/:id/lampioni", async (req: Request, res: Response) => {
     const { id } = req.params;
+    console.log(
+        `Ricevuta richiesta GET su /api/aree/${id}/`
+    );
     try {
         const area = await AreaSchema.findOne({ id: parseInt(id, 10) });
         if (area) {
@@ -172,6 +191,9 @@ lampRouter.post("/:id/lampioni", async (req: Request, res: Response) => {
     try {
         // Recupero ID area
         const { id } = req.params;
+        console.log(
+            `Ricevuta richiesta POST su /api/aree/${id}/lampioni/`
+        );
 
         // Recupero Area
         const areaMod = await AreaSchema.findOne({ id: id });
@@ -258,6 +280,10 @@ lampRouter.delete("/:idA/lampioni/:idL",
         const { idA, idL } = req.params;
         parseInt(idA, 10);
         parseInt(idL, 10);
+
+        console.log(
+            `Ricevuta richiesta DELETE su /api/aree/${idA}/lampioni/${idL}/`
+        );
 
         try {
             const area = await AreaSchema.findOne({ id: idA });
