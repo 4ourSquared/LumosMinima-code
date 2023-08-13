@@ -30,15 +30,15 @@ areaRouter.get("/:id", async (req: Request, res: Response) => {
         if (area) {
             res.status(200).json(area);
         } else {
-            res.status(404).json({ error: "Area illuminata non trovato." });
+            res.status(404).json({ error: "Errore nel recupero di una singola area illuminata: area illuminata non trovata." });
         }
     } catch (error) {
         console.error(
-            "Errore durante il recupero dell'area illuminata dal database:",
+            "Errore nel recupero di una singola area illuminata:",
             error
         );
         res.status(500).send(
-            "Errore durante il recupero dell'area illuminata dal database"
+            "Errore nel recupero di una singola area illuminata"
         );
     }
 });
@@ -62,11 +62,11 @@ areaRouter.post("/", async (req: Request, res: Response) => {
         res.status(200).json(savedArea);
     } catch (error) {
         console.error(
-            "Errore durante l'inserimento dell'area illuminata nel database:",
+            "Errore durante la creazione dell'area illuminata nel database:",
             error
         );
         res.status(500).send(
-            "Errore durante l'inserimento dell'area illuminata nel database"
+            "Errore durante la creazione dell'area illuminata nel database"
         );
     }
 });
@@ -90,10 +90,9 @@ areaRouter.put("/edit/:id", async (req: Request, res: Response) => {
         const areaToUpdate = await AreaSchema.findOne({ id });
 
         console.log(`Ricevuta richiesta PUT su /api/aree/edit -> ID: ${id}`);
-        console.log("Richiesta aggiornamento di un'area illuminata esistente");
 
         if (!areaToUpdate) {
-            res.status(404).send(`Area con id = ${id} non trovato`);
+            res.status(404).send(`Errore nel processo di modifica di un'area: area con id = ${id} non trovato`);
             return;
         }
 
@@ -117,11 +116,11 @@ areaRouter.put("/edit/:id", async (req: Request, res: Response) => {
         );
     } catch (error) {
         console.error(
-            "Errore durante l'aggiornamento dell'area illuminata:",
+            "Errore nel processo di modifica di un'area:",
             error
         );
         res.status(500).send(
-            "Errore durante l'aggiornamento dell'area illuminata"
+            "Errore nel processo di modifica di un'area"
         );
     }
 });
@@ -132,7 +131,7 @@ areaRouter.delete("/:id", async (req: Request, res: Response) => {
         const result = await AreaSchema.deleteOne({ id });
 
         if (result.deletedCount === 0) {
-            res.status(404).send(`Area illuminata con id = ${id} non trovato`);
+            res.status(404).send(`Errore nel processo di eliminazione di un'area: area illuminata con id = ${id} non trovata`);
             return;
         }
 
@@ -141,11 +140,11 @@ areaRouter.delete("/:id", async (req: Request, res: Response) => {
         );
     } catch (error) {
         console.error(
-            "Errore durante l'eliminazione dell'area illuminata:",
+            "Errore nel processo di eliminazione di un'area:",
             error
         );
         res.status(500).send(
-            "Errore durante l'eliminazione dell'area illuminata"
+            "Errore nel processo di eliminazione di un'area"
         );
     }
 });
