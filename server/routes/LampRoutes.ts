@@ -38,14 +38,14 @@ lampRouter.put("/:idA/lampioni/guasti/:idL", async (req: Request, res: Response)
                 return;
             }else{
                 res.status(404).send(
-                    `Lampione con id = ${idL} non trovato`
+                    `Errore nel processo di segnalazione dei guasti di un lampione: lampione con id = ${idL} non trovato`
                 );
             }
         }
     }
     catch (error){
-        console.error("Errore durante l'aggiornamento del lampione:", error);
-        res.status(500).send("Errore durante l'aggiornamento del lampione");
+        console.error("Errore nel processo di segnalazione dei guasti di un lampione:", error);
+        res.status(500).send("Errore nel processo di segnalazione dei guasti di un lampione");
     }
 })
 
@@ -80,8 +80,8 @@ lampRouter.put("/:idA/lampioni/guasti/remove/:idL", async (req: Request, res: Re
             }
         }
     } catch (error){
-        console.error("Errore durante l'aggiornamento del lampione:", error);
-        res.status(500).send("Errore durante l'aggiornamento del lampione");
+        console.error("Errore nel processo di segnalazione dei guasti di un lampione:", error);
+        res.status(500).send("Errore nel processo di segnalazione dei guasti di un lampione");
     }
 })
 
@@ -135,14 +135,14 @@ lampRouter.get("/:idA/lampioni/:idL", async (req: Request, res: Response) => {
             if (lampione) {
                 res.status(200).json(lampione);
             } else {
-                res.status(404).json({ error: "Lampione non trovato" });
+                res.status(404).json({ error: "Errore nel recupero delle informazioni di un lampione: lampione non trovato" });
             }
         } else {
-            res.status(404).json({ error: "Area non trovata" });
+            res.status(404).json({ error: "Errore nel recupero delle informazioni di un lampione: area non trovata" });
         }
     } catch (error) {
-        console.error("Errore durante il recupero del lampione:", error);
-        res.status(500).send("Errore durante il recupero del lampione");
+        console.error("Errore nel recupero delle informazioni di un lampione:", error);
+        res.status(500).send("Errore nel recupero delle informazioni di un lampione");
     }
 });
 // RICHIESTA INFORMAZIONI DI TUTTI I LAMPIONI DELL'AREA
@@ -154,15 +154,15 @@ lampRouter.get("/:id/lampioni", async (req: Request, res: Response) => {
             console.log("Area trovata");
             res.status(200).json(area.lampioni);
         } else {
-            res.status(404).json({ error: "Area non trovata." });
+            res.status(404).json({ error: "Errore nel recupero delle informazioni di tutti i lampioni dell'area: area non trovata." });
         }
     } catch (error) {
         console.error(
-            "Errore durante il recupero dei lampioni dall'area dal database:",
+            "Errore nel recupero delle informazioni di tutti i lampioni dell'area:",
             error
         );
         res.status(500).send(
-            "Errore durante il recupero dei lampioni dall'area dal database"
+            "Errore nel recupero delle informazioni di tutti i lampioni dell'area"
         );
     }
 });
@@ -177,7 +177,7 @@ lampRouter.post("/:id/lampioni", async (req: Request, res: Response) => {
         const areaMod = await AreaSchema.findOne({ id: id });
 
         if (!areaMod) {
-            res.status(400).json({ error: "Errore nel recupero dell'area" });
+            res.status(400).json({ error: "Errore nel processo di inserimento di un lampione in un'area: errore nel recupero dell'area" });
         } else {
             // Recupero nuovo lampione dalla richiesta
             const { stato, lum, luogo, area } = req.body;
@@ -198,11 +198,11 @@ lampRouter.post("/:id/lampioni", async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(
-            "Errore durante il recupero delle aree illuminate dal database:",
+            "Errore nel processo di inserimento di un lampione in un'area:",
             error
         );
         res.status(500).send(
-            "Errore durante il recupero delle aree illuminate dal database"
+            "Errore nel processo di inserimento di un lampione in un'area"
         );
     }
 });
@@ -241,13 +241,13 @@ lampRouter.put( "/:idA/lampioni/edit/:idL",
                     );
                 } else {
                     res.status(404).send(
-                        `Lampione con id = ${idL} non trovato`
+                        `Errore nel processo di modifica di un lampione: lampione con id = ${idL} non trovato`
                     );
                 }
             }
         } catch (error) {
-            console.error("Errore durante la modifica del lampione:", error);
-            res.status(500).send("Errore durante la modifica del lampione");
+            console.error("Errore nel processo di modifica di un lampione:", error);
+            res.status(500).send("Errore nel processo di modifica di un lampione");
         }
     }
 );
@@ -264,7 +264,7 @@ lampRouter.delete("/:idA/lampioni/:idL",
 
             if (!area) {
                 res.status(404).send(
-                    "Errore nel recupero dell'area illuminata"
+                    "Errore nel processo di eliminazione di un lampione: area non trovata"
                 );
                 return;
             } else {
@@ -276,8 +276,8 @@ lampRouter.delete("/:idA/lampioni/:idL",
                 res.status(200).send("Lampione eliminato con successo");
             }
         } catch (error) {
-            console.error("Errore durante l'eliminazione del lampione:", error);
-            res.status(500).send("Errore durante l'eliminazione del lampione");
+            console.error("Errore nel processo di eliminazione di un lampione:", error);
+            res.status(500).send("Errore nel processo di eliminazione di un lampione");
         }
     }
 );
