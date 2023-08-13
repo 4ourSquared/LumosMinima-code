@@ -65,7 +65,7 @@ sensRouter.post("/:id/sensori", async (req: Request, res: Response) => {
         // Recupero ID area
         const { id } = req.params;
         console.log(
-            `Ricevuta richiesta PUT su /api/aree/${id}/sensori/`
+            `Ricevuta richiesta POST su /api/aree/${id}/sensori/`
         );
 
         // Recupero Area
