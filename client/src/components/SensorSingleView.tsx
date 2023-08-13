@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SensorItem from "../types/SensorItem";
+import { Button } from "bootstrap";
+import { send } from "process";
 
 interface SensorSingleViewProps{
   areaId: number;
@@ -49,8 +51,19 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
       <Link to={`/api/aree/${areaId}`} type="button" className="btn btn-primary">
         Indietro
       </Link>
+      <button onClick={() => sendSignal(areaId)} className="btn btn-primary">
+        Invia Segnale
+      </button>
     </div>
   );
 };
+
+function sendSignal(idA: number) : void{
+  axios.defaults.baseURL = "http://localhost:5000/api/movimento/aree/";
+  axios.get(`/${idA}`);
+  
+}
+
+
 
 export default SensorSingleView;

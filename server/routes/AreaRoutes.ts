@@ -134,6 +134,7 @@ areaRouter.put("/edit/:id", async (req: Request, res: Response) => {
     }
 });
 
+
 areaRouter.delete("/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     console.log(
@@ -160,5 +161,6 @@ areaRouter.delete("/:id", async (req: Request, res: Response) => {
         );
     }
 });
+
 
 export default areaRouter;
