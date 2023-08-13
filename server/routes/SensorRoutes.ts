@@ -10,6 +10,9 @@ const sensRouter = Router();
 
 sensRouter.get("/:id/sensori", async (req: Request, res: Response) => {
     const { id } = req.params;
+    console.log(
+        `Ricevuta richiesta GET su /api/aree/${id}/`
+    );
     try {
         const area = await AreaSchema.findOne({ id: parseInt(id, 10) });
         if (area) {
@@ -33,6 +36,9 @@ sensRouter.get("/:idA/sensori/:idS", async (req: Request, res: Response) => {
     const idS = req.params.idS;
     parseInt(idA, 10);
     parseInt(idS, 10);
+    console.log(
+        `Ricevuta richiesta GET su /api/aree/${idA}/sensori/${idS}/ -> ID: ${idS}`
+    );
 
     try {
         const area = await AreaSchema.findOne({ id: idA });
@@ -58,6 +64,9 @@ sensRouter.post("/:id/sensori", async (req: Request, res: Response) => {
     try {
         // Recupero ID area
         const { id } = req.params;
+        console.log(
+            `Ricevuta richiesta PUT su /api/aree/${id}/sensori/`
+        );
 
         // Recupero Area
         const areaMod = await AreaSchema.findOne({ id: id });
@@ -165,6 +174,10 @@ sensRouter.delete("/:idA/sensori/:idS",
         const { idA, idS } = req.params;
         parseInt(idA, 10);
         parseInt(idS, 10);
+
+        console.log(
+            `Ricevuta richiesta DELETE su /api/aree/${idA}/sensori/${idS}/`
+        );
 
         try {
             const area = await AreaSchema.findOne({ id: idA });
