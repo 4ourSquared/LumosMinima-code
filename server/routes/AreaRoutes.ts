@@ -9,6 +9,9 @@ const areaRouter = Router();
 
 
 areaRouter.get("/", async (req: Request, res: Response) => {
+    console.log(
+        `Ricevuta richiesta GET su /api/aree/`
+    );
     try {
         const aree = await AreaSchema.find();
         res.status(200).json(aree);
@@ -25,6 +28,9 @@ areaRouter.get("/", async (req: Request, res: Response) => {
 
 areaRouter.get("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
+    console.log(
+        `Ricevuta richiesta GET su /api/aree/${id}/`
+    );
     try {
         const area = await AreaSchema.findOne({ id: parseInt(id, 10) });
         if (area) {
@@ -44,6 +50,9 @@ areaRouter.get("/:id", async (req: Request, res: Response) => {
 });
 
 areaRouter.post("/", async (req: Request, res: Response) => {
+    console.log(
+        `Ricevuta richiesta POST su /api/aree/`
+    );
     const { nome, descrizione, latitudine, longitudine, sensori, lampioni } =
         req.body;
     const id: number = await generateIdAree();
@@ -127,6 +136,9 @@ areaRouter.put("/edit/:id", async (req: Request, res: Response) => {
 
 areaRouter.delete("/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
+    console.log(
+        `Ricevuta richiesta DELETE su /api/aree/${id}/`
+    );
     try {
         const result = await AreaSchema.deleteOne({ id });
 
