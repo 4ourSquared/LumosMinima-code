@@ -16,7 +16,7 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
 
   useEffect(() => {
     fetchData();
-  }); //Anche se il compilatore da warning, mantenere l'array vuoto per evitare loop infiniti, dato che
+  }, [areaId, sensoreId]); //Anche se il compilatore da warning, mantenere l'array vuoto per evitare loop infiniti, dato che
   //effettua la richiesta ad ogni render della pagina
 
   const fetchData = async () => {
