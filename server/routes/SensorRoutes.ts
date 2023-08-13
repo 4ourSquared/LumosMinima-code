@@ -10,20 +10,23 @@ const sensRouter = Router();
 
 sensRouter.get("/:id/sensori", async (req: Request, res: Response) => {
     const { id } = req.params;
+    console.log(
+        `Ricevuta richiesta GET su /api/aree/${id}/`
+    );
     try {
         const area = await AreaSchema.findOne({ id: parseInt(id, 10) });
         if (area) {
             res.status(200).json(area.sensori);
         } else {
-            res.status(404).json({ error: "Area non trovata." });
+            res.status(404).json({ error: "Errore nel recupero delle informazioni di tutti i sensori dell'area: area non trovata " });
         }
     } catch (error) {
         console.error(
-            "Errore durante il recupero dei sensori dall'area dal database:",
+            "Errore nel recupero delle informazioni di tutti i sensori dell'area:",
             error
         );
         res.status(500).send(
-            "Errore durante il recupero dei sensori dall'area dal database"
+            "Errore nel recupero delle informazioni di tutti i sensori dell'area"
         );
     }
 });
@@ -33,6 +36,9 @@ sensRouter.get("/:idA/sensori/:idS", async (req: Request, res: Response) => {
     const idS = req.params.idS;
     parseInt(idA, 10);
     parseInt(idS, 10);
+    console.log(
+        `Ricevuta richiesta GET su /api/aree/${idA}/sensori/${idS}/ -> ID: ${idS}`
+    );
 
     try {
         const area = await AreaSchema.findOne({ id: idA });
@@ -43,14 +49,14 @@ sensRouter.get("/:idA/sensori/:idS", async (req: Request, res: Response) => {
             if (sensore) {
                 res.status(200).json(sensore);
             } else {
-                res.status(404).json({ error: "Sensore non trovato" });
+                res.status(404).json({ error: "Errore nel recupero delle informazioni di un sensore: sensore non trovato" });
             }
         } else {
-            res.status(404).json({ error: "Area non trovata" });
+            res.status(404).json({ error: "Errore nel recupero delle informazioni di un sensore: area non trovata" });
         }
     } catch (error) {
-        console.error("Errore durante il recupero del sensore:", error);
-        res.status(500).send("Errore durante il recupero del sensore");
+        console.error("Errore nel recupero delle informazioni di un sensore:", error);
+        res.status(500).send("Errore nel recupero delle informazioni di un sensore");
     }
 });
 
@@ -58,12 +64,15 @@ sensRouter.post("/:id/sensori", async (req: Request, res: Response) => {
     try {
         // Recupero ID area
         const { id } = req.params;
+        console.log(
+            `Ricevuta richiesta POST su /api/aree/${id}/sensori/`
+        );
 
         // Recupero Area
         const areaMod = await AreaSchema.findOne({ id: id });
 
         if (!areaMod) {
-            res.status(400).json({ error: "Errore nel recupero dell'area" });
+            res.status(400).json({ error: "Errore nel processo di creazione di un sensore: errore nel recupero dell'area" });
         } else {
             // Recupero nuovo sensore dalla richiesta
             const { iter, IP, luogo, raggio, area } = req.body;
@@ -84,11 +93,11 @@ sensRouter.post("/:id/sensori", async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(
-            "Errore durante il recupero delle aree illuminate dal database:",
+            "Errore nel processo di creazione di un sensore:",
             error
         );
         res.status(500).send(
-            "Errore durante il recupero delle aree illuminate dal database"
+            "Errore nel processo di creazione di un sensore"
         );
     }
 });
@@ -149,13 +158,13 @@ sensRouter.put("/:idA/sensori/edit/:idS",
                     );
                 } else {
                     res.status(404).send(
-                        `Sensore con id = ${idS} non trovato`
+                        `Errore nel processo di modifica di un sensore: sensore con id = ${idS} non trovato`
                     );
                 }
             }
         } catch (error) {
-            console.error("Errore durante la modifica del sensore:", error);
-            res.status(500).send("Errore durante la modifica del sensore");
+            console.error("Errore nel processo di modifica di un sensore:", error);
+            res.status(500).send("Errore nel processo di modifica di un sensore");
         }
     }
 );
@@ -166,12 +175,16 @@ sensRouter.delete("/:idA/sensori/:idS",
         parseInt(idA, 10);
         parseInt(idS, 10);
 
+        console.log(
+            `Ricevuta richiesta DELETE su /api/aree/${idA}/sensori/${idS}/`
+        );
+
         try {
             const area = await AreaSchema.findOne({ id: idA });
 
             if (!area) {
                 res.status(404).send(
-                    "Errore nel recupero dell'area illuminata"
+                    "Errore nel processo di eliminazione di un sensore: errore nel recupero dell'area illuminata"
                 );
                 return;
             } else {
@@ -183,8 +196,8 @@ sensRouter.delete("/:idA/sensori/:idS",
                 res.status(200).send("Sensore eliminato con successo");
             }
         } catch (error) {
-            console.error("Errore durante l'eliminazione del sensore:", error);
-            res.status(500).send("Errore durante l'eliminazione del sensore");
+            console.error("Errore nel processo di eliminazione di un sensore:", error);
+            res.status(500).send("Errore nel processo di eliminazione di un sensore");
         }
     }
 );
