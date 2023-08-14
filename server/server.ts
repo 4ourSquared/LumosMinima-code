@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import areaRoutes from "./routes/AreaRoutes";
 import lampRoutes from "./routes/LampRoutes"
 import sensRoutes from "./routes/SensorRoutes"
+import movimentoRoutes from "./routes/MovimentoRoutes"
 
 
 
@@ -58,6 +59,7 @@ db.once("open", () => {
 app.use("/api/aree", areaRoutes);
 app.use("/api/aree", lampRoutes);
 app.use("/api/aree", sensRoutes);
+app.use("/api/movimento/aree", movimentoRoutes);
 
 
 // Accesso alla pagina

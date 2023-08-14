@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SensorItem from "../types/SensorItem";
 
+// TODO: Implementare l'invio del segnale solo qualora il sensore sia in modalità automatica
+// TODO: Implementare la funzione di invio del segnale qualora il sensore sia in modalità manuale
 interface SensorSingleViewProps{
   areaId: number;
   sensoreId: number;
@@ -14,7 +16,7 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
 
   useEffect(() => {
     fetchData();
-  }); //Anche se il compilatore da warning, mantenere l'array vuoto per evitare loop infiniti, dato che
+  }, [areaId, sensoreId]); //Anche se il compilatore da warning, mantenere l'array vuoto per evitare loop infiniti, dato che
   //effettua la richiesta ad ogni render della pagina
 
   const fetchData = async () => {
@@ -49,8 +51,19 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
       <Link to={`/api/aree/${areaId}`} type="button" className="btn btn-primary">
         Indietro
       </Link>
+      <button onClick={() => sendSignal(areaId)} className="btn btn-warning">
+        Invia Segnale
+      </button>
     </div>
   );
 };
+
+function sendSignal(idA: number) : void{
+  axios.defaults.baseURL = "http://localhost:5000/api/movimento/aree/";
+  axios.get(`/${idA}`);
+  
+}
+
+
 
 export default SensorSingleView;
