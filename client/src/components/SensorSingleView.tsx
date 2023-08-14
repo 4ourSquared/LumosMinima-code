@@ -2,9 +2,6 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SensorItem from "../types/SensorItem";
-import { Button } from "bootstrap";
-import { send } from "process";
-
 
 // TODO: Implementare l'invio del segnale solo qualora il sensore sia in modalità automatica
 // TODO: Implementare la funzione di invio del segnale qualora il sensore sia in modalità manuale
