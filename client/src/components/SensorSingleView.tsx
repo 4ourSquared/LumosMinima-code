@@ -5,6 +5,9 @@ import SensorItem from "../types/SensorItem";
 import { Button } from "bootstrap";
 import { send } from "process";
 
+
+// TODO: Implementare l'invio del segnale solo qualora il sensore sia in modalità automatica
+// TODO: Implementare la funzione di invio del segnale qualora il sensore sia in modalità manuale
 interface SensorSingleViewProps{
   areaId: number;
   sensoreId: number;
@@ -51,7 +54,7 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
       <Link to={`/api/aree/${areaId}`} type="button" className="btn btn-primary">
         Indietro
       </Link>
-      <button onClick={() => sendSignal(areaId)} className="btn btn-primary">
+      <button onClick={() => sendSignal(areaId)} className="btn btn-warning">
         Invia Segnale
       </button>
     </div>
