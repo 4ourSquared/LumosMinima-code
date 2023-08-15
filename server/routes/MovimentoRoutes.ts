@@ -54,5 +54,4 @@ async function turnOffLamps(startingLum: number[], areaMod: IAreaSchema, res: Re
     }
 }
 
-
 export default movimentoRoutes;
