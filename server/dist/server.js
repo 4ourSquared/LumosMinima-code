@@ -8,6 +8,7 @@ const AreaRoutes_1 = __importDefault(require("./routes/AreaRoutes"));
 const LampRoutes_1 = __importDefault(require("./routes/LampRoutes"));
 const SensorRoutes_1 = __importDefault(require("./routes/SensorRoutes"));
 const MovimentoRoutes_1 = __importDefault(require("./routes/MovimentoRoutes"));
+const TokenRoutes_1 = __importDefault(require("./routes/TokenRoutes"));
 /*
     SERVER: questo file al momento rappresenta il server in tutto e per tutto. Al suo interno si trovano tutti i metodi attualmente sviluppati per la gestione delle richieste in arrivo
             dal client
@@ -51,6 +52,7 @@ app.use("/api/aree", AreaRoutes_1.default);
 app.use("/api/aree", LampRoutes_1.default);
 app.use("/api/aree", SensorRoutes_1.default);
 app.use("/api/movimento/aree", MovimentoRoutes_1.default);
+app.use("/api/movimento/token/aree", TokenRoutes_1.default);
 // Accesso alla pagina
 app.get("/", (req, res) => {
     console.log("Ricevuta richiesta GET su /");
