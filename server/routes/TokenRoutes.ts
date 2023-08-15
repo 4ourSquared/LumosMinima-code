@@ -13,6 +13,7 @@ tokenRoutes.post("/:id", async (req: Request, res: Response) => {
         const token = new TokenSchema({
             id: tokenId,
             area: id,
+            // Durata del token: 20 secondi
             expiring: new Date(Date.now() + 1000 * 20)
         });
 
