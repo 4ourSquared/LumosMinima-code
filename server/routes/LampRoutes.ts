@@ -238,7 +238,7 @@ lampRouter.post("/:id/lampioni", async (req: Request, res: Response) => {
                 lum: parseInt(lum, 10),
                 luogo,
                 guasto: false,
-                iter
+                iter,
             });
 
             // Aggiunta del lampione all'array dell'area
@@ -271,33 +271,43 @@ lampRouter.put(
 
         try {
             const area = await AreaSchema.findOne({ id: idA });
-            if (area) {
-                const lampione = area.lampioni.find(
-                    (lamp: ILampSchema) => lamp.id === parseInt(idL)
-                );
-                if (lampione) {
-                    if (req.body.stato !== undefined) {
-                        lampione.stato = req.body.stato;
-                    }
-                    if (req.body.lum !== undefined) {
-                        lampione.lum = parseInt(req.body.lum, 10);
-                    }
-                    if (req.body.luogo !== undefined) {
-                        lampione.luogo = req.body.luogo;
-                    }
-                    if (req.body.iter !== undefined) {
-                        lampione.iter = req.body.iter;
-                    }
-                    await area.save();
-                    res.status(200).send(
-                        `Lampione con id = ${idL} modificato con successo`
-                    );
-                } else {
-                    res.status(404).send(
-                        `Errore nel processo di modifica di un lampione: lampione con id = ${idL} non trovato`
-                    );
-                }
+
+            if (!area) {
+                res.status(404).send(`Area non trovata`);
+                return;
             }
+
+            const lampione = area.lampioni.find(
+                (lamp) => lamp.id === parseInt(idL)
+            );
+
+            if (!lampione) {
+                res.status(404).send(`Lampione non trovato`);
+                return;
+            }
+
+            const { stato, lum, luogo, iter } = req.body;
+
+            if (stato !== undefined) {
+                lampione.stato = stato;
+            }
+
+            if (lum !== undefined) {
+                lampione.lum = parseInt(lum, 10);
+            }
+
+            if (luogo !== undefined) {
+                lampione.luogo = luogo;
+            }
+
+            if (iter !== undefined) {
+                lampione.iter = iter;
+            }
+
+            await area.save();
+            res.status(200).send(
+                `Lampione con id = ${idL} modificato con successo`
+            );
         } catch (error) {
             console.error(
                 "Errore nel processo di modifica di un lampione:",
