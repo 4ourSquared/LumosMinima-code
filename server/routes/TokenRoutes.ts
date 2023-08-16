@@ -42,7 +42,6 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
         // Verifica del token
         if (token) {
             if (token.expiring > new Date(Date.now())) {
-                // TODO: Manca la parte di gestione del token qualora fosse valido
                 try {
                     const areaMod = await AreaSchema.findOne({ id: id });
 
