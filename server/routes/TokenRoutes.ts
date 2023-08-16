@@ -5,6 +5,7 @@ import { ILampSchema } from "../schemas/LampSchema";
 
 const tokenRoutes = Router();
 
+// Generazione token
 tokenRoutes.post("/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
     console.log(`Richiesta POST ricevuto a api/movimento/token/aree/${id}`);
@@ -28,9 +29,10 @@ tokenRoutes.post("/:id", async (req: Request, res: Response) => {
     }
 });
 
+// Ricerca e verifica del token
 tokenRoutes.get("/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    console.log(`Richiesta POST ricevuto a api/movimento/token/aree/${id}`);
+    console.log(`Richiesta GET ricevuto a api/movimento/token/aree/${id}`);
 
     try {
         // Ricerca del token

@@ -3,7 +3,6 @@ mongoose.pluralize(null);
 
 export interface ISensorSchema extends Document{
     id: number;
-    iter: string;
     IP: string;
     luogo: string;
     raggio: number;
@@ -15,7 +14,7 @@ const sensoreSchema : Schema= new mongoose.Schema({
         type: Number,
         required: true,
     },
-    iter: { type: String, default: "manuale" },
+    
     IP: String,
     luogo: String,
     raggio: Number,

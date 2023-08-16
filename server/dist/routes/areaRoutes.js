@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const AreaSchema_1 = __importDefault(require("../schemas/AreaSchema"));
 const areaRouter = (0, express_1.Router)();
+// Recupero della lista di aree illuminate
 areaRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Ricevuta richiesta GET su /api/aree/`);
     try {
@@ -29,6 +30,7 @@ areaRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500).send("Errore durante il recupero delle aree illuminate dal database");
     }
 }));
+// Recupero delle informazioni di una singola area
 areaRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     console.log(`Ricevuta richiesta GET su /api/aree/${id}/`);
@@ -46,6 +48,7 @@ areaRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(500).send("Errore nel recupero di una singola area illuminata");
     }
 }));
+// Creazione di una nuova area
 areaRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Ricevuta richiesta POST su /api/aree/`);
     const { nome, descrizione, latitudine, longitudine, sensori, lampioni } = req.body;
@@ -83,6 +86,7 @@ function generateIdAree() {
         }
     });
 }
+// Modifica di una area
 areaRouter.put("/edit/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
     try {
@@ -112,6 +116,7 @@ areaRouter.put("/edit/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(500).send("Errore nel processo di modifica di un'area");
     }
 }));
+// Eliminazione di una area
 areaRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
     console.log(`Ricevuta richiesta DELETE su /api/aree/${id}/`);
