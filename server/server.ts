@@ -3,6 +3,7 @@ import areaRoutes from "./routes/AreaRoutes";
 import lampRoutes from "./routes/LampRoutes"
 import sensRoutes from "./routes/SensorRoutes"
 import movimentoRoutes from "./routes/MovimentoRoutes"
+import tokenRoutes from "./routes/TokenRoutes"
 
 
 
@@ -60,6 +61,7 @@ app.use("/api/aree", areaRoutes);
 app.use("/api/aree", lampRoutes);
 app.use("/api/aree", sensRoutes);
 app.use("/api/movimento/aree", movimentoRoutes);
+app.use("/api/movimento/token/aree", tokenRoutes)
 
 
 // Accesso alla pagina
