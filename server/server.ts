@@ -2,6 +2,9 @@ import express, { Request, Response } from "express";
 import areaRoutes from "./routes/AreaRoutes";
 import lampRoutes from "./routes/LampRoutes"
 import sensRoutes from "./routes/SensorRoutes"
+import bodyParser from "body-parser";
+import sha512 from "crypto-js";
+import * as jwt from "jsonwebtoken";
 
 
 
