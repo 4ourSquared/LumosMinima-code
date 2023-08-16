@@ -13,7 +13,7 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
 
   return (
     <Formik
-      initialValues={{ id: 0, iter: "manuale", IP: "", luogo: "", raggio: 0, area: areaId }}
+      initialValues={{ id: 0, IP: "", luogo: "", raggio: 0, area: areaId }}
       validationSchema={Yup.object({
       IP: Yup.string()
         .matches(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, "Deve essere un indirizzo IP valido")
@@ -36,16 +36,6 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
         <div className="form-group">
           <label htmlFor="id">ID (Automatico)</label>
           <Field name="id" type="text" className="form-control" readOnly />
-        </div>
-        <div className="form-group">
-          <label htmlFor="iter">Interazione</label>
-          <Field name="iter" as="select">
-            <option value="manuale">Manuale</option>
-            <option value="automatico">Automatico</option>
-          </Field>
-          <small id="statusHelp" className="form-text text-muted">
-            Indica se il sensore ha un controllo sui lampioni (automatico) o se i lampioni saranno modificati manualmente da un utente
-          </small>
         </div>
         <div className="form-group">
           <label htmlFor="IP">Indirizzo IP</label>

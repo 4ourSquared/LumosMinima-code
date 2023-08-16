@@ -45,7 +45,6 @@ const SensorTable: React.FC<SensorTableProps> = ({
                 <thead>
                     <tr>
                         <th scope="col">ID</th>
-                        <th scope="col">Tipo di interazione</th>
                         <th scope="col">Indirizzo IP</th>
                         <th scope="col">Zona Illuminata</th>
                         <th scope="col">Raggio d'azione</th>
@@ -58,11 +57,6 @@ const SensorTable: React.FC<SensorTableProps> = ({
                     {sensori.map((sensore) => (
                         <tr key={sensore.id}>
                             <th scope="row">{sensore.id}</th>
-                            <td>
-                                {sensore.iter === "manuale"
-                                    ? "Manuale"
-                                    : "Automatico"}
-                            </td>
                             <td>{sensore.IP}</td>
                             <td>{sensore.luogo}</td>
                             <td>{sensore.raggio}</td>

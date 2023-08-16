@@ -3,7 +3,6 @@
 
 interface SensorItem {
   id: number;
-  iter: string;
   IP: string;
   luogo: string;
   raggio: number;

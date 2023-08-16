@@ -40,6 +40,7 @@ const LampSingleView: React.FC<LampSingleViewProps> = ({areaId, lampioneId}) => 
             <li>Stato: {lamp.stato}</li>
             <li>Luminosit&agrave;: {lamp.lum}</li>
             <li>Luogo: {lamp.luogo}</li>
+            <li>Interazione: {lamp.iter}</li>
             <li>ID Area di Riferimento: {lamp.area}</li>
           </ul>
         </div>
