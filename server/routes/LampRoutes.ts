@@ -35,7 +35,7 @@ lampRouter.put(
                         lampione.guasto = true;
                     } else {
                         res.status(409).send(
-                            `Lampione con id = ${idL} già presente nella lista guasti!`
+                            `Lampione già presente nella lista guasti!`
                         );
                         return;
                     }
@@ -46,7 +46,7 @@ lampRouter.put(
                     return;
                 } else {
                     res.status(404).send(
-                        `Errore nel processo di segnalazione dei guasti di un lampione: lampione con id = ${idL} non trovato`
+                        `Errore nel processo di segnalazione dei guasti di un lampione: lampione non trovato`
                     );
                 }
             }
