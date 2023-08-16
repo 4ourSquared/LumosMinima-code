@@ -89,13 +89,13 @@ lampRouter.put(
                         lampione.guasto = false;
                     } else {
                         res.status(409).send(
-                            `Lampione con id = ${idL} non era presente nella lista guasti!`
+                            `Il lampione non era presente nella lista guasti!`
                         );
                         return;
                     }
                     await area.save();
                     res.status(200).send(
-                        `Lampione con id = ${idL} rimosso dalla lista guasti!`
+                        `Lampione rimosso dalla lista guasti!`
                     );
                     return;
                 }
