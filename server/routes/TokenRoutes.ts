@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import TokenSchema from "../schemas/TokenSchema";
-import { Token } from "typescript";
+import AreaSchema, { IAreaSchema } from "../schemas/AreaSchema";
+import { ILampSchema } from "../schemas/LampSchema";
 
 const tokenRoutes = Router();
 
@@ -41,12 +42,41 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
         // Verifica del token
         if (token) {
             if (token.expiring > new Date(Date.now())) {
-                res.status(200).json("Token valido");
-
                 // TODO: Manca la parte di gestione del token qualora fosse valido
-            }
-            else {
-                res.status(401).json({error: "Token scaduto"});
+                try {
+                    const areaMod = await AreaSchema.findOne({ id: id });
+
+                    if (!areaMod) {
+                        res.status(400).json({
+                            error: "Errore nel processo: errore nel recupero dell'area",
+                        });
+                    } else {
+                        const startingLum: number[] = [];
+
+                        // Salvataggio informazioni iniziali luminosità lampioni
+                        areaMod.lampioni.forEach((lamp: ILampSchema) =>
+                            startingLum.push(lamp.lum)
+                        );
+
+                        // Accensione lampioni
+                        console.log("Inizio accensione lampioni");
+                        areaMod.lampioni.forEach(
+                            (lamp: ILampSchema) => (lamp.lum = 10)
+                        );
+                        console.log("Fine accensione lampioni");
+                        await areaMod.save();
+
+                        setTimeout(() => {
+                            turnOffLamps(startingLum, areaMod, res);
+                        }, 10000);
+
+                        res.status(200).json("Successo");
+                    }
+                } catch (error) {
+                    res.status(500).json("Errore");
+                }
+            } else {
+                res.status(401).json({ error: "Token scaduto" });
             }
         }
     } catch (error) {
@@ -68,6 +98,27 @@ async function generateTokenId(): Promise<number> {
     } catch (error) {
         console.error("Errore durante la generazione del token:", error);
         throw error;
+    }
+}
+
+async function turnOffLamps(
+    startingLum: number[],
+    areaMod: IAreaSchema,
+    res: Response
+) {
+    console.log("Inizio spegnimento lampioni");
+
+    try {
+        for (let i = 0; i < areaMod.lampioni.length; i++) {
+            areaMod.lampioni[i].lum = startingLum[i];
+        }
+
+        await areaMod.save();
+        console.log("Fine spegnimento lampioni");
+    } catch (error) {
+        res.status(400).json({
+            error: "Errore nel processo di spegnimento dei lampioni",
+        });
     }
 }
 
