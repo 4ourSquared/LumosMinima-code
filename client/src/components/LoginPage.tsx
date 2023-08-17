@@ -8,11 +8,11 @@ export default function LoginPage() {
     const prepareLogin = async (e: React.MouseEvent) => {
         e.preventDefault();
         
-        const username: String = (
+        const username: string = (
             document.getElementById("username") as HTMLInputElement
         ).value;
 
-        const password: String = (
+        const password: string = (
             document.getElementById("password") as HTMLInputElement
         ).value;
 

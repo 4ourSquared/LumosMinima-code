@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-export default async function UseLoginMechanism(username: String, password: String) : Promise<boolean> {
+export default async function UseLoginMechanism(username: string, password: string) : Promise<boolean> {
 
     try {
         axios.defaults.baseURL = "http://localhost:5000/";
