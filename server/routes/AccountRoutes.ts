@@ -16,8 +16,8 @@ accountRoutes.post("/login", async (req: Request, res: Response) => {
     const { username, password } = req.body;
 
     try {
-        const query_username = { username: req.body.username };
-        const user = await UserSchema.findOne({ query_username });
+        const query_username = { username: req.body.username.toString() };
+        const user = await UserSchema.findOne(query_username);
 
         if (!user || user.password !== crypto.SHA512(password).toString()) {
             return res.status(401).json({ message: "Credenziali non valide" });
@@ -39,8 +39,8 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
 
     try {
 
-        const query_username = { username: req.body.username };
-        const query_email = { email: req.body.email };
+        const query_username = { username: req.body.username.toString() };
+        const query_email = { email: req.body.email.toString() };
 
         const existingUser = await UserSchema.findOne(query_username);
         const existingMail = await UserSchema.findOne(query_email);
