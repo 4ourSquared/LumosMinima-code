@@ -4,12 +4,17 @@ import axios from "axios";
 export default async function UseLoginMechanism(username: String, password: String) : Promise<boolean> {
 
     try {
-        const response = await axios.post("/login", { username, password });
-        const token = response.data.token;
-        localStorage.setItem("token", token);
-        return true;
+        axios.defaults.baseURL = "http://localhost:5000/";
+        const response = await axios.post("/accounting/login", { username: username, password: password });
+        const token = response.data;
+        if(token){
+            localStorage.setItem("token", JSON.stringify(token));
+            return true;
+        }
+        else{
+            return false
+        }
     } catch (error) {
-        console.error(error);
         return false;
     }
 }

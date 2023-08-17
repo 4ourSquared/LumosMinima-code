@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import UseLoginMechanism from "../auth/LoginMechanism";
 
-export default async function LoginPage() {
+export default function LoginPage() {
     const navigate = useNavigate();
 
     const prepareLogin = async (e: React.MouseEvent) => {
