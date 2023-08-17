@@ -1,10 +1,8 @@
 import { Router, Request, Response } from "express";
-import UserSchema, { IUserSchema } from "../schemas/UserSchema";
-import bodyParser from "body-parser";
+import UserSchema from "../schemas/UserSchema";
 import * as crypto from "crypto-js";
 import jwt from "jsonwebtoken";
-import https from "https";
-import fs from "fs";
+
 
 const accountRoutes = Router();
 
