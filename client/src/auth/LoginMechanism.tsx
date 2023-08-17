@@ -1,16 +1,23 @@
-export default function UseLoginMechanism() {
-    return (username:String,password:String): boolean => {
+import axios from "axios";
 
-        if(username.startsWith("manut"))
-        {
-            document.cookie="user-type=manutentore"
-            return true
+
+export default function useLoginMechanism() : (username:string,password:string) => Promise<boolean> {
+    
+    return async (username: string, password: string) => {
+
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            const response = await axios.post("/accounting/login", { username: username, password: password });
+            const token = response.data;
+            if(token){
+                localStorage.setItem("token", JSON.stringify(token));
+                return true;
+            }
+            else{
+                return false
+            }
+        } catch (error) {
+            return false;
         }
-        else if(username.startsWith("admin"))
-        {
-            document.cookie="user-type=amministratore"
-            return true
-        }
-        return false
     }
 }
