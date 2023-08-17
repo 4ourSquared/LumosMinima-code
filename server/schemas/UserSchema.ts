@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 mongoose.pluralize(null);
 
