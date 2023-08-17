@@ -2,18 +2,23 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import UseLoginMechanism from "../auth/LoginMechanism";
 
-export default function LoginPage() {
+export default async function LoginPage() {
     const navigate = useNavigate();
 
-    const prepareLogin = (e: React.MouseEvent) => {
+    const prepareLogin = async (e: React.MouseEvent) => {
         e.preventDefault();
-
-        const login = UseLoginMechanism();
+        
         const username: String = (
             document.getElementById("username") as HTMLInputElement
         ).value;
-        if (login(username, "")) {
+
+        const password: String = (
+            document.getElementById("password") as HTMLInputElement
+        ).value;
+
+        if (await UseLoginMechanism(username, password)) {
             navigate("/");
+
         }
     };
     return (

@@ -33,7 +33,7 @@ accountRoutes.post("/login", async (req: Request, res: Response) => {
 
 // Signup
 accountRoutes.post("/signup", async (req: Request, res: Response) => {
-    const { email, username, password } = req.body;
+    const { email, username, password } = req.body.password;
 
     try {
 
