@@ -22,7 +22,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
         luogo: "",
         area: 0,
         guasto: false,
-        iter: "manuale",
+        mode: "manuale",
     });
 
     useEffect(() => {
@@ -48,7 +48,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                 stato: lampioneData.stato || "",
                 lum: lampioneData.lum || 0,
                 luogo: lampioneData.luogo || "",
-                iter: lampioneData.iter || "manuale",
+                mode: lampioneData.mode || "manuale",
                 area: lampioneData.area || 0,
             }}
             validationSchema={Yup.object({
@@ -126,8 +126,8 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                     <ErrorMessage name="luogo" />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="iter">Interazione</label>
-                    <Field name="iter" as="select" className="form-control">
+                    <label htmlFor="mode">Interazione</label>
+                    <Field name="mode" as="select" className="form-control">
                         <option value="manuale">Manuale</option>
                         <option value="automatico">Automatico</option>
                     </Field>

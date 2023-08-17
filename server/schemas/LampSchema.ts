@@ -8,7 +8,7 @@ export interface ILampSchema extends Document{
     luogo: string;
     area: number;
     guasto: boolean;
-    iter: string;
+    mode: string;
 }
 
 const lampioneSchema : Schema= new mongoose.Schema({
@@ -24,7 +24,7 @@ const lampioneSchema : Schema= new mongoose.Schema({
         required: true,
     },
     guasto: Boolean,
-    iter: { type: String, default: "manuale" },
+    mode: { type: String, default: "manuale" },
 });
 
 export default mongoose.model("lampioni", lampioneSchema);

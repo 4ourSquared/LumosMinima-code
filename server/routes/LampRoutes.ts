@@ -229,7 +229,7 @@ lampRouter.post("/:id/lampioni", async (req: Request, res: Response) => {
             });
         } else {
             // Recupero nuovo lampione dalla richiesta
-            const { stato, lum, luogo, area, iter } = req.body;
+            const { stato, lum, luogo, area, mode } = req.body;
             const id = await generateLampId(area);
             const newLamp = new LampioneSchema({
                 id,
@@ -238,7 +238,7 @@ lampRouter.post("/:id/lampioni", async (req: Request, res: Response) => {
                 lum: parseInt(lum, 10),
                 luogo,
                 guasto: false,
-                iter,
+                mode,
             });
 
             // Aggiunta del lampione all'array dell'area
@@ -286,7 +286,7 @@ lampRouter.put(
                 return;
             }
 
-            const { stato, lum, luogo, iter } = req.body;
+            const { stato, lum, luogo, mode } = req.body;
 
             if (stato !== undefined) {
                 lampione.stato = stato;
@@ -300,8 +300,8 @@ lampRouter.put(
                 lampione.luogo = luogo;
             }
 
-            if (iter !== undefined) {
-                lampione.iter = iter;
+            if (mode !== undefined) {
+                lampione.mode = mode;
             }
 
             await area.save();

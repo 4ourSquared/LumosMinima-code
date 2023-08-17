@@ -18,7 +18,7 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
         <Formik
             initialValues={{
                 id: 0,
-                iter: "manuale",
+                mode: "manuale",
                 stato: "Attivo",
                 lum: 0,
                 luogo: "",
@@ -94,8 +94,8 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
                     <ErrorMessage name="luogo" />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="iter">Interazione</label>
-                    <Field name="iter" as="select">
+                    <label htmlFor="mode">Interazione</label>
+                    <Field name="mode" as="select">
                         <option value="manuale">Manuale</option>
                         <option value="automatico">Automatico</option>
                     </Field>
