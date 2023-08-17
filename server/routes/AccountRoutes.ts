@@ -11,7 +11,7 @@ accountRoutes.post("/logout", (req: Request, res: Response) => {});
 
 // Login
 accountRoutes.post("/login", async (req: Request, res: Response) => {
-    const { username, password } = req.body;
+    const { password } = req.body.password;
 
     try {
         const query_username = { username: req.body.username.toString() };
