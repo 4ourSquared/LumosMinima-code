@@ -28,7 +28,8 @@ app.use(express_1.default.urlencoded({ extended: false }));
 ------------------------------------------------------------------------------
 */
 const mongoose_1 = __importDefault(require("mongoose"));
-const mongoURI = "mongodb://poc-db-1:27017/lumosminima";
+const AccountRoutes_1 = __importDefault(require("./routes/AccountRoutes"));
+const mongoURI = "mongodb://lumosminima-code-db-1:27017/lumosminima";
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -49,6 +50,7 @@ db.once("open", () => {
 app.use("/api/aree", AreaRoutes_1.default);
 app.use("/api/aree", LampRoutes_1.default);
 app.use("/api/aree", SensorRoutes_1.default);
+app.use("/accounting", AccountRoutes_1.default);
 // Accesso alla pagina
 app.get("/", (req, res) => {
     console.log("Ricevuta richiesta GET su /");

@@ -2,12 +2,6 @@ import express, { Request, Response } from "express";
 import areaRoutes from "./routes/AreaRoutes";
 import lampRoutes from "./routes/LampRoutes"
 import sensRoutes from "./routes/SensorRoutes"
-import bodyParser from "body-parser";
-import sha512 from "crypto-js";
-import * as jwt from "jsonwebtoken";
-
-
-
 
 /*
     SERVER: questo file al momento rappresenta il server in tutto e per tutto. Al suo interno si trovano tutti i metodi attualmente sviluppati per la gestione delle richieste in arrivo
@@ -32,8 +26,9 @@ app.use(express.urlencoded({ extended: false }));
 ------------------------------------------------------------------------------
 */
 import mongoose from "mongoose";
+import accountRoutes from "./routes/AccountRoutes";
 
-const mongoURI = "mongodb://poc-db-1:27017/lumosminima";
+const mongoURI = "mongodb://lumosminima-code-db-1:27017/lumosminima";
 const options : any = {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -61,6 +56,7 @@ db.once("open", () => {
 app.use("/api/aree", areaRoutes);
 app.use("/api/aree", lampRoutes);
 app.use("/api/aree", sensRoutes);
+app.use("/accounting", accountRoutes)
 
 
 // Accesso alla pagina

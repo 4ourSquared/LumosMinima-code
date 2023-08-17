@@ -4,7 +4,6 @@ import { Schema, Document } from "mongoose";
 mongoose.pluralize(null);
 
 export interface IUserSchema extends Document {
-    id: number;
     username: string;
     email: string;
     password: string;
@@ -12,7 +11,6 @@ export interface IUserSchema extends Document {
 }
 
 const userSchema: Schema = new mongoose.Schema({
-    id: Number,
     username: String,
     email:{
         required: true,
