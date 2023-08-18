@@ -41,7 +41,7 @@ accountRoutes.post("/login", async (req: Request, res: Response) => {
     }
 });
 
-// Signup -- Da rivedere, quando ci si registra non deve essere registrato un token, ma al massimo dopo il processo di registrazione si procede automaticamente con il login
+// Signup
 accountRoutes.post("/signup", async (req: Request, res: Response) => {
     const { email, username, password } = req.body;
 
