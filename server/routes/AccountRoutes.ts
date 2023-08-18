@@ -88,4 +88,19 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
     }
 });
 
+accountRoutes.get("/checkToken", async (req: Request, res: Response) => {
+    const token = req.headers.authorization;
+
+    if(!token){
+        return res.status(401).json({message: "Token non presente"});
+    }
+
+    try {
+        const decodedToken = jwt.verify(token, "ChiaveDaImplementareTODO:");
+        return res.status(200).json({message: "Token valido", isValid: true});
+    } catch (error) {
+        return res.status(401).json({message: "Token non valido", isValid: false});
+    }
+});
+
 export default accountRoutes;
