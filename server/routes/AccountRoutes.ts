@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import UserSchema from "../schemas/UserSchema";
 import * as crypto from "crypto-js";
 import jwt from "jsonwebtoken";
-
+import request from "request";
 
 // INFO: Per validare un token generato, bisogna utilizzare la funzione verify() di jwt (https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
 
@@ -20,39 +20,37 @@ accountRoutes.post("/login", async (req: Request, res: Response) => {
         const query_username = { username: req.body.username.toString() };
         const user = await UserSchema.findOne(query_username);
 
-        if(user){
-            console.log(user.username);
-            console.log(user.password);
-            console.log(crypto.SHA512(password).toString());
-            console.log(password);
-        }
-
         if (!user || user.password !== crypto.SHA512(password).toString()) {
             return res.status(401).json({ message: "Credenziali non valide" });
         }
 
-        const token = await jwt.sign({ userId: user._id }, "ChiaveDaImplementareTODO:", {
-            expiresIn: "1h",
-        });
+        const token = await jwt.sign(
+            { userId: user._id, email: user.email, privilege: user.privilege },
+            "ChiaveDaImplementareTODO:",
+            {
+                expiresIn: "1h",
+            }
+        );
 
         return res.json({ token });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Errore nel processo di login" });
+        return res
+            .status(500)
+            .json({ message: "Errore nel processo di login" });
     }
 });
 
-// Signup
+// Signup -- Da rivedere, quando ci si registra non deve essere registrato un token, ma al massimo dopo il processo di registrazione si procede automaticamente con il login
 accountRoutes.post("/signup", async (req: Request, res: Response) => {
     const { email, username, password } = req.body;
 
     try {
-
         const query_username = { username: req.body.username.toString() };
         const query_email = { email: req.body.email.toString() };
 
-        const existingUser = await UserSchema.findOne({query_username});
-        const existingMail = await UserSchema.findOne({query_email});
+        const existingUser = await UserSchema.findOne({ query_username });
+        const existingMail = await UserSchema.findOne({ query_email });
 
         if (existingUser) {
             return res.status(409).json({ message: "Username già in uso" });
@@ -71,35 +69,55 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
         });
         await newUser.save();
 
-        const token = jwt.sign(
-            { userId: newUser._id },
-            "ChiaveDaImplementareTODO:",
+        // Effettua la richiesta POST per il login
+        request.post(
             {
-                expiresIn: "1h",
+                url: "http://localhost:5000/accounting/login",
+                json: true,
+                body: {
+                    username,
+                    password,
+                },
+            },
+            (error, response, body) => {
+                if (error) {
+                    console.error("Errore nella richiesta:", error);
+                    return res
+                        .status(500)
+                        .json({ message: "Errore nella richiesta di login" });
+                }
+
+                // Gestisci la risposta dal server di login
+                if (response.statusCode === 200) {
+                    // Login riuscito, body contiene il token
+                    return res.json(body);
+                } else {
+                    // Login non riuscito, body contiene il messaggio di errore
+                    return res.status(response.statusCode).json(body);
+                }
             }
         );
-
-        return res.json({ token });
     } catch (error) {
         console.log(error);
-        return res
-            .status(500)
-            .json({ message: "Errore nel processo di registrazione" });
+        return res.status(500).json({ message: "Errore nella registrazione" });
     }
 });
 
 accountRoutes.get("/checkToken", async (req: Request, res: Response) => {
     const token = req.headers.authorization;
 
-    if(!token){
-        return res.status(401).json({message: "Token non presente"});
+    if (!token) {
+        return res.status(401).json({ message: "Token non presente" });
     }
 
     try {
         const decodedToken = jwt.verify(token, "ChiaveDaImplementareTODO:");
-        return res.status(200).json({message: "Token valido", isValid: true});
+        console.log(decodedToken);
+        return res.status(200).json({ message: "Token valido", isValid: true });
     } catch (error) {
-        return res.status(401).json({message: "Token non valido", isValid: false});
+        return res
+            .status(401)
+            .json({ message: "Token non valido", isValid: false });
     }
 });
 
