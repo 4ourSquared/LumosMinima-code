@@ -1,4 +1,5 @@
 import axios from "axios";
+import sha512 from "js-sha512";
 
 
 export default function useLoginMechanism() : (username:string,password:string) => Promise<boolean> {
@@ -7,7 +8,7 @@ export default function useLoginMechanism() : (username:string,password:string) 
 
         try {
             axios.defaults.baseURL = "http://localhost:5000/";
-            const response = await axios.post("/accounting/login", { username: username, password: password });
+            const response = await axios.post("/accounting/login", { username: username, password: sha512.sha512(password) });
             const token = response.data;
             if(token){
                 localStorage.setItem("token", JSON.stringify(token));

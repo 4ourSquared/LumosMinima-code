@@ -21,6 +21,7 @@ accountRoutes.post("/login", async (req: Request, res: Response) => {
         const user = await UserSchema.findOne(query_username);
 
         if (!user || user.password !== crypto.SHA512(password).toString()) {
+            
             return res.status(401).json({ message: "Credenziali non valide" });
         }
 
@@ -49,8 +50,8 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
         const query_username = { username: req.body.username.toString() };
         const query_email = { email: req.body.email.toString() };
 
-        const existingUser = await UserSchema.findOne({ query_username });
-        const existingMail = await UserSchema.findOne({ query_email });
+        const existingUser = await UserSchema.findOne( query_username);
+        const existingMail = await UserSchema.findOne( query_email );
 
         if (existingUser) {
             return res.status(409).json({ message: "Username già in uso" });
@@ -75,8 +76,8 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
                 url: "http://localhost:5000/accounting/login",
                 json: true,
                 body: {
-                    username,
-                    password,
+                    username: username,
+                    password: password,
                 },
             },
             (error, response, body) => {
