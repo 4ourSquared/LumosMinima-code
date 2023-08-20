@@ -13,7 +13,7 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
 
   return (
     <Formik
-      initialValues={{ id: 0, IP: "", luogo: "", raggio: 0, area: areaId }}
+      initialValues={{ id: 0, IP: "", luogo: "", raggio: 0, durata: 20, area: areaId }}
       validationSchema={Yup.object({
       IP: Yup.string()
         .matches(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, "Deve essere un indirizzo IP valido")
@@ -80,6 +80,21 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
           </Field>
           <small id="intensityHelp" className="form-text text-muted">
             Indica il raggio d'azione (in metri) del sensore.
+          </small>
+        </div>
+        <div className="form-group">
+          <label htmlFor="Durata">Durata della Segnalazione</label>
+          <Field
+            name="durata"
+            type="number"
+            className="form-control"
+            id="durata"
+            aria-describedby="durataHelp"
+            placeholder=""
+          />
+          <ErrorMessage name="durata" component="div" className="error-message" />
+          <small id="durataHelp" className="form-text text-muted">
+            InIndica la durata in secondi della segnalazione di movimento in secondi, utile qualora un lampione della zona interagisca in modalità pull.
           </small>
         </div>
         <div className="form-group">

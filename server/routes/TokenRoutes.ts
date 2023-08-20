@@ -6,22 +6,33 @@ import { ILampSchema } from "../schemas/LampSchema";
 const tokenRoutes = Router();
 
 // Generazione token
-tokenRoutes.post("/:id", async (req: Request, res: Response) => {
-    const id = parseInt(req.params.id, 10);
-    console.log(`Richiesta POST ricevuto a api/movimento/token/aree/${id}`);
+tokenRoutes.post("/:idA/sensore/:idS", async (req: Request, res: Response) => {
+    const idA = parseInt(req.params.idA, 10);
+    const idS = parseInt(req.params.idS, 10);
+
+    console.log(`Richiesta POST ricevuto a api/movimento/token/aree/${idA}`);
 
     try {
         // Generazione del token
         const tokenId = await generateTokenId();
-        const token = new TokenSchema({
-            id: tokenId,
-            area: id,
-            // Durata del token: 20 secondi
-            expiring: new Date(Date.now() + 1000 * 20),
-        });
+        const area = await AreaSchema.findOne({ id: idA });
 
-        // Salvataggio del token
-        await token.save();
+        if (area) {
+            const sensoreData = area.sensori.find((sens) => sens.id === idS);
+
+            if (sensoreData) {
+                const token = new TokenSchema({
+                    id: tokenId,
+                    area: idA,
+                    expiring: new Date(
+                        Date.now() + 1000 * sensoreData?.sig_time
+                    ),
+                });
+
+                // Salvataggio del token
+                await token.save();
+            }
+        }
 
         res.status(200).json("Token generato con successo");
     } catch (error) {
@@ -43,17 +54,15 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
 
         // Verifica del token
         if (token) {
-            if (token.expiring > new Date(Date.now())) {
-                try {
-                    const areaMod = await AreaSchema.findOne({ id: id });
-
+            try {
+                const areaMod = await AreaSchema.findOne({ id: id });
+                const startingLum: number[] = [];
+                if (token.expiring > new Date(Date.now())) {
                     if (!areaMod) {
                         res.status(400).json({
                             error: "Errore nel processo: errore nel recupero dell'area",
                         });
                     } else {
-                        const startingLum: number[] = [];
-
                         // Salvataggio informazioni iniziali luminosità lampioni
                         areaMod.lampioni.forEach((lamp: ILampSchema) =>
                             startingLum.push(lamp.lum)
@@ -61,23 +70,28 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
 
                         // Accensione lampioni
                         console.log("Inizio accensione lampioni");
-                        areaMod.lampioni.forEach(
-                            (lamp: ILampSchema) => (lamp.lum = 10)
-                        );
+                        areaMod.lampioni.forEach((lamp: ILampSchema) => {
+                            if (lamp.mode == "manuale") {
+                                console.log("Accensione Lampione: ", lamp.id);
+                                lamp.lum = 10;
+                            }
+                        });
                         console.log("Fine accensione lampioni");
                         await areaMod.save();
-
-                        setTimeout(() => {
-                            turnOffLamps(startingLum, areaMod, res);
-                        }, 10000);
-
-                        res.status(200).json("Successo");
+                        res.status(200).json("Accensione lampioni");
                     }
-                } catch (error) {
-                    res.status(500).json("Errore");
+                } else {
+                    if (areaMod) {
+                        turnOffLamps(startingLum, areaMod, res);
+                        res.status(200).json("Spegnimento lampioni");
+                    } else {
+                        res.status(400).json({
+                            error: "Errore nel processo di spegnimento dei lampioni: errore nel recupero dell'area",
+                        });
+                    }
                 }
-            } else {
-                res.status(401).json({ error: "Token scaduto" });
+            } catch (error) {
+                res.status(500).json("Errore");
             }
         }
     } catch (error) {
@@ -111,6 +125,7 @@ async function turnOffLamps(
 
     try {
         for (let i = 0; i < areaMod.lampioni.length; i++) {
+            console.log("Spegnimento Lampione: ", areaMod.lampioni[i].id);
             areaMod.lampioni[i].lum = startingLum[i];
         }
 

@@ -78,7 +78,7 @@ sensRouter.post("/:id/sensori", async (req: Request, res: Response) => {
             res.status(400).json({ error: "Errore nel processo di creazione di un sensore: errore nel recupero dell'area" });
         } else {
             // Recupero nuovo sensore dalla richiesta
-            const {IP, luogo, raggio, area } = req.body;
+            const {IP, luogo, raggio, durata ,area } = req.body;
             const id = await generateSensId(area);
             const newSens = new SensoreSchema({
                 id,
@@ -86,6 +86,7 @@ sensRouter.post("/:id/sensori", async (req: Request, res: Response) => {
                 IP,
                 luogo,
                 raggio,
+                durata: parseInt(durata, 10),
             });
 
             // Aggiunta del sensore all'array dell'area
@@ -151,6 +152,11 @@ sensRouter.put("/:idA/sensori/edit/:idS",
                     if (req.body.raggio !== undefined){
                         sensore.raggio = req.body.raggio;
                     }
+
+                    if(req.body.durata !== undefined){
+                        sensore.sig_time = req.body.durata;
+                    }
+
                     await area.save();
                     res.status(200).send(
                         `Sensore con id = ${idS} modificato con successo`

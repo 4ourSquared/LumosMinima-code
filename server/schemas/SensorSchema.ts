@@ -7,6 +7,7 @@ export interface ISensorSchema extends Document{
     luogo: string;
     raggio: number;
     area: number;
+    sig_time: number;
 }
 
 const sensoreSchema : Schema= new mongoose.Schema({
@@ -21,7 +22,8 @@ const sensoreSchema : Schema= new mongoose.Schema({
     area: {
         type: Number,
         required: true,
-    }
+    },
+    sig_time: Number,
 });
 
 export default mongoose.model("sensori", sensoreSchema);
