@@ -8,6 +8,7 @@ import AreaSchema from "../schemas/AreaSchema";
 
 const sensRouter = Router();
 
+// Recupero di tutti i sensori dell'area
 sensRouter.get("/:id/sensori", async (req: Request, res: Response) => {
     const { id } = req.params;
     console.log(
@@ -31,6 +32,7 @@ sensRouter.get("/:id/sensori", async (req: Request, res: Response) => {
     }
 });
 
+// Recupero di un singolo lampione dell'area
 sensRouter.get("/:idA/sensori/:idS", async (req: Request, res: Response) => {
     const idA = req.params.idA;
     const idS = req.params.idS;
@@ -60,6 +62,7 @@ sensRouter.get("/:idA/sensori/:idS", async (req: Request, res: Response) => {
     }
 });
 
+// Aggiunta di un sensore all'area
 sensRouter.post("/:id/sensori", async (req: Request, res: Response) => {
     try {
         // Recupero ID area
@@ -75,12 +78,11 @@ sensRouter.post("/:id/sensori", async (req: Request, res: Response) => {
             res.status(400).json({ error: "Errore nel processo di creazione di un sensore: errore nel recupero dell'area" });
         } else {
             // Recupero nuovo sensore dalla richiesta
-            const { iter, IP, luogo, raggio, area } = req.body;
+            const {IP, luogo, raggio, area } = req.body;
             const id = await generateSensId(area);
             const newSens = new SensoreSchema({
                 id,
                 area: parseInt(area, 10),
-                iter,
                 IP,
                 luogo,
                 raggio,
@@ -140,9 +142,6 @@ sensRouter.put("/:idA/sensori/edit/:idS",
                     (sens: ISensorSchema) => sens.id === parseInt(idS)
                 );
                 if (sensore) {
-                    if (req.body.iter !== undefined) {
-                        sensore.iter = req.body.iter;
-                    }
                     if (req.body.IP !== undefined) {
                         sensore.IP = req.body.IP;
                     }

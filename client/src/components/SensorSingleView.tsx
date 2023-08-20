@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SensorItem from "../types/SensorItem";
 
-// TODO: Implementare l'invio del segnale solo qualora il sensore sia in modalità automatica
-// TODO: Implementare la funzione di invio del segnale qualora il sensore sia in modalità manuale
 interface SensorSingleViewProps{
   areaId: number;
   sensoreId: number;
@@ -38,7 +36,6 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
           <h1>Info sul sensore {sens.id}</h1>
           <h3>Id: {sens.id}</h3>
           <ul>
-            <li>Interazione: {sens.iter}</li>
             <li>Indirizzo IP: {sens.IP}</li>
             <li>Luogo: {sens.luogo}</li>
             <li>Raggio d'azione: {sens.raggio}</li>

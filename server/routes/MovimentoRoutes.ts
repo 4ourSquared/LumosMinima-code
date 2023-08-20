@@ -4,6 +4,7 @@ import { ILampSchema } from "../schemas/LampSchema";
 
 const movimentoRoutes =  Router();
 
+// Accensione e spegnimento dei lampioni
 movimentoRoutes.get("/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     console.log(`Segnale ricevuto a /api/aree/${id}/movimento`);
