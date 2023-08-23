@@ -7,7 +7,7 @@ interface SensorItem {
   luogo: string;
   raggio: number;
   area: number;
-  durata: number;
+  sig_time: number;
 }
 
 export default SensorItem;

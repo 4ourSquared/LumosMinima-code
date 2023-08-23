@@ -39,7 +39,7 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
             <li>Indirizzo IP: {sens.IP}</li>
             <li>Luogo: {sens.luogo}</li>
             <li>Raggio d'azione: {sens.raggio}</li>
-            <li>Durata: {sens.durata}</li>
+            <li>Durata: {sens.sig_time} secondi</li>
             <li>ID Area di Riferimento: {sens.area}</li>
           </ul>
         </div>

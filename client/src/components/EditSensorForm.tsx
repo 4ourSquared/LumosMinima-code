@@ -23,7 +23,7 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
         IP: "",
         luogo: "",
         raggio: 0,
-        durata: 20,
+        sig_time: 20,
         area: 0,
     });
 
@@ -50,7 +50,7 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
                 IP: sens.IP || "",
                 luogo: sens.luogo || "",
                 raggio: sens.raggio || 0,
-                durata: sens.durata || 20,
+                sig_time: sens.sig_time || 20,
                 area: sens.area || 0,
             }}
             validationSchema={Yup.object({
@@ -128,21 +128,21 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
                     </small>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="Durata">Durata della Segnalazione</label>
+                    <label htmlFor="sig_time">Durata della Segnalazione</label>
                     <Field
-                        name="durata"
+                        name="sig_time"
                         type="text"
                         className="form-control"
-                        id="durata"
-                        aria-describedby="durataHelp"
+                        id="sig_time"
+                        aria-describedby="sig_timeHelp"
                         placeholder=""
                     />
                     <ErrorMessage
-                        name="durata"
+                        name="sig_time"
                         component="div"
                         className="error-message"
                     />
-                    <small id="durataHelp" className="form-text text-muted">
+                    <small id="sig_timeHelp" className="form-text text-muted">
                         InIndica la durata in secondi della segnalazione di
                         movimento in secondi, utile qualora un lampione della
                         zona interagisca in modalità pull.
