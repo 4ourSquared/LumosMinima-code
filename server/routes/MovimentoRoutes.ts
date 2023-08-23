@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import AreaSchema, { IAreaSchema } from "../schemas/AreaSchema";
 import { ILampSchema } from "../schemas/LampSchema";
 
-const movimentoRoutes =  Router();
+const movimentoRoutes = Router();
 
 // Accensione e spegnimento dei lampioni
 movimentoRoutes.get("/:id", async (req: Request, res: Response) => {
@@ -22,18 +22,21 @@ movimentoRoutes.get("/:id", async (req: Request, res: Response) => {
 
             // Accensione lampioni
             console.log("Inizio accensione lampioni");
-            areaMod.lampioni.forEach((lamp: ILampSchema) => lamp.lum = 10);
+            areaMod.lampioni.forEach((lamp: ILampSchema) => {
+                if (lamp.mode == "automatico")
+                    lamp.lum = 10
+            });
             console.log("Fine accensione lampioni");
             await areaMod.save();
 
-            
+
 
             setTimeout(() => {
                 turnOffLamps(startingLum, areaMod, res);
             }, 10000);
 
             res.status(200).json("Successo");
-            
+
         }
     } catch (error) {
         res.status(500).json("Errore")

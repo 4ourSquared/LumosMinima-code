@@ -74,3 +74,5 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log("Il server è in ascolto sulla porta 5000");
 });
+
+// TODO: bisognerà unire i file MovimentoRoutes e TokenRoutes in un file singolo visto che le routine sono dello stesso tipo e hanno lo stesso obiettivo solo che lo fanno in due modi diversi

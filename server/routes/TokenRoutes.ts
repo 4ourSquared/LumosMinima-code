@@ -25,7 +25,7 @@ tokenRoutes.post("/:idA/sensore/:idS", async (req: Request, res: Response) => {
                     id: tokenId,
                     area: idA,
                     expiring: new Date(
-                        Date.now() + 1000 * sensoreData?.sig_time
+                        Date.now() + 1000 * sensoreData.sig_time
                     ),
                 });
 
