@@ -138,4 +138,37 @@ async function turnOffLamps(
     }
 }
 
+/* GESTIONE POLLING */
+import schedule from 'node-schedule'
+import axios from 'axios'
+
+const scheduled = new Map<number, schedule.Job>();
+
+async function generateSchedule(){
+
+    const areaTime = new Map<number, number>();
+
+    // Fecth delle aree
+    const requestResponse : IAreaSchema[] = await (await axios.get("http://localhost:5000/api/aree")).data;
+
+    // Gestione dei dati delle aree e salvataggio
+    if(requestResponse){
+        requestResponse.forEach((item: IAreaSchema) => {
+            areaTime.set(item.id, item.polling)
+        });
+    }
+
+    // Creazione della Routine
+    areaTime.forEach((polling, id) => {
+        const rule = `*/${polling} * * * * *`;
+        schedule.scheduleJob(rule, async () =>{
+           const response = await axios.get(`http://localhost:5000/api/movimento/token/aree/${id}`);
+
+           if(response.status === 200){
+            console.log("Risposta ottenuta con successo")
+           }
+        })
+    })
+}
+
 export default tokenRoutes;
