@@ -143,6 +143,7 @@ import schedule from 'node-schedule'
 import axios from 'axios'
 
 async function generateSchedule() {
+    console.log("generateSchedule()");
     const areas: IAreaSchema[] = await AreaSchema.find({}).exec();
 
     areas.forEach(async (area) => {
@@ -154,6 +155,7 @@ async function createOrUpdateJob(area: IAreaSchema) {
     const existingJob = schedule.scheduledJobs[area.id.toString()];
 
     if (existingJob) {
+        console.log("createOrPudateJob()");
         existingJob.cancel();
     }
 
@@ -171,6 +173,7 @@ async function createOrUpdateJob(area: IAreaSchema) {
 }
 
 AreaSchema.watch().on('change', async (change) => {
+    console.log("Rilevato cambiamento nel componente area");
     const areaId = change.documentKey._id;
 
     if (change.operationType === 'insert' || change.operationType === 'update') {
