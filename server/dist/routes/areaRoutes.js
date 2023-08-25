@@ -51,7 +51,8 @@ areaRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function*
 // Creazione di una nuova area
 areaRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Ricevuta richiesta POST su /api/aree/`);
-    const { nome, descrizione, latitudine, longitudine, sensori, lampioni } = req.body;
+    const { nome, descrizione, latitudine, longitudine, polling, sensori, lampioni } = req.body;
+    parseInt(polling, 10);
     const id = yield generateIdAree();
     const newArea = new AreaSchema_1.default({
         id,
@@ -59,6 +60,7 @@ areaRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         descrizione,
         latitudine,
         longitudine,
+        polling,
         sensori,
         lampioni,
     });
@@ -107,6 +109,9 @@ areaRouter.put("/edit/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
         }
         if (req.body.longitudine !== undefined) {
             areaToUpdate.longitudine = req.body.longitudine;
+        }
+        if (req.body.polling !== undefined) {
+            areaToUpdate.polling = parseInt(req.body.polling, 10);
         }
         yield areaToUpdate.save();
         res.status(200).send(`Area illuminata con id = ${id} aggiornato con successo`);

@@ -55,8 +55,9 @@ areaRouter.post("/", async (req: Request, res: Response) => {
     console.log(
         `Ricevuta richiesta POST su /api/aree/`
     );
-    const { nome, descrizione, latitudine, longitudine, sensori, lampioni } =
-        req.body;
+    const { nome, descrizione, latitudine, longitudine, polling, sensori, lampioni } = req.body;
+    parseInt(polling, 10);
+
     const id: number = await generateIdAree();
     const newArea = new AreaSchema({
         id,
@@ -64,6 +65,7 @@ areaRouter.post("/", async (req: Request, res: Response) => {
         descrizione,
         latitudine,
         longitudine,
+        polling,
         sensori,
         lampioni,
     });
@@ -119,6 +121,10 @@ areaRouter.put("/edit/:id", async (req: Request, res: Response) => {
         }
         if (req.body.longitudine !== undefined) {
             areaToUpdate.longitudine = req.body.longitudine;
+        }
+
+        if(req.body.polling !== undefined){
+            areaToUpdate.polling = parseInt(req.body.polling, 10);
         }
 
         await areaToUpdate.save();

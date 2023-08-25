@@ -142,33 +142,47 @@ async function turnOffLamps(
 import schedule from 'node-schedule'
 import axios from 'axios'
 
-const scheduled = new Map<number, schedule.Job>();
+async function generateSchedule() {
+    const areas: IAreaSchema[] = await AreaSchema.find({}).exec();
 
-async function generateSchedule(){
+    areas.forEach(async (area) => {
+        createOrUpdateJob(area);
+    });
+}
 
-    const areaTime = new Map<number, number>();
+async function createOrUpdateJob(area: IAreaSchema) {
+    const existingJob = schedule.scheduledJobs[area.id.toString()];
 
-    // Fecth delle aree
-    const requestResponse : IAreaSchema[] = await (await axios.get("http://localhost:5000/api/aree")).data;
-
-    // Gestione dei dati delle aree e salvataggio
-    if(requestResponse){
-        requestResponse.forEach((item: IAreaSchema) => {
-            areaTime.set(item.id, item.polling)
-        });
+    if (existingJob) {
+        existingJob.cancel();
     }
 
-    // Creazione della Routine
-    areaTime.forEach((polling, id) => {
-        const rule = `*/${polling} * * * * *`;
-        schedule.scheduleJob(rule, async () =>{
-           const response = await axios.get(`http://localhost:5000/api/movimento/token/aree/${id}`);
+    schedule.scheduleJob(area.id.toString(), `*/${area.polling} * * * * *`, async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/movimento/token/aree/${area.id}`);
 
-           if(response.status === 200){
-            console.log("Risposta ottenuta con successo")
-           }
-        })
-    })
+            if (response.status === 200) {
+                console.log("Risposta ottenuta con successo");
+            }
+        } catch (error) {
+            console.error("Errore durante la richiesta:", error);
+        }
+    });
 }
+
+AreaSchema.watch().on('change', async (change) => {
+    const areaId = change.documentKey._id;
+
+    if (change.operationType === 'insert' || change.operationType === 'update') {
+        const area = await AreaSchema.findById(areaId);
+        if (area) {
+            createOrUpdateJob(area);
+        }
+    } else if (change.operationType === 'delete') {
+        schedule.cancelJob(areaId.toString());
+    }
+});
+
+generateSchedule();
 
 export default tokenRoutes;

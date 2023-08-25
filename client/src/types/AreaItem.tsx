@@ -9,6 +9,7 @@ interface AreaItem {
     descrizione: string;
     latitudine: string;
     longitudine: string;
+    polling: number;
     sensori: SensorItem[];
     lampioni: LampItem[];
 }
