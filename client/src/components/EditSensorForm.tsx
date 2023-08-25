@@ -56,7 +56,7 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
             validationSchema={Yup.object({
                 IP: Yup.string()
                     .matches(
-                        /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/,
+                        /^(?:\d{1,3}\.){3}\d{1,3}$/,
                         "Deve essre un indirizzo IP valido"
                     )
                     .required("Campo obbligatorio")

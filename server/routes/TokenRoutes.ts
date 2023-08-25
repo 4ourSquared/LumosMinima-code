@@ -43,100 +43,84 @@ tokenRoutes.post("/:idA/sensore/:idS", async (req: Request, res: Response) => {
 // Ricerca e verifica del token
 tokenRoutes.get("/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    console.log(`Richiesta GET ricevuto a api/movimento/token/aree/${id}`);
+    console.log(`Richiesta GET ricevuta a api/movimento/token/aree/${id}`);
 
     try {
-        // Ricerca del token
-        const token = await TokenSchema.find({ area: id })
-            .sort({ id: -1 })
-            .findOne()
-            .exec();
+        const token = await TokenSchema.findOne({ area: id }).sort({ id: -1 }).exec();
 
-        // Verifica del token
-        if (token) {
-            try {
-                const areaMod = await AreaSchema.findOne({ id: id });
-                const startingLum: number[] = [];
-                if (token.expiring > new Date(Date.now())) {
-                    if (!areaMod) {
-                        res.status(400).json({
-                            error: "Errore nel processo: errore nel recupero dell'area",
-                        });
-                    } else {
-                        // Salvataggio informazioni iniziali luminosità lampioni
-                        areaMod.lampioni.forEach((lamp: ILampSchema) =>
-                            startingLum.push(lamp.lum)
-                        );
+        if (!token) {
+            res.status(500).json({ error: "Errore nel recupero del token" });
+            return;
+        }
 
-                        // Accensione lampioni
-                        console.log("Inizio accensione lampioni");
-                        areaMod.lampioni.forEach((lamp: ILampSchema) => {
-                            if (lamp.mode == "manuale") {
-                                console.log("Accensione Lampione: ", lamp.id);
-                                lamp.lum = 10;
-                            }
-                        });
-                        console.log("Fine accensione lampioni");
-                        await areaMod.save();
-                        res.status(200).json("Accensione lampioni");
-                    }
-                } else {
-                    if (areaMod) {
-                        turnOffLamps(startingLum, areaMod, res);
-                        res.status(200).json("Spegnimento lampioni");
-                    } else {
-                        res.status(400).json({
-                            error: "Errore nel processo di spegnimento dei lampioni: errore nel recupero dell'area",
-                        });
-                    }
+        const areaMod = await AreaSchema.findOne({ id });
+
+        if (!areaMod) {
+            res.status(400).json({ error: "Errore nel recupero dell'area" });
+            return;
+        }
+
+        const startingLum = areaMod.lampioni.map(lamp => lamp.lum);
+
+        if (token.expiring > new Date()) {
+            console.log("Inizio accensione lampioni");
+            areaMod.lampioni.forEach(lamp => {
+                if (lamp.mode === "manuale") {
+                    console.log("Accensione Lampione:", lamp.id);
+                    lamp.lum = 10;
                 }
-            } catch (error) {
-                res.status(500).json("Errore");
-            }
+            });
+            console.log("Fine accensione lampioni");
+            await areaMod.save();
+            res.status(200).json("Accensione lampioni");
+        } else {
+            turnOffLamps(startingLum, areaMod, res);
+            res.status(200).json("Spegnimento lampioni");
         }
     } catch (error) {
-        res.status(500).json({ error: "Errore nella recupero del token " });
-        console.log("Errore nel processo di recupero del token: ", error);
+        console.log("Errore:", error);
+        res.status(500).json({ error: "Errore nell'esecuzione del processo" });
     }
 });
 
+
 // GENERAZIONE ID INCREMENTALE PER TOKEN
 async function generateTokenId(): Promise<number> {
-    try {
-        const tokenId: number =
-            (await TokenSchema.countDocuments({}).exec()) + 1;
+        try {
+            const tokenId: number =
+                (await TokenSchema.countDocuments({}).exec()) + 1;
 
-        if (!tokenId) {
-            throw new Error(`Impossibile generare il token`);
+            if (!tokenId) {
+                throw new Error(`Impossibile generare il token`);
+            }
+            return tokenId;
+        } catch (error) {
+            console.error("Errore durante la generazione del token:", error);
+            throw error;
         }
-        return tokenId;
-    } catch (error) {
-        console.error("Errore durante la generazione del token:", error);
-        throw error;
     }
-}
 
 async function turnOffLamps(
-    startingLum: number[],
-    areaMod: IAreaSchema,
-    res: Response
-) {
-    console.log("Inizio spegnimento lampioni");
+        startingLum: number[],
+        areaMod: IAreaSchema,
+        res: Response
+    ) {
+        console.log("Inizio spegnimento lampioni");
 
-    try {
-        for (let i = 0; i < areaMod.lampioni.length; i++) {
-            console.log("Spegnimento Lampione: ", areaMod.lampioni[i].id);
-            areaMod.lampioni[i].lum = startingLum[i];
+        try {
+            for (let i = 0; i < areaMod.lampioni.length; i++) {
+                console.log("Spegnimento Lampione: ", areaMod.lampioni[i].id);
+                areaMod.lampioni[i].lum = startingLum[i];
+            }
+
+            await areaMod.save();
+            console.log("Fine spegnimento lampioni");
+        } catch (error) {
+            res.status(400).json({
+                error: "Errore nel processo di spegnimento dei lampioni",
+            });
         }
-
-        await areaMod.save();
-        console.log("Fine spegnimento lampioni");
-    } catch (error) {
-        res.status(400).json({
-            error: "Errore nel processo di spegnimento dei lampioni",
-        });
     }
-}
 
 /* GESTIONE POLLING */
 import schedule from 'node-schedule'
@@ -147,7 +131,7 @@ async function generateSchedule() {
     const areas: IAreaSchema[] = await AreaSchema.find({}).exec();
 
     areas.forEach(async (area) => {
-        createOrUpdateJob(area);
+        await createOrUpdateJob(area);
     });
 }
 
