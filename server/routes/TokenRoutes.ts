@@ -132,6 +132,7 @@ async function generateSchedule() {
 
     areas.forEach(async (area) => {
         await createOrUpdateJob(area);
+        return;
     });
 }
 
