@@ -130,11 +130,11 @@ async function generateSchedule() {
     console.log("generateSchedule()");
     const areas: IAreaSchema[] = await AreaSchema.find({}).exec();
 
-    areas.forEach(async (area) => {
+    for (const area of areas) {
         await createOrUpdateJob(area);
-        return;
-    });
+    }
 }
+
 
 async function createOrUpdateJob(area: IAreaSchema) {
     const existingJob = schedule.scheduledJobs[area.id.toString()];
