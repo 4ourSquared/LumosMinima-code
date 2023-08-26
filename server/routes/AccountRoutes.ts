@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 
 // INFO: Per validare un token generato, bisogna utilizzare la funzione verify() di jwt (https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
-
+const JWT_KEY = "1KqcotIgrWMVyZq3SgC7uMIlRX8TNvEZ73hSenTUKt4dlyORcYfw4wehb0YvV4tD" //64 byte
 const accountRoutes = Router();
 
 // Logout
@@ -31,11 +31,17 @@ accountRoutes.post("/login", async (req: Request, res: Response) => {
             return res.status(401).json({ message: "Credenziali non valide" });
         }
 
-        const token = await jwt.sign({ userId: user._id }, "ChiaveDaImplementareTODO:", {
+        const token = await jwt.sign({ userId: user._id }, "JWT_KEY", {
             expiresIn: "1h",
         });
 
-        return res.json({ token });
+        return res.cookie("auth-jwt", JSON.stringify(token), {
+            //secure: true,        cosa faccio? il protocollo è http o https?
+            sameSite: 'strict',
+            maxAge: 60 * 60 * 24 * 30, //il cookie dopo 1 mese sparisce dal browser
+            httpOnly: true, //fondamentale
+          }).status(200);
+
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Errore nel processo di login" });
@@ -71,6 +77,7 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
         });
         await newUser.save();
 
+        /* renderei il login un'operazione successiva alla registrazione per aumentare la sicurezza 
         const token = jwt.sign(
             { userId: newUser._id },
             "ChiaveDaImplementareTODO:",
@@ -80,6 +87,8 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
         );
 
         return res.json({ token });
+        */
+        return res.status(200)
     } catch (error) {
         console.log(error);
         return res
@@ -87,5 +96,25 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
             .json({ message: "Errore nel processo di registrazione" });
     }
 });
+
+accountRoutes.get("/verify", async (req: Request, res: Response) => {
+    const token = req.cookies['auth-jwt']
+    console.log(token)
+    if(!token) 
+    {
+        res.status(403).json({ error: "Nessun token fornito!" })
+        console.log("nessun token fornito")
+    }
+    else {
+        jwt.verify( token, 
+                    JWT_KEY, 
+                    (err:any) => {
+                        if(err) 
+                            res.status(500).json({error: "Autenticazione del token fallita!"})
+                        else
+                            res.status(200).json({result: "Successo"})
+         })
+    }
+})
 
 export default accountRoutes;

@@ -74,7 +74,7 @@ const LampTable: React.FC<LampTableProps> = ({
             <th scope="col">Info</th>
             <th scope="col">Modifica</th>
             <th scope="col">Elimina</th>
-            {isAdmin && <th scope="col">Guasto</th>}
+            {/*{isAdmin && <th scope="col">Guasto</th>}*/}
           </tr>
         </thead>
         <tbody id="tableBody">
@@ -114,6 +114,7 @@ const LampTable: React.FC<LampTableProps> = ({
                   Elimina
                 </button>
               </td>
+              {/*
               {isAdmin && (
                 <td>
                   {lampione.guasto ? (
@@ -137,15 +138,18 @@ const LampTable: React.FC<LampTableProps> = ({
                   )}
                 </td>
               )}
+                  */}
             </tr>
           ))}
         </tbody>
       </table>
+      {/*
       {isManut && (
         <button className="btn btn-secondary" onClick={() => showListaGuasti()}>
           Vai alla lista guasti
         </button>
       )}
+      */}
     </div>
   );
 };

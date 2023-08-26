@@ -1,12 +1,13 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import {isLogged} from '../auth/LoginState'
+import {useState, useEffect} from 'react'
 
 interface GuardedRouteProps {
 	/**
 	 * Permission check for route
 	 * @default false
 	 */
-     condition?: boolean;
+     conditionCallback?: (() => Promise<boolean>)
 	/**
 	 * Route to be redirected to
 	 * @default '/'
@@ -32,10 +33,19 @@ interface GuardedRouteProps {
  * />
  * ```
  */
-const GuardedRoute = ({
-	condition = isLogged(),
-	redirectRoute,
-}: GuardedRouteProps): JSX.Element =>
-	condition ? <Outlet /> : <Navigate to={redirectRoute} replace />;
+const GuardedRoute = ({conditionCallback = isLogged, redirectRoute}: GuardedRouteProps): JSX.Element => {
+
+	const [condition,setCondition] = useState<boolean>(false)
+
+	useEffect(()=>{
+		const retrieve = async () => {
+			const condition = await conditionCallback()
+			setCondition(condition)
+		retrieve()
+		}
+	},[])
+
+	return condition ? <Outlet /> : <Navigate to={redirectRoute} replace />;
+}
 
 export default GuardedRoute;

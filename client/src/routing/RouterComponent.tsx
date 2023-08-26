@@ -120,7 +120,7 @@ const RouterComponent: React.FC = () => {
           />
           <Route
             element={
-              <GuardedRoute condition={isManutentore()} redirectRoute="/" />
+              <GuardedRoute conditionCallback={isManutentore} redirectRoute="/" />
             }
           >
             <Route

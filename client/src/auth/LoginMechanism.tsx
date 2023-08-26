@@ -10,7 +10,8 @@ export default function useLoginMechanism() : (username:string,password:string) 
             const response = await axios.post("/accounting/login", { username: username, password: password });
             const token = response.data;
             if(token){
-                localStorage.setItem("token", JSON.stringify(token));
+                //localStorage.setItem("token", JSON.stringify(token));
+                //NON SICURO!
                 return true;
             }
             else{

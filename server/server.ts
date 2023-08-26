@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import areaRoutes from "./routes/AreaRoutes";
 import lampRoutes from "./routes/LampRoutes"
 import sensRoutes from "./routes/SensorRoutes"
+import cors from "cors"; // Per la configurazione di un certificato valido che permetta lo scambio di informazioni tra due endpoint senza l'utilizzo di proxy
+import cookieParser from "cookie-parser"; //per estrarre i cookie dalle richieste HTTP
 
 /*
     SERVER: questo file al momento rappresenta il server in tutto e per tutto. Al suo interno si trovano tutti i metodi attualmente sviluppati per la gestione delle richieste in arrivo
@@ -13,10 +15,11 @@ import sensRoutes from "./routes/SensorRoutes"
                         CONFIGURAZIONE DEL SERVER
 ------------------------------------------------------------------------------
 */
-const cors = require("cors"); // Per la configurazione di un certificato valido che permetta lo scambio di informazioni tra due endpoint senza l'utilizzo di proxy
+
 const app = express(); // Per il routing e il middleware
 const port = 5000;
 app.use(cors());
+app.use(cookieParser())
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
