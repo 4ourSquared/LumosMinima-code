@@ -14,24 +14,28 @@ accountRoutes.post("/logout", (req: Request, res: Response) => {});
 // Login
 accountRoutes.post("/login", async (req: Request, res: Response) => {
     console.log("Ricevuta richiesta di login");
-    const { password } = req.body;
+    const {username, password } = req.body;
 
     try {
-        const query_username = { username: req.body.username.toString() };
+        const query_username = { username: username };
         const user = await UserSchema.findOne(query_username);
 
-        if(user){
-            console.log(user.username);
-            console.log(user.password);
-            console.log(crypto.SHA512(password).toString());
-            console.log(password);
-        }
-
         if (!user || user.password !== crypto.SHA512(password).toString()) {
+
+            if(!user){ 
+                console.log("Username non trovato");
+            }
+
+            else{
+                console.log("Password errata");
+                console.log(crypto.SHA512(password).toString());
+                console.log(user.password);
+            }
+
             return res.status(401).json({ message: "Credenziali non valide" });
         }
 
-        const token = await jwt.sign({ userId: user._id }, "ChiaveDaImplementareTODO:", {
+        const token = await jwt.sign({ userId: user._id, username: user.username, privilege: user.privilege }, "ChiaveDaImplementareTODO:", {
             expiresIn: "1h",
         });
 
@@ -85,6 +89,24 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
         return res
             .status(500)
             .json({ message: "Errore nel processo di registrazione" });
+    }
+});
+
+accountRoutes.get("/checkToken", async (req: Request, res: Response) => {
+    const token = req.headers.authorization;
+
+    if (!token) {
+        return res.status(401).json({ message: "Token non presente" });
+    }
+
+    try {
+        const decodedToken = jwt.verify(token, "ChiaveDaImplementareTODO:");
+        console.log(decodedToken);
+        return res.status(200).json({ message: "Token valido", isValid: true });
+    } catch (error) {
+        return res
+            .status(401)
+            .json({ message: "Token non valido", isValid: false });
     }
 });
 
