@@ -46,10 +46,12 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
     console.log(`Richiesta GET ricevuta a api/movimento/token/aree/${id}`);
 
     try {
-        const token = await TokenSchema.findOne({ area: id }).sort({ id: -1 }).exec();
+        const token = await TokenSchema.findOne({ area: id })
+            .sort({ id: -1 })
+            .exec();
 
         if (!token) {
-            res.status(500).json({ error: "Errore nel recupero del token" });
+            res.status(498).json({ error: "Errore nel recupero del token" });
             return;
         }
 
@@ -60,11 +62,11 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
             return;
         }
 
-        const startingLum = areaMod.lampioni.map(lamp => lamp.lum);
+        const startingLum = areaMod.lampioni.map((lamp) => lamp.lum);
 
         if (token.expiring > new Date()) {
             console.log("Inizio accensione lampioni");
-            areaMod.lampioni.forEach(lamp => {
+            areaMod.lampioni.forEach((lamp) => {
                 if (lamp.mode === "manuale") {
                     console.log("Accensione Lampione:", lamp.id);
                     lamp.lum = 10;
@@ -83,48 +85,49 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
     }
 });
 
-
 // GENERAZIONE ID INCREMENTALE PER TOKEN
 async function generateTokenId(): Promise<number> {
-        try {
-            const tokenId: number =
-                (await TokenSchema.countDocuments({}).exec()) + 1;
+    try {
+        const tokenId: number =
+            (await TokenSchema.countDocuments({}).exec()) + 1;
 
-            if (!tokenId) {
-                throw new Error(`Impossibile generare il token`);
-            }
-            return tokenId;
-        } catch (error) {
-            console.error("Errore durante la generazione del token:", error);
-            throw error;
+        if (!tokenId) {
+            throw new Error(`Impossibile generare il token`);
         }
+        return tokenId;
+    } catch (error) {
+        console.error("Errore durante la generazione del token:", error);
+        throw error;
     }
+}
 
 async function turnOffLamps(
-        startingLum: number[],
-        areaMod: IAreaSchema,
-        res: Response
-    ) {
-        console.log("Inizio spegnimento lampioni");
+    startingLum: number[],
+    areaMod: IAreaSchema,
+    res: Response
+) {
+    console.log("Inizio spegnimento lampioni");
 
-        try {
-            for (let i = 0; i < areaMod.lampioni.length; i++) {
+    try {
+        for (let i = 0; i < areaMod.lampioni.length; i++) {
+            if (areaMod.lampioni[i].mode === "manuale") {
                 console.log("Spegnimento Lampione: ", areaMod.lampioni[i].id);
                 areaMod.lampioni[i].lum = startingLum[i];
             }
-
-            await areaMod.save();
-            console.log("Fine spegnimento lampioni");
-        } catch (error) {
-            res.status(400).json({
-                error: "Errore nel processo di spegnimento dei lampioni",
-            });
         }
+
+        await areaMod.save();
+        console.log("Fine spegnimento lampioni");
+    } catch (error) {
+        res.status(400).json({
+            error: "Errore nel processo di spegnimento dei lampioni",
+        });
     }
+}
 
 /* GESTIONE POLLING */
-import schedule from 'node-schedule'
-import axios from 'axios'
+import schedule from "node-schedule";
+import axios from "axios";
 
 async function generateSchedule() {
     console.log("generateSchedule()");
@@ -135,7 +138,6 @@ async function generateSchedule() {
     }
 }
 
-
 async function createOrUpdateJob(area: IAreaSchema) {
     const existingJob = schedule.scheduledJobs[area.id.toString()];
 
@@ -144,29 +146,40 @@ async function createOrUpdateJob(area: IAreaSchema) {
         existingJob.cancel();
     }
 
-    schedule.scheduleJob(area.id.toString(), `*/${area.polling} * * * * *`, async () => {
-        try {
-            const response = await axios.get(`http://localhost:5000/api/movimento/token/aree/${area.id}`);
+    schedule.scheduleJob(
+        area.id.toString(),
+        `*/${area.polling} * * * * *`,
+        async () => {
+            try {
+                const response = await axios.get(
+                    `http://localhost:5000/api/movimento/token/aree/${area.id.toString()}`
+                );
 
-            if (response.status === 200) {
-                console.log("Risposta ottenuta con successo");
+                if (response.status === 200) {
+                    console.log("Risposta ottenuta con successo");
+                }
+            } catch (error) {
+                console.error(
+                    "Errore durante la richiesta di verifica del token al server"
+                );
             }
-        } catch (error) {
-            console.error("Errore durante la richiesta:", error);
         }
-    });
+    );
 }
 
-AreaSchema.watch().on('change', async (change) => {
+AreaSchema.watch().on("change", async (change) => {
     console.log("Rilevato cambiamento nel componente area");
     const areaId = change.documentKey._id;
 
-    if (change.operationType === 'insert' || change.operationType === 'update') {
+    if (
+        change.operationType === "insert" ||
+        change.operationType === "update"
+    ) {
         const area = await AreaSchema.findById(areaId);
         if (area) {
             createOrUpdateJob(area);
         }
-    } else if (change.operationType === 'delete') {
+    } else if (change.operationType === "delete") {
         schedule.cancelJob(areaId.toString());
     }
 });

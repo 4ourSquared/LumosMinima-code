@@ -49,16 +49,16 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
       <Link to={`/api/aree/${areaId}`} type="button" className="btn btn-primary">
         Indietro
       </Link>
-      <button onClick={() => sendSignal(areaId)} className="btn btn-warning">
+      <button onClick={() => sendSignal(areaId, sensoreId)} className="btn btn-warning">
         Invia Segnale
       </button>
     </div>
   );
 };
 
-function sendSignal(idA: number) : void{
-  axios.defaults.baseURL = "http://localhost:5000/api/movimento/aree/";
-  axios.get(`/${idA}`);
+function sendSignal(idA: number, idS: number) : void{
+  axios.defaults.baseURL = "http://localhost:5000/api/movimento/token/aree/";
+  axios.post(`/${idA}/sensore/${idS}`);
   
 }
 
