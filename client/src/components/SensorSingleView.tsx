@@ -57,8 +57,8 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
 };
 
 function sendSignal(idA: number, idS: number) : void{
-  axios.defaults.baseURL = "http://localhost:5000/api/movimento/token/aree/";
-  axios.post(`/${idA}/sensore/${idS}`);
+  axios.defaults.baseURL = "http://localhost:5000/api/segnale/area";
+  axios.post(`/${idA}/sensore/${idS}/new`);
   
 }
 

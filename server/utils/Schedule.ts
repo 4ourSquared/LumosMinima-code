@@ -42,14 +42,13 @@ async function createOrUpdateJob(area: IAreaSchema) {
         async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:5000/api/movimento/token/aree/${area.id.toString()}`
+                    `http://localhost:5000/api/segnale/area/${area.id}/token`
                 );
 
                 if (response.status === 200) {
                     console.log("Response obtained successfully");
                 }
             } catch (error) {
-                console.error("Error during token verification request to server");
             }
         }
     );

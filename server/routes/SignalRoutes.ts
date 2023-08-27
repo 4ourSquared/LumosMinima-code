@@ -1,16 +1,47 @@
 import { Router, Request, Response } from "express";
 import TokenSchema from "../schemas/TokenSchema";
-import AreaSchema, { IAreaSchema } from "../schemas/AreaSchema";
+import AreaSchema from "../schemas/AreaSchema";
 import { generateSchedule } from "../utils/Schedule";
+import { ILampSchema } from "../schemas/LampSchema";
+import { turnOffLamps, generateTokenId } from "../utils/LightManagement";
+import axios from "axios";
 
-const tokenRoutes = Router();
 
-// Generazione token
-tokenRoutes.post("/:idA/sensore/:idS", async (req: Request, res: Response) => {
-    const idA = parseInt(req.params.idA, 10);
-    const idS = parseInt(req.params.idS, 10);
+const signalRoutes = Router();
 
-    console.log(`Richiesta POST ricevuto a api/movimento/token/aree/${idA}`);
+/*
+    REDIRECT DELLE RICHIESTE
+*/
+
+// Visto che il segnale inviato dal sensore è unico, questo verrà gestito da questa route per inviarlo ai due endpoint corretti, ossia quello per i lampioni push e a quello per i lampioni pull
+
+signalRoutes.post("/area/:idA/sensore/:idS/new", async (req: Request, res: Response) => {
+    const { idA, idS } = req.params;
+    axios.defaults.baseURL = "http://localhost:5000/api/segnale/";
+
+    try{
+        const response2 = await axios.post(`area/${idA}/sensore/${idS}`);
+        const response1 = await axios.get(`area/${idA}`);
+        
+
+        res.status(200).json("Successo");
+    }
+    catch(error){
+        console.log("Errore nel routing del segnale");
+        console.error(error);
+        res.status(500).json("Errore nel routing del segnale");
+    }
+});
+
+/*
+    GESTIONE CON TOKEN
+*/
+
+// Generazione del token
+signalRoutes.post("/area/:idA/sensore/:idS", async (req: Request, res: Response) => {
+    const { idA, idS } = req.params;
+
+    console.log(`Richiesta POST ricevuto a api/segnale/area/${idA}/sensore/${idS}`);
 
     try {
         // Generazione del token
@@ -18,7 +49,7 @@ tokenRoutes.post("/:idA/sensore/:idS", async (req: Request, res: Response) => {
         const area = await AreaSchema.findOne({ id: idA });
 
         if (area) {
-            const sensoreData = area.sensori.find((sens) => sens.id === idS);
+            const sensoreData = area.sensori.find((sens) => sens.id === parseInt(idS, 10));
 
             if (sensoreData) {
                 const token = new TokenSchema({
@@ -41,10 +72,11 @@ tokenRoutes.post("/:idA/sensore/:idS", async (req: Request, res: Response) => {
     }
 });
 
+
 // Ricerca e verifica del token
-tokenRoutes.get("/:id", async (req: Request, res: Response) => {
+signalRoutes.get("/area/:id/token", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    console.log(`Richiesta GET ricevuta a api/movimento/token/aree/${id}`);
+    console.log(`Richiesta GET ricevuta a api/segnale/area/${id}`);
 
     try {
         const token = await TokenSchema.findOne({ area: id })
@@ -100,46 +132,53 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
     }
 });
 
-// GENERAZIONE ID INCREMENTALE PER TOKEN
-async function generateTokenId(): Promise<number> {
-    try {
-        const tokenId: number =
-            (await TokenSchema.countDocuments({}).exec()) + 1;
+/*
+    GESTIONE SENZA TOKEN
+*/
 
-        if (!tokenId) {
-            throw new Error(`Impossibile generare il token`);
-        }
-        return tokenId;
-    } catch (error) {
-        console.error("Errore durante la generazione del token:", error);
-        throw error;
-    }
-}
-
-async function turnOffLamps(
-    startingLum: number[],
-    areaMod: IAreaSchema,
-    res: Response
-) {
-    console.log("Inizio spegnimento lampioni");
+// Accensione e spegnimento dei lampioni senza token
+signalRoutes.get("/area/:id", async (req: Request, res: Response) => {
+    const {id} = req.params;
+    console.log(`Segnale ricevuto a /api/segnale/area/${id}`);
 
     try {
-        for (let i = 0; i < areaMod.lampioni.length; i++) {
-            if (areaMod.lampioni[i].mode === "manuale") {
-                console.log("Spegnimento Lampione: ", areaMod.lampioni[i].id);
-                areaMod.lampioni[i].lum = startingLum[i];
-            }
+        console.log("Recupero area");
+        const areaMod = await AreaSchema.findOne({ id: id });
+
+        if (!areaMod) {
+            console.log("Area non trovata")
+            res.status(400).json({ error: "Errore nel processo: errore nel recupero dell'area" });
+        } else {
+            const startingLum: number[] = [];
+
+            // Salvataggio informazioni iniziali luminosità lampioni
+            areaMod.lampioni.forEach((lamp: ILampSchema) => startingLum.push(lamp.lum))
+
+            // Accensione lampioni
+            console.log("Inizio accensione lampioni");
+            areaMod.lampioni.forEach((lamp: ILampSchema) => {
+                if (lamp.mode == "automatico")
+                    lamp.lum = 10
+            });
+            console.log("Fine accensione lampioni");
+            await areaMod.save();
+
+
+
+            setTimeout(() => {
+                turnOffLamps(startingLum, areaMod, res);
+            }, 10000);
+
+            res.status(200).json("Successo");
+
         }
-
-        await areaMod.save();
-        console.log("Fine spegnimento lampioni");
     } catch (error) {
-        res.status(400).json({
-            error: "Errore nel processo di spegnimento dei lampioni",
-        });
+        res.status(500).json("Errore")
     }
-}
+});
 
+
+// Generazione della Schedule
 generateSchedule();
 
-export default tokenRoutes;
+export default signalRoutes;

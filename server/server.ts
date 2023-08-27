@@ -54,11 +54,12 @@ import lampRoutes from "./routes/LampRoutes"
 import sensRoutes from "./routes/SensorRoutes"
 import movimentoRoutes from "./routes/MovimentoRoutes"
 import tokenRoutes from "./routes/TokenRoutes"
+import signalRoutes from "./routes/SignalRoutes";
+
 app.use("/api/aree", areaRoutes);
 app.use("/api/aree", lampRoutes);
 app.use("/api/aree", sensRoutes);
-app.use("/api/movimento/aree", movimentoRoutes);
-app.use("/api/movimento/token/aree", tokenRoutes)
+app.use("/api/segnale", signalRoutes)
 
 
 // Accesso alla pagina
@@ -71,5 +72,3 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log("Il server è in ascolto sulla porta 5000");
 });
-
-// TODO: bisognerà unire i file MovimentoRoutes e TokenRoutes in un file singolo visto che le routine sono dello stesso tipo e hanno lo stesso obiettivo solo che lo fanno in due modi diversi
