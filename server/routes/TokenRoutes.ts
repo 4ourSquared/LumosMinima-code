@@ -47,39 +47,28 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
     console.log(`Richiesta GET ricevuta a api/movimento/token/aree/${id}`);
 
     try {
-        const token = await TokenSchema.findOne({ area: id })
-            .sort({ id: -1 })
-            .exec();
-
-        if (!token) {
-            res.status(498).json({ error: "Errore nel recupero del token" });
-            return;
-        }
-
+        const token = await TokenSchema.findOne({ area: id }).sort({ id: -1 }).exec();
         const areaMod = await AreaSchema.findOne({ id });
-
-        if (!areaMod) {
-            res.status(400).json({ error: "Errore nel recupero dell'area" });
-            return;
+        if (!token) {
+            return res.status(498).json({ error: "Errore nel recupero del token" });
         }
-
+        if (!areaMod) {
+            return res.status(400).json({ error: "Errore nel recupero dell'area" });
+        }
+    
         const startingLum = areaMod.lampioni.map((lamp) => lamp.lum);
-        if (token.expiring < new Date()) {
-            // Token scaduto e non utilizzato -> Non fare nulla
+        const now = new Date();
+    
+        if (token.expiring < now) {
             if (token.used === false) {
-                res.status(218).json("This is fine");
-                return;
-            }
-            // Token scaduto e utilizzato -> Spegnimento dei lampioni
-            else {
+                return res.status(218).json("This is fine");
+            } else {
                 token.used = false;
                 await token.save();
                 await turnOffLamps(startingLum, areaMod, res);
-                res.status(200).json("Spegnimento lampioni");
-                return;
+                return res.status(200).json("Spegnimento lampioni");
             }
         } else {
-            // Token valido e non utilizzato -> Accensione dei lampioni
             if (token.used === false) {
                 token.used = true;
                 await token.save();
@@ -89,25 +78,19 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
                         console.log("Accensione Lampione:", lamp.id);
                         lamp.lum = 10;
                     }
-                    else{
-                        
-                    }
                 });
                 console.log("Fine accensione lampioni");
                 await areaMod.save();
-                res.status(200).json("Accensione lampioni");
-                return;
-            }
-            // Token valido e utilizzato -> Non fare nulla
-            else {
-                res.status(226).json("Token Utilizzato");
-                return;
+                return res.status(200).json("Accensione lampioni");
+            } else {
+                return res.status(226).json("Token Utilizzato");
             }
         }
     } catch (error) {
         console.log("Errore:", error);
-        res.status(500).json({ error: "Errore nell'esecuzione del processo" });
+        return res.status(500).json({ error: "Errore nell'esecuzione del processo" });
     }
+    
 });
 
 // GENERAZIONE ID INCREMENTALE PER TOKEN
