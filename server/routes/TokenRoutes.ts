@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 import TokenSchema from "../schemas/TokenSchema";
 import AreaSchema, { IAreaSchema } from "../schemas/AreaSchema";
-import { ILampSchema } from "../schemas/LampSchema";
 import { generateSchedule } from "../utils/Schedule";
 
 const tokenRoutes = Router();
