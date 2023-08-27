@@ -90,6 +90,9 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
                         console.log("Accensione Lampione:", lamp.id);
                         lamp.lum = 10;
                     }
+                    else{
+                        
+                    }
                 });
                 console.log("Fine accensione lampioni");
                 await areaMod.save();
