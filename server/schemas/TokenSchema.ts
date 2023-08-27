@@ -5,6 +5,7 @@ export interface ITokenSchema extends Document{
     id: number;
     area: number;
     expiring: Date;
+    used: boolean;
 }
 
 const tokenSchema : Schema = new mongoose.Schema({
@@ -13,7 +14,8 @@ const tokenSchema : Schema = new mongoose.Schema({
         required: true,
     },
     area: Number,
-    expiring: Date
+    expiring: Date,
+    used: Boolean,
 });
 
 export default mongoose.model("token", tokenSchema);

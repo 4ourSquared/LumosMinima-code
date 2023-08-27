@@ -28,6 +28,7 @@ tokenRoutes.post("/:idA/sensore/:idS", async (req: Request, res: Response) => {
                     expiring: new Date(
                         Date.now() + 1000 * sensoreData.sig_time
                     ),
+                    used: false,
                 });
 
                 // Salvataggio del token
@@ -64,21 +65,42 @@ tokenRoutes.get("/:id", async (req: Request, res: Response) => {
         }
 
         const startingLum = areaMod.lampioni.map((lamp) => lamp.lum);
-
-        if (token.expiring > new Date()) {
-            console.log("Inizio accensione lampioni");
-            areaMod.lampioni.forEach((lamp) => {
-                if (lamp.mode === "manuale") {
-                    console.log("Accensione Lampione:", lamp.id);
-                    lamp.lum = 10;
-                }
-            });
-            console.log("Fine accensione lampioni");
-            await areaMod.save();
-            res.status(200).json("Accensione lampioni");
+        if (token.expiring < new Date()) {
+            // Token scaduto e non utilizzato -> Non fare nulla
+            if (token.used === false) {
+                res.status(218).json("This is fine");
+                return;
+            }
+            // Token scaduto e utilizzato -> Spegnimento dei lampioni
+            else {
+                token.used = false;
+                await token.save();
+                await turnOffLamps(startingLum, areaMod, res);
+                res.status(200).json("Spegnimento lampioni");
+                return;
+            }
         } else {
-            turnOffLamps(startingLum, areaMod, res);
-            res.status(200).json("Spegnimento lampioni");
+            // Token valido e non utilizzato -> Accensione dei lampioni
+            if (token.used === false) {
+                token.used = true;
+                await token.save();
+                console.log("Inizio accensione lampioni");
+                areaMod.lampioni.forEach((lamp) => {
+                    if (lamp.mode === "manuale") {
+                        console.log("Accensione Lampione:", lamp.id);
+                        lamp.lum = 10;
+                    }
+                });
+                console.log("Fine accensione lampioni");
+                await areaMod.save();
+                res.status(200).json("Accensione lampioni");
+                return;
+            }
+            // Token valido e utilizzato -> Non fare nulla
+            else {
+                res.status(226).json("Token Utilizzato");
+                return;
+            }
         }
     } catch (error) {
         console.log("Errore:", error);
