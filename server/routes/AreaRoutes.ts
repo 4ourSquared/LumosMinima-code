@@ -4,6 +4,7 @@
 
 import { Router, Request, Response } from "express";
 import AreaSchema from "../schemas/AreaSchema";
+import { updateSchedule } from "../utils/Schedule";
 
 const areaRouter = Router();
 
@@ -72,6 +73,7 @@ areaRouter.post("/", async (req: Request, res: Response) => {
 
     try {
         const savedArea = await newArea.save();
+        updateSchedule(savedArea._id);
         res.status(200).json(savedArea);
     } catch (error) {
         console.error(
@@ -128,6 +130,7 @@ areaRouter.put("/edit/:id", async (req: Request, res: Response) => {
         }
 
         await areaToUpdate.save();
+        updateSchedule(areaToUpdate._id);
 
         res.status(200).send(
             `Area illuminata con id = ${id} aggiornato con successo`
@@ -150,6 +153,7 @@ areaRouter.delete("/:id", async (req: Request, res: Response) => {
         `Ricevuta richiesta DELETE su /api/aree/${id}/`
     );
     try {
+        const deletedArea = await AreaSchema.findOne({ id });
         const result = await AreaSchema.deleteOne({ id });
 
         if (result.deletedCount === 0) {
@@ -157,6 +161,9 @@ areaRouter.delete("/:id", async (req: Request, res: Response) => {
             return;
         }
 
+        if(deletedArea)
+            updateSchedule(deletedArea._id);
+        
         res.status(200).send(
             `Area illuminata con id = ${id} eliminato con successo`
         );

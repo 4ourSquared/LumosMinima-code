@@ -17,6 +17,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const AreaSchema_1 = __importDefault(require("../schemas/AreaSchema"));
+const Schedule_1 = require("../utils/Schedule");
 const areaRouter = (0, express_1.Router)();
 // Recupero della lista di aree illuminate
 areaRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -66,6 +67,7 @@ areaRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     });
     try {
         const savedArea = yield newArea.save();
+        (0, Schedule_1.updateSchedule)(savedArea._id);
         res.status(200).json(savedArea);
     }
     catch (error) {
@@ -114,6 +116,7 @@ areaRouter.put("/edit/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
             areaToUpdate.polling = parseInt(req.body.polling, 10);
         }
         yield areaToUpdate.save();
+        (0, Schedule_1.updateSchedule)(areaToUpdate._id);
         res.status(200).send(`Area illuminata con id = ${id} aggiornato con successo`);
     }
     catch (error) {
@@ -126,11 +129,14 @@ areaRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, functi
     const id = parseInt(req.params.id);
     console.log(`Ricevuta richiesta DELETE su /api/aree/${id}/`);
     try {
+        const deletedArea = yield AreaSchema_1.default.findOne({ id });
         const result = yield AreaSchema_1.default.deleteOne({ id });
         if (result.deletedCount === 0) {
             res.status(404).send(`Errore nel processo di eliminazione di un'area: area illuminata con id = ${id} non trovata`);
             return;
         }
+        if (deletedArea)
+            (0, Schedule_1.updateSchedule)(deletedArea._id);
         res.status(200).send(`Area illuminata con id = ${id} eliminato con successo`);
     }
     catch (error) {

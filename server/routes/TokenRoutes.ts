@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import TokenSchema from "../schemas/TokenSchema";
 import AreaSchema, { IAreaSchema } from "../schemas/AreaSchema";
 import { ILampSchema } from "../schemas/LampSchema";
+import { generateSchedule } from "../utils/Schedule";
 
 const tokenRoutes = Router();
 
@@ -124,65 +125,6 @@ async function turnOffLamps(
         });
     }
 }
-
-/* GESTIONE POLLING */
-import schedule from "node-schedule";
-import axios from "axios";
-
-async function generateSchedule() {
-    console.log("generateSchedule()");
-    const areas: IAreaSchema[] = await AreaSchema.find({}).exec();
-
-    for (const area of areas) {
-        await createOrUpdateJob(area);
-    }
-}
-
-async function createOrUpdateJob(area: IAreaSchema) {
-    const existingJob = schedule.scheduledJobs[area.id.toString()];
-
-    if (existingJob) {
-        console.log("createOrPudateJob()");
-        existingJob.cancel();
-    }
-
-    schedule.scheduleJob(
-        area.id.toString(),
-        `*/${area.polling} * * * * *`,
-        async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:5000/api/movimento/token/aree/${area.id.toString()}`
-                );
-
-                if (response.status === 200) {
-                    console.log("Risposta ottenuta con successo");
-                }
-            } catch (error) {
-                console.error(
-                    "Errore durante la richiesta di verifica del token al server"
-                );
-            }
-        }
-    );
-}
-
-AreaSchema.watch().on("change", async (change) => {
-    console.log("Rilevato cambiamento nel componente area");
-    const areaId = change.documentKey._id;
-
-    if (
-        change.operationType === "insert" ||
-        change.operationType === "update"
-    ) {
-        const area = await AreaSchema.findById(areaId);
-        if (area) {
-            createOrUpdateJob(area);
-        }
-    } else if (change.operationType === "delete") {
-        schedule.cancelJob(areaId.toString());
-    }
-});
 
 generateSchedule();
 

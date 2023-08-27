@@ -1,12 +1,4 @@
 import express, { Request, Response } from "express";
-import areaRoutes from "./routes/AreaRoutes";
-import lampRoutes from "./routes/LampRoutes"
-import sensRoutes from "./routes/SensorRoutes"
-import movimentoRoutes from "./routes/MovimentoRoutes"
-import tokenRoutes from "./routes/TokenRoutes"
-
-
-
 
 /*
     SERVER: questo file al momento rappresenta il server in tutto e per tutto. Al suo interno si trovano tutti i metodi attualmente sviluppati per la gestione delle richieste in arrivo
@@ -57,6 +49,11 @@ db.once("open", () => {
 
 
 // Collegamento alla route per i sensori
+import areaRoutes from "./routes/AreaRoutes";
+import lampRoutes from "./routes/LampRoutes"
+import sensRoutes from "./routes/SensorRoutes"
+import movimentoRoutes from "./routes/MovimentoRoutes"
+import tokenRoutes from "./routes/TokenRoutes"
 app.use("/api/aree", areaRoutes);
 app.use("/api/aree", lampRoutes);
 app.use("/api/aree", sensRoutes);
