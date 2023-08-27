@@ -167,7 +167,7 @@ signalRoutes.get("/area/:id", async (req: Request, res: Response) => {
 
             setTimeout(() => {
                 turnOffLamps(startingLum, areaMod, res);
-            }, 10000);
+            }, areaMod.polling * 1000);
 
             res.status(200).json("Successo");
 

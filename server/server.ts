@@ -52,8 +52,6 @@ db.once("open", () => {
 import areaRoutes from "./routes/AreaRoutes";
 import lampRoutes from "./routes/LampRoutes"
 import sensRoutes from "./routes/SensorRoutes"
-import movimentoRoutes from "./routes/MovimentoRoutes"
-import tokenRoutes from "./routes/TokenRoutes"
 import signalRoutes from "./routes/SignalRoutes";
 
 app.use("/api/aree", areaRoutes);
