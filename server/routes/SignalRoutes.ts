@@ -6,7 +6,6 @@ import { ILampSchema } from "../schemas/LampSchema";
 import { turnOffLamps, generateTokenId } from "../utils/LightManagement";
 import axios from "axios";
 
-
 const signalRoutes = Router();
 
 /*
@@ -15,63 +14,78 @@ const signalRoutes = Router();
 
 // Visto che il segnale inviato dal sensore è unico, questo verrà gestito da questa route per inviarlo ai due endpoint corretti, ossia quello per i lampioni push e a quello per i lampioni pull
 
-signalRoutes.post("/area/:idA/sensore/:idS/new", async (req: Request, res: Response) => {
-    const { idA, idS } = req.params;
-    axios.defaults.baseURL = "http://localhost:5000/api/segnale/";
+signalRoutes.post(
+    "/area/:idA/sensore/:idS/new",
+    async (req: Request, res: Response) => {
 
-    try{
-        const response2 = await axios.post(`area/${idA}/sensore/${idS}`);
-        const response1 = await axios.get(`area/${idA}`);
-        
+        const { idA, idS } = req.params;
+        const baseURL = "http://localhost:5000/api/segnale/";
+        const urlPart1 = `area/${encodeURIComponent(
+            idA
+        )}/sensore/${encodeURIComponent(idS)}`;
 
-        res.status(200).json("Successo");
+        try {
+            const response2 = await axios.post(urlPart1);
+            const response1 = await axios.get(
+                `area/${encodeURIComponent(idA)}`
+            );
+
+            res.status(200).json("Successo");
+        } catch (error) {
+            console.log("Errore nel routing del segnale");
+            console.error(error);
+            res.status(500).json("Errore nel routing del segnale");
+        }
     }
-    catch(error){
-        console.log("Errore nel routing del segnale");
-        console.error(error);
-        res.status(500).json("Errore nel routing del segnale");
-    }
-});
+);
 
 /*
     GESTIONE CON TOKEN
 */
 
 // Generazione del token
-signalRoutes.post("/area/:idA/sensore/:idS", async (req: Request, res: Response) => {
-    const { idA, idS } = req.params;
+signalRoutes.post(
+    "/area/:idA/sensore/:idS",
+    async (req: Request, res: Response) => {
+        const { idA, idS } = req.params;
 
-    console.log(`Richiesta POST ricevuto a api/segnale/area/${idA}/sensore/${idS}`);
+        console.log(
+            `Richiesta POST ricevuto a api/segnale/area/${idA}/sensore/${idS}`
+        );
 
-    try {
-        // Generazione del token
-        const tokenId = await generateTokenId();
-        const area = await AreaSchema.findOne({ id: idA });
+        try {
+            // Generazione del token
+            const tokenId = await generateTokenId();
+            const area = await AreaSchema.findOne({ id: idA });
 
-        if (area) {
-            const sensoreData = area.sensori.find((sens) => sens.id === parseInt(idS, 10));
+            if (area) {
+                const sensoreData = area.sensori.find(
+                    (sens) => sens.id === parseInt(idS, 10)
+                );
 
-            if (sensoreData) {
-                const token = new TokenSchema({
-                    id: tokenId,
-                    area: idA,
-                    expiring: new Date(
-                        Date.now() + 1000 * sensoreData.sig_time
-                    ),
-                    used: false,
-                });
+                if (sensoreData) {
+                    const token = new TokenSchema({
+                        id: tokenId,
+                        area: idA,
+                        expiring: new Date(
+                            Date.now() + 1000 * sensoreData.sig_time
+                        ),
+                        used: false,
+                    });
 
-                // Salvataggio del token
-                await token.save();
+                    // Salvataggio del token
+                    await token.save();
+                }
             }
+
+            res.status(200).json("Token generato con successo");
+        } catch (error) {
+            res.status(500).json({
+                error: "Errore nella generazione del token ",
+            });
         }
-
-        res.status(200).json("Token generato con successo");
-    } catch (error) {
-        res.status(500).json({ error: "Errore nella generazione del token " });
     }
-});
-
+);
 
 // Ricerca e verifica del token
 signalRoutes.get("/area/:id/token", async (req: Request, res: Response) => {
@@ -138,7 +152,7 @@ signalRoutes.get("/area/:id/token", async (req: Request, res: Response) => {
 
 // Accensione e spegnimento dei lampioni senza token
 signalRoutes.get("/area/:id", async (req: Request, res: Response) => {
-    const {id} = req.params;
+    const { id } = req.params;
     console.log(`Segnale ricevuto a /api/segnale/area/${id}`);
 
     try {
@@ -146,37 +160,36 @@ signalRoutes.get("/area/:id", async (req: Request, res: Response) => {
         const areaMod = await AreaSchema.findOne({ id: id });
 
         if (!areaMod) {
-            console.log("Area non trovata")
-            res.status(400).json({ error: "Errore nel processo: errore nel recupero dell'area" });
+            console.log("Area non trovata");
+            res.status(400).json({
+                error: "Errore nel processo: errore nel recupero dell'area",
+            });
         } else {
             const startingLum: number[] = [];
 
             // Salvataggio informazioni iniziali luminosità lampioni
-            areaMod.lampioni.forEach((lamp: ILampSchema) => startingLum.push(lamp.lum))
+            areaMod.lampioni.forEach((lamp: ILampSchema) =>
+                startingLum.push(lamp.lum)
+            );
 
             // Accensione lampioni
             console.log("Inizio accensione lampioni");
             areaMod.lampioni.forEach((lamp: ILampSchema) => {
-                if (lamp.mode == "automatico")
-                    lamp.lum = 10
+                if (lamp.mode == "automatico") lamp.lum = 10;
             });
             console.log("Fine accensione lampioni");
             await areaMod.save();
-
-
 
             setTimeout(() => {
                 turnOffLamps(startingLum, areaMod, res);
             }, areaMod.polling * 1000);
 
             res.status(200).json("Successo");
-
         }
     } catch (error) {
-        res.status(500).json("Errore")
+        res.status(500).json("Errore");
     }
 });
-
 
 // Generazione della Schedule
 generateSchedule();
