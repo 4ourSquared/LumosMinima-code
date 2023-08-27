@@ -14,30 +14,24 @@ const signalRoutes = Router();
 
 // Visto che il segnale inviato dal sensore è unico, questo verrà gestito da questa route per inviarlo ai due endpoint corretti, ossia quello per i lampioni push e a quello per i lampioni pull
 
-signalRoutes.post(
-    "/area/:idA/sensore/:idS/new",
-    async (req: Request, res: Response) => {
+const baseURL = "http://localhost:5000/api/segnale/";
 
-        const { idA, idS } = req.params;
-        const baseURL = "http://localhost:5000/api/segnale/";
-        const urlPart1 = `area/${encodeURIComponent(
-            idA
-        )}/sensore/${encodeURIComponent(idS)}`;
+signalRoutes.post("/area/:idA/sensore/:idS/new", async (req: Request, res: Response) => {
+    const { idA, idS } = req.params;
 
-        try {
-            const response2 = await axios.post(urlPart1);
-            const response1 = await axios.get(
-                `area/${encodeURIComponent(idA)}`
-            );
-
-            res.status(200).json("Successo");
-        } catch (error) {
-            console.log("Errore nel routing del segnale");
-            console.error(error);
-            res.status(500).json("Errore nel routing del segnale");
-        }
+    try {
+        const urlPart1 = `area/${encodeURIComponent(idA)}/sensore/${encodeURIComponent(idS)}`;
+        await axios.post(urlPart1, null, { baseURL });
+        await axios.get(`area/${encodeURIComponent(idA)}`, { baseURL });
+        
+        res.status(200).json("Successo");
+    } catch (error) {
+        console.log("Errore nel routing del segnale");
+        console.error(error);
+        res.status(500).json("Errore nel routing del segnale");
     }
-);
+});
+
 
 /*
     GESTIONE CON TOKEN
