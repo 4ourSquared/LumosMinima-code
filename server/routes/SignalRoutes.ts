@@ -5,7 +5,7 @@ import { generateSchedule } from "../utils/Schedule";
 import { ILampSchema } from "../schemas/LampSchema";
 import { turnOffLamps, generateTokenId } from "../utils/LightManagement";
 import axios from "axios";
-import SensorSchema, { ISensorSchema } from "../schemas/SensorSchema";
+
 
 const signalRoutes = Router();
 /*
@@ -22,7 +22,6 @@ let startingLum: number[][] = [];
 
 const baseURL = "http://localhost:5000/api/segnale/";
 
-// TODO: Implementare la verifica del token (se uno c'è già ed è attivo, aggiorno la sua scadenza)
 signalRoutes.post(
     "/area/:idA/sensore/:idS/new",
     async (req: Request, res: Response) => {
@@ -195,10 +194,6 @@ signalRoutes.get("/area/:id", async (req: Request, res: Response) => {
                 error: "Errore nel processo: errore nel recupero dell'area",
             });
         } else {
-            const token = await TokenSchema.findOne({ area: id })
-                .sort({ id: -1 })
-                .exec();
-
             // Accensione lampioni
             console.log("Inizio accensione lampioni");
             areaMod.lampioni.forEach((lamp: ILampSchema) => {
