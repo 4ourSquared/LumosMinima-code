@@ -7,6 +7,11 @@ import { turnOffLamps, generateTokenId } from "../utils/LightManagement";
 import axios from "axios";
 
 const signalRoutes = Router();
+/*
+    RISORSE
+*/
+
+let startingLum: number[][] = [];
 
 /*
     REDIRECT DELLE RICHIESTE
@@ -16,25 +21,34 @@ const signalRoutes = Router();
 
 const baseURL = "http://localhost:5000/api/segnale/";
 
-signalRoutes.post("/area/:idA/sensore/:idS/new", async (req: Request, res: Response) => {
-    const { idA, idS } = req.params;
+signalRoutes.post(
+    "/area/:idA/sensore/:idS/new",
+    async (req: Request, res: Response) => {
+        const { idA, idS } = req.params;
 
-    try {
-        const urlPart1 = `area/${encodeURIComponent(idA)}/sensore/${encodeURIComponent(idS)}`;
-        await axios.post(urlPart1, null, { baseURL });
-        await axios.get(`area/${encodeURIComponent(idA)}`, { baseURL });
-        
-        res.status(200).json("Successo");
-    } catch (error) {
-        console.log("Errore nel routing del segnale");
-        console.error(error);
-        res.status(500).json("Errore nel routing del segnale");
+        try {
+            const area = await AreaSchema.findOne({ id: idA });
+            if (area) {
+                startingLum[area.id] = area.lampioni.map((lamp) => lamp.lum);
+            }
+
+            const urlPart1 = `area/${encodeURIComponent(
+                idA
+            )}/sensore/${encodeURIComponent(idS)}`;
+            await axios.post(urlPart1, null, { baseURL });
+            await axios.get(`area/${encodeURIComponent(idA)}`, { baseURL });
+
+            res.status(200).json("Successo");
+        } catch (error) {
+            console.log("Errore nel routing del segnale");
+            console.error(error);
+            res.status(500).json("Errore nel routing del segnale");
+        }
     }
-});
-
+);
 
 /*
-    GESTIONE CON TOKEN
+    GESTIONE PULL
 */
 
 // Generazione del token
@@ -84,8 +98,6 @@ signalRoutes.post(
 // Ricerca e verifica del token
 signalRoutes.get("/area/:id/token", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id, 10);
-    console.log(`Richiesta GET ricevuta a api/segnale/area/${id}`);
-
     try {
         const token = await TokenSchema.findOne({ area: id })
             .sort({ id: -1 })
@@ -102,7 +114,6 @@ signalRoutes.get("/area/:id/token", async (req: Request, res: Response) => {
                 .json({ error: "Errore nel recupero dell'area" });
         }
 
-        const startingLum = areaMod.lampioni.map((lamp) => lamp.lum);
         const now = new Date();
 
         if (token.expiring < now) {
@@ -111,13 +122,14 @@ signalRoutes.get("/area/:id/token", async (req: Request, res: Response) => {
             } else {
                 token.used = false;
                 await token.save();
-                await turnOffLamps(startingLum, areaMod, res);
+                await turnOffLamps(startingLum[areaMod.id], areaMod, res);
                 return res.status(200).json("Spegnimento lampioni");
             }
         } else {
             if (token.used === false) {
                 token.used = true;
                 await token.save();
+
                 console.log("Inizio accensione lampioni");
                 areaMod.lampioni.forEach((lamp) => {
                     if (lamp.mode === "manuale") {
@@ -141,10 +153,10 @@ signalRoutes.get("/area/:id/token", async (req: Request, res: Response) => {
 });
 
 /*
-    GESTIONE SENZA TOKEN
+    GESTIONE PUSH
 */
 
-// Accensione e spegnimento dei lampioni senza token
+// Accensione e spegnimento dei lampioni push
 signalRoutes.get("/area/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     console.log(`Segnale ricevuto a /api/segnale/area/${id}`);
@@ -159,12 +171,9 @@ signalRoutes.get("/area/:id", async (req: Request, res: Response) => {
                 error: "Errore nel processo: errore nel recupero dell'area",
             });
         } else {
-            const startingLum: number[] = [];
-
-            // Salvataggio informazioni iniziali luminosità lampioni
-            areaMod.lampioni.forEach((lamp: ILampSchema) =>
-                startingLum.push(lamp.lum)
-            );
+            const token = await TokenSchema.findOne({ area: id })
+                .sort({ id: -1 })
+                .exec();
 
             // Accensione lampioni
             console.log("Inizio accensione lampioni");
@@ -174,9 +183,9 @@ signalRoutes.get("/area/:id", async (req: Request, res: Response) => {
             console.log("Fine accensione lampioni");
             await areaMod.save();
 
-            setTimeout(() => {
-                turnOffLamps(startingLum, areaMod, res);
-            }, areaMod.polling * 1000);
+            setTimeout(async () => {
+                await turnOffLamps(startingLum[areaMod.id], areaMod, res);
+            }, 25000);
 
             res.status(200).json("Successo");
         }
