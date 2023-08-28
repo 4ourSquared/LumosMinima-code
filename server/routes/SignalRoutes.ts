@@ -5,6 +5,7 @@ import { generateSchedule } from "../utils/Schedule";
 import { ILampSchema } from "../schemas/LampSchema";
 import { turnOffLamps, generateTokenId } from "../utils/LightManagement";
 import axios from "axios";
+import SensorSchema, { ISensorSchema } from "../schemas/SensorSchema";
 
 const signalRoutes = Router();
 /*
@@ -21,22 +22,45 @@ let startingLum: number[][] = [];
 
 const baseURL = "http://localhost:5000/api/segnale/";
 
+// TODO: Implementare la verifica del token (se uno c'è già ed è attivo, aggiorno la sua scadenza)
 signalRoutes.post(
     "/area/:idA/sensore/:idS/new",
     async (req: Request, res: Response) => {
         const { idA, idS } = req.params;
 
         try {
+            const token = await TokenSchema.findOne({ area: idA })
+                .sort({ id: -1 })
+                .exec();
+
             const area = await AreaSchema.findOne({ id: idA });
+            let sensoreData = null;
+
             if (area) {
-                startingLum[area.id] = area.lampioni.map((lamp) => lamp.lum);
+                sensoreData = area.sensori.find(
+                    (sens) => sens.id === parseInt(idS, 10)
+                );
             }
 
-            const urlPart1 = `area/${encodeURIComponent(
-                idA
-            )}/sensore/${encodeURIComponent(idS)}`;
-            await axios.post(urlPart1, null, { baseURL });
-            await axios.get(`area/${encodeURIComponent(idA)}`, { baseURL });
+            if (token && token.expiring > new Date() && sensoreData) {
+                token.expiring = new Date(
+                    Date.now() + 1000 * sensoreData.sig_time
+                );
+                await token.save();
+            } else {
+                const area = await AreaSchema.findOne({ id: idA });
+                if (area) {
+                    startingLum[area.id] = area.lampioni.map(
+                        (lamp) => lamp.lum
+                    );
+                }
+
+                const urlPart1 = `area/${encodeURIComponent(
+                    idA
+                )}/sensore/${encodeURIComponent(idS)}`;
+                await axios.post(urlPart1, null, { baseURL });
+                await axios.get(`area/${encodeURIComponent(idA)}`, { baseURL });
+            }
 
             res.status(200).json("Successo");
         } catch (error) {
