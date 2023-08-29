@@ -94,7 +94,7 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
           />
           <ErrorMessage name="sig_time" component="div" className="error-message" />
           <small id="sig_timeHelp" className="form-text text-muted">
-            InIndica la durata in secondi della segnalazione di movimento in secondi, utile qualora un lampione della zona interagisca in modalità pull.
+            Indica la durata in secondi della segnalazione di movimento, utile qualora un lampione della zona interagisca in modalità pull.
           </small>
         </div>
         <div className="form-group">
