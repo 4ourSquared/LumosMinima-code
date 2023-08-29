@@ -1,4 +1,9 @@
 import express, { Request, Response } from "express";
+import mongoose from "mongoose";
+import areaRoutes from "./routes/AreaRoutes";
+import lampRoutes from "./routes/LampRoutes"
+import sensRoutes from "./routes/SensorRoutes"
+import signalRoutes from "./routes/SignalRoutes";
 
 /*
     SERVER: questo file al momento rappresenta il server in tutto e per tutto. Al suo interno si trovano tutti i metodi attualmente sviluppati per la gestione delle richieste in arrivo
@@ -22,7 +27,6 @@ app.use(express.urlencoded({ extended: false }));
                         COLLEGAMENTO AL DATABASE
 ------------------------------------------------------------------------------
 */
-import mongoose from "mongoose";
 
 const mongoURI = "mongodb://lumosminima-code-db-1:27017/lumosminima";
 const options : any = {
@@ -49,11 +53,6 @@ db.once("open", () => {
 
 
 // Collegamento alla route per i sensori
-import areaRoutes from "./routes/AreaRoutes";
-import lampRoutes from "./routes/LampRoutes"
-import sensRoutes from "./routes/SensorRoutes"
-import signalRoutes from "./routes/SignalRoutes";
-
 app.use("/api/aree", areaRoutes);
 app.use("/api/aree", lampRoutes);
 app.use("/api/aree", sensRoutes);
