@@ -25,7 +25,6 @@ export async function isAmministratore()
     return true
 }
 
-//non servirà più
 /*
 function getCookie(name:String) : String {
     const value = `; ${document.cookie}`;

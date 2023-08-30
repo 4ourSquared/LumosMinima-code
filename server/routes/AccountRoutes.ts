@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import UserSchema from "../schemas/UserSchema";
-import * as crypto from "crypto-js";
+import sha512 from "js-sha512";
 import jwt from "jsonwebtoken";
 
 // INFO: Per validare un token generato, bisogna utilizzare la funzione verify() di jwt (https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
@@ -8,34 +8,61 @@ const JWT_KEY = "1KqcotIgrWMVyZq3SgC7uMIlRX8TNvEZ73hSenTUKt4dlyORcYfw4wehb0YvV4t
 const accountRoutes = Router();
 
 // Logout
-accountRoutes.post("/logout", (req: Request, res: Response) => {});
+accountRoutes.post("/logout", (req: Request, res: Response) => {
+        const token = req.cookies['auth-jwt']
+      
+        if (!token) {
+          return res.status(401).json({
+            status: 'error',
+            error: 'Unauthorized',
+          });
+        }
+      
+        return res.cookie("auth-jwt", JSON.stringify(token), {
+            sameSite: 'strict',
+            maxAge: -1,
+            httpOnly: true, //fondamentale
+          }).status(200).send();
+});
 
 // Login
 accountRoutes.post("/login", async (req: Request, res: Response) => {
     console.log("Ricevuta richiesta di login");
-    const { password } = req.body;
+    const { username, password } = req.body;
 
     try {
-        const query_username = { username: req.body.username.toString() };
+        const query_username = { username: username };
         const user = await UserSchema.findOne(query_username);
 
-        if (!user || user.password !== crypto.SHA512(password).toString()) {
+        if (!user || user.password !== password) {
             
+            if(!user){ 
+                console.log("Username non trovato");
+            }
+
+            else{
+                console.log("Password errata");
+                console.log(password);
+                console.log(user.password);
+            }
+
             return res.status(401).json({ message: "Credenziali non valide" });
         }
 
-        const token = await jwt.sign(
+        const token = jwt.sign(
             { userId: user._id, email: user.email, privilege: user.privilege },
             "JWT_KEY", 
-            {expiresIn: "1h",}
+            {expiresIn: "1h"}
         );
-
-        return res.cookie("auth-jwt", JSON.stringify(token), {
+        
+        console.log("JWT firmato!")
+        console.log(token)
+        return res.cookie("auth-jwt",token, {
             sameSite: 'strict',
-            maxAge: 60 * 60 * 24 * 30, //il cookie dopo 1 mese sparisce dal browser
+            maxAge: 60 * 60 * 2, //il cookie dopo 2 ore sparisce dal browser
             httpOnly: true, //fondamentale
-          }).status(200);
-
+          }).status(200).send()
+          
     } catch (error) {
         console.log(error);
         return res
@@ -63,7 +90,7 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
             return res.status(409).json({ message: "Email già in uso" });
         }
 
-        const hashedPassword = crypto.SHA512(password).toString();
+        const hashedPassword = sha512.sha512(password).toString();
 
         const newUser = new UserSchema({
             email,
@@ -72,34 +99,16 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
         });
         await newUser.save();
 
-        return res.status(200)
+        return res.status(200).send()
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Errore nella registrazione" });
     }
 });
 
-/*
-accountRoutes.get("/checkToken", async (req: Request, res: Response) => {
-    const token = req.headers.authorization;
 
-    if (!token) {
-        return res.status(401).json({ message: "Token non presente" });
-    }
-
-    try {
-        const decodedToken = jwt.verify(token, "ChiaveDaImplementareTODO:");
-        console.log(decodedToken);
-        return res.status(200).json({ message: "Token valido", isValid: true });
-    } catch (error) {
-        return res
-            .status(401)
-            .json({ message: "Token non valido", isValid: false });
-    }
-});
-*/ 
 accountRoutes.get("/verify", async (req: Request, res: Response) => {
-    const token = req.cookies['auth-jwt']
+    const token: req.cookies['auth-jwt']
     console.log(token)
     if(!token) 
     {
@@ -110,8 +119,11 @@ accountRoutes.get("/verify", async (req: Request, res: Response) => {
         jwt.verify( token, 
                     JWT_KEY, 
                     (err:any) => {
-                        if(err) 
+                        if(err)
+                        {
+                            console.log(err)
                             res.status(500).json({error: "Autenticazione del token fallita!"})
+                        }
                         else
                             res.status(200).json({result: "Successo"})
          })
