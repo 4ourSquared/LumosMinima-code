@@ -71,6 +71,7 @@ const AreaSingleView: React.FC = () => {
                         <li>Descrizione: {area.descrizione}</li>
                         <li>Latitudine: {area.latitudine}</li>
                         <li>Longitudine: {area.longitudine}</li>
+                        <li>Polling Time: {area.polling}</li>
                     </ul>
                     <h2>Lampioni Collegati</h2>
                     <div className="row">

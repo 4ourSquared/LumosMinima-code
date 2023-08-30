@@ -22,6 +22,7 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({areaId}) => {
     descrizione: "",
     latitudine: "",
     longitudine: "",
+    polling: 15,
     sensori: [],
     lampioni: [],
   });
@@ -56,6 +57,7 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({areaId}) => {
         descrizione: area.descrizione || "",
         latitudine: area.latitudine || "",
         longitudine: area.longitudine || "",
+        polling: area.polling || 15,
         sensori: area.sensori || [], // Aggiunto
         lampioni: area.lampioni || [], // Aggiunto
       }}
@@ -122,6 +124,19 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({areaId}) => {
           <label htmlFor="longitudine">Longitudine</label>
           <Field name="longitudine" type="text" className="form-control" />
           <ErrorMessage name="longitudine" />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="polling">Polling Time</label>
+          <Field name="polling" type="text" className="form-control" />
+          <ErrorMessage
+            name="polling"
+            component="div"
+            className="text-danger"
+          />
+          <small id="intensityHelp" className="form-text text-muted">
+            Indica il tempo in secondi che deve intercorrere tra una verifica e l'altra per rendere possibile l'interazione dei lampioni in modalit&agrave; pull.
+          </small>
         </div>
         
         {/*

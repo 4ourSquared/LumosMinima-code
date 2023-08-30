@@ -13,17 +13,17 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
 
   return (
     <Formik
-      initialValues={{ id: 0, iter: "manuale", IP: "", luogo: "", raggio: 0, area: areaId }}
+      initialValues={{ id: 0, IP: "", luogo: "", raggio: 0, sig_time: 20, area: areaId }}
       validationSchema={Yup.object({
-      IP: Yup.string()
-        .matches(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, "Deve essere un indirizzo IP valido")
-        .required("Campo obbligatorio")
-        .trim(),
-      luogo: Yup.string()
-        .min(2, "Inserisci almeno 2 caratteri")
-        .required("Campo obbligatorio")
-        .trim()
-})}
+        IP: Yup.string()
+          .matches(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, "Deve essere un indirizzo IP valido")
+          .required("Campo obbligatorio")
+          .trim(),
+        luogo: Yup.string()
+          .min(2, "Inserisci almeno 2 caratteri")
+          .required("Campo obbligatorio")
+          .trim()
+      })}
 
       onSubmit={(values, { setSubmitting }) => {
         console.log(values);
@@ -36,16 +36,6 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
         <div className="form-group">
           <label htmlFor="id">ID (Automatico)</label>
           <Field name="id" type="text" className="form-control" readOnly />
-        </div>
-        <div className="form-group">
-          <label htmlFor="iter">Interazione</label>
-          <Field name="iter" as="select">
-            <option value="manuale">Manuale</option>
-            <option value="automatico">Automatico</option>
-          </Field>
-          <small id="statusHelp" className="form-text text-muted">
-            Indica se il sensore ha un controllo sui lampioni (automatico) o se i lampioni saranno modificati manualmente da un utente
-          </small>
         </div>
         <div className="form-group">
           <label htmlFor="IP">Indirizzo IP</label>
@@ -93,8 +83,23 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
           </small>
         </div>
         <div className="form-group">
+          <label htmlFor="sig_time">Durata della Segnalazione</label>
+          <Field
+            name="sig_time"
+            type="number"
+            className="form-control"
+            id="sig_time"
+            aria-describedby="sig_timeHelp"
+            placeholder=""
+          />
+          <ErrorMessage name="sig_time" component="div" className="error-message" />
+          <small id="sig_timeHelp" className="form-text text-muted">
+            Indica la durata in secondi della segnalazione di movimento, utile qualora un lampione della zona interagisca in modalità pull.
+          </small>
+        </div>
+        <div className="form-group">
           <label htmlFor="area">ID Area di Riferimento</label>
-          <Field name="area" type="number" className="form-control" readOnly/>
+          <Field name="area" type="number" className="form-control" readOnly />
         </div>
         <button type="submit" className="btn btn-primary">
           Crea

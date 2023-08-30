@@ -17,8 +17,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const AreaSchema_1 = __importDefault(require("../schemas/AreaSchema"));
+const Schedule_1 = require("../utils/Schedule");
 const areaRouter = (0, express_1.Router)();
+// Recupero della lista di aree illuminate
 areaRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Ricevuta richiesta GET su /api/aree/`);
     try {
         const aree = yield AreaSchema_1.default.find();
         res.status(200).json(aree);
@@ -28,24 +31,29 @@ areaRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500).send("Errore durante il recupero delle aree illuminate dal database");
     }
 }));
+// Recupero delle informazioni di una singola area
 areaRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    console.log(`Ricevuta richiesta GET su /api/aree/${id}/`);
     try {
         const area = yield AreaSchema_1.default.findOne({ id: parseInt(id, 10) });
         if (area) {
             res.status(200).json(area);
         }
         else {
-            res.status(404).json({ error: "Area illuminata non trovato." });
+            res.status(404).json({ error: "Errore nel recupero di una singola area illuminata: area illuminata non trovata." });
         }
     }
     catch (error) {
-        console.error("Errore durante il recupero dell'area illuminata dal database:", error);
-        res.status(500).send("Errore durante il recupero dell'area illuminata dal database");
+        console.error("Errore nel recupero di una singola area illuminata:", error);
+        res.status(500).send("Errore nel recupero di una singola area illuminata");
     }
 }));
+// Creazione di una nuova area
 areaRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { nome, descrizione, latitudine, longitudine, sensori, lampioni } = req.body;
+    console.log(`Ricevuta richiesta POST su /api/aree/`);
+    const { nome, descrizione, latitudine, longitudine, polling, sensori, lampioni } = req.body;
+    parseInt(polling, 10);
     const id = yield generateIdAree();
     const newArea = new AreaSchema_1.default({
         id,
@@ -53,16 +61,18 @@ areaRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         descrizione,
         latitudine,
         longitudine,
+        polling,
         sensori,
         lampioni,
     });
     try {
         const savedArea = yield newArea.save();
+        (0, Schedule_1.updateSchedule)(savedArea._id);
         res.status(200).json(savedArea);
     }
     catch (error) {
-        console.error("Errore durante l'inserimento dell'area illuminata nel database:", error);
-        res.status(500).send("Errore durante l'inserimento dell'area illuminata nel database");
+        console.error("Errore durante la creazione dell'area illuminata nel database:", error);
+        res.status(500).send("Errore durante la creazione dell'area illuminata nel database");
     }
 }));
 function generateIdAree() {
@@ -80,14 +90,14 @@ function generateIdAree() {
         }
     });
 }
+// Modifica di una area
 areaRouter.put("/edit/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
     try {
         const areaToUpdate = yield AreaSchema_1.default.findOne({ id });
         console.log(`Ricevuta richiesta PUT su /api/aree/edit -> ID: ${id}`);
-        console.log("Richiesta aggiornamento di un'area illuminata esistente");
         if (!areaToUpdate) {
-            res.status(404).send(`Area con id = ${id} non trovato`);
+            res.status(404).send(`Errore nel processo di modifica di un'area: area con id = ${id} non trovato`);
             return;
         }
         if (req.body.nome !== undefined) {
@@ -102,27 +112,36 @@ areaRouter.put("/edit/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
         if (req.body.longitudine !== undefined) {
             areaToUpdate.longitudine = req.body.longitudine;
         }
+        if (req.body.polling !== undefined) {
+            areaToUpdate.polling = parseInt(req.body.polling, 10);
+        }
         yield areaToUpdate.save();
+        (0, Schedule_1.updateSchedule)(areaToUpdate._id);
         res.status(200).send(`Area illuminata con id = ${id} aggiornato con successo`);
     }
     catch (error) {
-        console.error("Errore durante l'aggiornamento dell'area illuminata:", error);
-        res.status(500).send("Errore durante l'aggiornamento dell'area illuminata");
+        console.error("Errore nel processo di modifica di un'area:", error);
+        res.status(500).send("Errore nel processo di modifica di un'area");
     }
 }));
+// Eliminazione di una area
 areaRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
+    console.log(`Ricevuta richiesta DELETE su /api/aree/${id}/`);
     try {
+        const deletedArea = yield AreaSchema_1.default.findOne({ id });
         const result = yield AreaSchema_1.default.deleteOne({ id });
         if (result.deletedCount === 0) {
-            res.status(404).send(`Area illuminata con id = ${id} non trovato`);
+            res.status(404).send(`Errore nel processo di eliminazione di un'area: area illuminata con id = ${id} non trovata`);
             return;
         }
+        if (deletedArea)
+            (0, Schedule_1.updateSchedule)(deletedArea._id);
         res.status(200).send(`Area illuminata con id = ${id} eliminato con successo`);
     }
     catch (error) {
-        console.error("Errore durante l'eliminazione dell'area illuminata:", error);
-        res.status(500).send("Errore durante l'eliminazione dell'area illuminata");
+        console.error("Errore nel processo di eliminazione di un'area:", error);
+        res.status(500).send("Errore nel processo di eliminazione di un'area");
     }
 }));
 exports.default = areaRouter;
