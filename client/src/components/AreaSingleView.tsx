@@ -6,6 +6,7 @@ import LampItem from "../types/LampItem";
 import SensorItem from "../types/SensorItem";
 import LampTable from "./LampTable";
 import SensorTable from "./SensorTable";
+import { Field } from "formik";
 
 const AreaSingleView: React.FC = () => {
     const [area, setArea] = useState<AreaItem | null>(null);
@@ -72,6 +73,25 @@ const AreaSingleView: React.FC = () => {
                         <li>Latitudine: {area.latitudine}</li>
                         <li>Longitudine: {area.longitudine}</li>
                         <li>Polling Time: {area.polling}</li>
+                        <li>
+                            Modifica Luminosit&agrave; Area: <span>  </span>  
+                                <select
+                                    name="lum"
+                                    className="form-group"
+                                >
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                        </li>
                     </ul>
                     <h2>Lampioni Collegati</h2>
                     <div className="row">
