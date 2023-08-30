@@ -108,7 +108,7 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
 
 
 accountRoutes.get("/verify", async (req: Request, res: Response) => {
-    const token: req.cookies['auth-jwt']
+    let token = req.cookies['auth-jwt']
     console.log(token)
     if(!token) 
     {
