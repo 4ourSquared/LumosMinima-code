@@ -16,7 +16,7 @@ const AreaSingleView: React.FC = () => {
 
     async function getValueAndSend(option : React.ChangeEvent<HTMLSelectElement>){
         // Recupero del valore
-        var value = option.target.value;
+        const value = option.target.value;
         console.log(value);
     
         // Invio della richiesta

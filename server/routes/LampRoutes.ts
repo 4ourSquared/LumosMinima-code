@@ -5,7 +5,6 @@
 import { Router, Request, Response } from "express";
 import LampioneSchema, { ILampSchema } from "../schemas/LampSchema";
 import AreaSchema from "../schemas/AreaSchema";
-import { forever } from "request";
 
 const lampRouter = Router();
 
