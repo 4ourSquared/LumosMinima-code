@@ -257,6 +257,41 @@ lampRouter.post("/:id/lampioni", async (req: Request, res: Response) => {
     }
 });
 
+// RICHIESTA DI SUPPORTO PER LA MODIFICA DELLA LUMINOSITA' DI TUTTI I LAMPIONI DELL'AREA
+lampRouter.put("/:id/lampioni/:lum", async (req: Request, res: Response) => {
+    const { id, lum } = req.params;
+    parseInt(id, 10);
+    parseInt(lum, 10);
+
+    const newlum = parseInt(lum, 10);
+
+    console.log(`Ricevuta richiesta PUT su /api/aree/${id}/lampioni/${lum}`);
+
+    try {
+        const area = await AreaSchema.findOne({ id: id });
+
+        if (!area) {
+            res.status(404).send(`Area non trovata`);
+            return;
+        }
+
+        area.lampioni.forEach((lamp) => {
+            lamp.lum = newlum;
+        });
+
+        await area.save();
+        res.status(200).send(`Luminosità modificata con successo`);
+    } catch (error) {
+        console.error(
+            "Errore nel processo di modifica della luminosità di tutti i lampioni dell'area:",
+            error
+        );
+        res.status(500).send(
+            "Errore nel processo di modifica della luminosità di tutti i lampioni dell'area"
+        );
+    }
+});
+
 // RICHIESTA MODIFICA LAMPIONE
 lampRouter.put(
     "/:idA/lampioni/edit/:idL",

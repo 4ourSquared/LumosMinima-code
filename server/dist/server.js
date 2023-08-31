@@ -4,6 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const mongoose_1 = __importDefault(require("mongoose"));
+const AreaRoutes_1 = __importDefault(require("./routes/AreaRoutes"));
+const LampRoutes_1 = __importDefault(require("./routes/LampRoutes"));
+const SensorRoutes_1 = __importDefault(require("./routes/SensorRoutes"));
+const SignalRoutes_1 = __importDefault(require("./routes/SignalRoutes"));
 /*
     SERVER: questo file al momento rappresenta il server in tutto e per tutto. Al suo interno si trovano tutti i metodi attualmente sviluppati per la gestione delle richieste in arrivo
             dal client
@@ -24,7 +29,6 @@ app.use(express_1.default.urlencoded({ extended: false }));
                         COLLEGAMENTO AL DATABASE
 ------------------------------------------------------------------------------
 */
-const mongoose_1 = __importDefault(require("mongoose"));
 const mongoURI = "mongodb://lumosminima-code-db-1:27017/lumosminima";
 const options = {
     useNewUrlParser: true,
@@ -43,10 +47,6 @@ db.once("open", () => {
 ------------------------------------------------------------------------------
 */
 // Collegamento alla route per i sensori
-const AreaRoutes_1 = __importDefault(require("./routes/AreaRoutes"));
-const LampRoutes_1 = __importDefault(require("./routes/LampRoutes"));
-const SensorRoutes_1 = __importDefault(require("./routes/SensorRoutes"));
-const SignalRoutes_1 = __importDefault(require("./routes/SignalRoutes"));
 app.use("/api/aree", AreaRoutes_1.default);
 app.use("/api/aree", LampRoutes_1.default);
 app.use("/api/aree", SensorRoutes_1.default);

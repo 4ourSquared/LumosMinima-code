@@ -7,10 +7,27 @@ import SensorItem from "../types/SensorItem";
 import LampTable from "./LampTable";
 import SensorTable from "./SensorTable";
 
+
+
 const AreaSingleView: React.FC = () => {
     const [area, setArea] = useState<AreaItem | null>(null);
     const [loading, setLoading] = useState(true);
     const { areaId } = useParams<{ areaId: string }>();
+
+    async function getValueAndSend(option : React.ChangeEvent<HTMLSelectElement>){
+        // Recupero del valore
+        const value = option.target.value;
+        console.log(value);
+    
+        // Invio della richiesta
+        axios.defaults.baseURL = "http://localhost:5000/api";
+        const response = await axios.put(`/aree/${areaId}/lampioni/${value}`);
+
+        if (response.status === 200) {
+            window.location.reload();
+        }
+    
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -73,6 +90,22 @@ const AreaSingleView: React.FC = () => {
                         <li>Longitudine: {area.longitudine}</li>
                         <li>Polling Time: {area.polling}</li>
                     </ul>
+                    <label htmlFor="edit-lum">
+                        Modifica Luminosit&agrave; Area: <span> </span>
+                    </label>
+                    <select value={this} name="edit-lum" className="form-group" onChange={e => getValueAndSend(e)}>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
                     <h2>Lampioni Collegati</h2>
                     <div className="row">
                         <LampTable
