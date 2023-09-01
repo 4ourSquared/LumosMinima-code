@@ -18,6 +18,7 @@
     "@types/react-dom": "^18.2.4",
     "axios": "^1.4.0",
     "bootstrap": "^5.3.0",
+    "cross-env": "^7.0.3",
     "formik": "^2.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -31,10 +32,10 @@
   },
   "scripts": {
     "start": "WATCHPACK_POLLING=true react-scripts start",
-    "build": "react-scripts build",
+    "build": "cross-env CI=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "coverage": "npm test -- --coverage"
+    "coverage": "npm test -- --coverage ."
   },
   "eslintConfig": {
     "extends": [
