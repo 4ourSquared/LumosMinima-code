@@ -15,7 +15,7 @@ jobs:
         run: npm install
       - name: Run tests
         working-directory: ./client
-        run: npm install && npm run test -- --coverage
+        run: npm install && npm run coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         env:
