@@ -7,6 +7,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Cache NPM
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Set up Node 20.x
         uses: actions/setup-node@v3
         with:
@@ -18,5 +25,3 @@ jobs:
         run: npm ci && npm run coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
