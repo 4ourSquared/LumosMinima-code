@@ -1,5 +1,5 @@
 {
-  "name": "lumos_minima_poc",
+  "name": "lumos_minima_code",
   "version": "0.1.0",
   "private": true,
   "jest": {
@@ -42,7 +42,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "coverage": "npm test -- --coverage --watchAll"
+    "coverage": "npm test -- --coverage --watchAll=false"
   },
   "eslintConfig": {
     "extends": [
