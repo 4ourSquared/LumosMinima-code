@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev
+      - 4-grafica
 jobs:
   run:
     runs-on: ubuntu-latest
