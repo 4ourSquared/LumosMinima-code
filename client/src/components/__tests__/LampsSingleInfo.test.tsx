@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import LampSingleView from "../LampSingleView";
+import RouterComponent from "../../routing/RouterComponent";
 
 test("apre la pagina dedicata alla info del singolo lampione", () => {
   render(<LampSingleView areaId={1} lampioneId={1} />);
