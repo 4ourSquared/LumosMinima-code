@@ -5,6 +5,6 @@ ignore:
   - "client/src/img"
   - "client/src/types"
   - "client/setupTest.ts"
-  - "client/reportWebVitals.ts"
+  - "client/src/reportWebVitals.ts"
   - "client/react-app-env.d.ts"
   - "client/index.tsx"
