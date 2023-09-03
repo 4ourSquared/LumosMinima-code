@@ -29,7 +29,7 @@ jobs:
         run: |
           npm ci && 
           npm run build && 
-          npm run coverage -- --config=./.github/codecov.yml
+          npm run coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
