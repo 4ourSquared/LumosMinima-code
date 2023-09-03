@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AreaItem from "../types/AreaItem";
 //import LampItem from "../types/LampItem";
-import SensorItem from "../types/SensorItem";
+//import SensorItem from "../types/SensorItem";
 import LampTable from "./LampTable";
 import SensorTable from "./SensorTable";
 import { ConfirmProvider } from "material-ui-confirm";
@@ -37,7 +37,7 @@ const AreaSingleView: React.FC = () => {
                 console.error("areaId is undefined");
                 return;
             }
-            let areaResponse, /*lampioniResponse,*/ sensoriResponse;
+            let areaResponse; //lampioniResponse, sensoriResponse;
 
             try {
                 areaResponse = await axios.get<AreaItem>(`/aree/${areaId}`);
@@ -55,7 +55,6 @@ const AreaSingleView: React.FC = () => {
             } catch (error) {
                 console.error("Error fetching lampioni:", error);
             }
-            */
 
             try {
                 sensoriResponse = await axios.get<SensorItem[]>(
@@ -65,11 +64,12 @@ const AreaSingleView: React.FC = () => {
             } catch (error) {
                 console.error("Error fetching sensori:", error);
             }
+            */
 
-            if (areaResponse /*&& lampioniResponse*/ && sensoriResponse) {
+            if (areaResponse /*&& lampioniResponse && sensoriResponse*/) {
                 const areaData = areaResponse.data;
                 //areaData.lampioni = lampioniResponse.data;
-                areaData.sensori = sensoriResponse.data;
+                //areaData.sensori = sensoriResponse.data;
                 setArea(areaData);
                 setLoading(false);
             }
@@ -135,9 +135,9 @@ const AreaSingleView: React.FC = () => {
                     <h2>Sensori Collegati</h2>
                     <div className="row">
                         <SensorTable
-                            sensori={area.sensori}
+                            //sensori={area.sensori}
                             areaId={area.id}
-                            onSensoreDeleted={(id) => {
+                            /*onSensoreDeleted={(id) => {
                                 setArea((currentArea) => {
                                     if (currentArea) {
                                         return {
@@ -150,7 +150,7 @@ const AreaSingleView: React.FC = () => {
                                         return null;
                                     }
                                 });
-                            }}
+                            }}*/
                         />
                     </div>
                 </div>
