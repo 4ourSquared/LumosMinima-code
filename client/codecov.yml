@@ -1,0 +1,11 @@
+ignore:
+  - "coverage"
+  - "node_modules"
+  - "public"
+  - "src/img"
+  - "src/types"
+  - "setupTest.ts"
+  - "reportWebVitals.ts"
+  - "react-app-env.d.ts"
+  - "index.tsx"
+  
