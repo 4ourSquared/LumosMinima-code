@@ -27,7 +27,7 @@ jobs:
       - name: Run tests
         working-directory: ./client
         run: |
-          npm ci && 
+          npm install && 
           npm run build && 
           npm run coverage
 
