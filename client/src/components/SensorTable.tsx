@@ -5,15 +5,9 @@ import SensorItem from "../types/SensorItem";
 import { useConfirm } from "material-ui-confirm";
 
 interface SensorTableProps {
-    //sensori: SensorItem[];
-    //onSensoreDeleted: (id: number) => void; // Aggiunta di una nuova prop
     areaId: number; // Aggiunta dell'ID dell'area come prop
 }
-const SensorTable: React.FC<SensorTableProps> = ({
-    //sensori,
-    //onSensoreDeleted,
-    areaId,
-}) => {
+const SensorTable: React.FC<SensorTableProps> = ({areaId}) => {
     const [sensori, setSensori] = useState<SensorItem[]>([]);
     const navigate = useNavigate();
     const confirm = useConfirm();
@@ -49,20 +43,6 @@ const SensorTable: React.FC<SensorTableProps> = ({
         }).catch(() => {
             console.error("Annullata cancellazione del sensore");
         })
-
-        /*
-        const confirmed = window.confirm(
-            "Sei sicuro di voler eliminare il sensore?"
-        );
-        try {
-            if (confirmed) {
-                await axios.delete(`http://localhost:5000/api/aree/${areaId}/sensori/${id}`);
-                onSensoreDeleted(id); // Chiamata alla funzione di callback
-            }
-        } catch (error) {
-            console.error("Errore nella cancellazione del sensore: ", error);
-        }
-        */
     };
 
     return (

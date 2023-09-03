@@ -7,16 +7,10 @@ import LampItem from "../types/LampItem";
 import { useConfirm } from "material-ui-confirm";
 
 interface LampTableProps {
-  //lampioni: LampItem[];
-  //onLampioneDeleted: (id: number) => void; // Aggiunta di una nuova prop
   areaId: number; // Aggiunta dell'ID dell'area come prop
 }
 
-const LampTable: React.FC<LampTableProps> = ({
-  //lampioni,
-  //onLampioneDeleted,
-  areaId,
-}) => {
+const LampTable: React.FC<LampTableProps> = ({areaId}) => {
   const [lampioni, setLampioni] = useState<LampItem[]>([]);
   const navigate = useNavigate();
   const [isAdmin] = useState(isAmministratore());
@@ -54,21 +48,6 @@ const LampTable: React.FC<LampTableProps> = ({
     }).catch(() => {
       console.log("Annulata cancellazione del lampione.")
     })
-    /*
-    const confirmed = window.confirm(
-      "Sei sicuro di voler eliminare il lampione?"
-    );
-    try {
-      if (confirmed) {
-        await axios.delete(
-          `http://localhost:5000/api/aree/${areaId}/lampioni/${id}`
-        );
-        onLampioneDeleted(id); // Chiamata alla funzione di callback
-      }
-    } catch (error) {
-      console.error("Errore nella cancellazione del lampione: ", error);
-    }
-    */
   };
 
   const markGuasto = async (id: number) => {
@@ -87,17 +66,6 @@ const LampTable: React.FC<LampTableProps> = ({
     }).catch(() => {
       console.log("Annullata la segnalazione del lampione come guasto.")
     });
-    /*
-    try {
-      const response = await axios.put(
-        `http://localhost:5000/api/aree/${areaId}/lampioni/guasti/${id}`
-      );
-      const confirmed = window.confirm(response.data);
-    } catch (error: any) {
-      window.confirm(error.response.data);
-      console.error("Errore nell'aggiunta guasto:", error);
-    }
-    */
   };
 
   const showListaGuasti = async () => {
