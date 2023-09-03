@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import LoginPage from "../LoginPage";
-import { BrowserRouter as Router } from "react-router-dom";
+import { MemoryRouter, BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
 test("Render della pagina di login", () => {
@@ -19,13 +19,40 @@ test("Render della pagina di login", () => {
     expect(passwordInput).toBeInTheDocument();
 });
 
-test("Click sul pulsante Entra", async () => {
+test("Click sul pulsante Entra - campi errati", () => {
     render(
         <Router>
             <LoginPage />
         </Router>
+    );
+
+    userEvent.click(screen.getByRole('button'));
+})
+
+test("Click sul pulsante Entra - admin", async () => {
+    render(
+        <MemoryRouter initialEntries={["/"]}>
+            <Routes>
+                <Route path="/" element={<LoginPage />}/>
+            </Routes>
+        </MemoryRouter>
     )
 
-    await userEvent.click(screen.getByRole('button'));
-    //expect(screen.getByText(/Aree illuminate/i)).toBeInTheDocument();
+    userEvent.type(screen.getByLabelText("Nome utente"),"admin");
+    userEvent.type(screen.getByLabelText("Password"),"admin");
+    userEvent.click(screen.getByRole('button'));
+})
+
+test("Click sul pulsante Entra - manut", async () => {
+    render(
+        <MemoryRouter initialEntries={["/"]}>
+            <Routes>
+                <Route path="/" element={<LoginPage />}/>
+            </Routes>
+        </MemoryRouter>
+    )
+
+    userEvent.type(screen.getByLabelText("Nome utente"),"manut");
+    userEvent.type(screen.getByLabelText("Password"),"manut");
+    userEvent.click(screen.getByRole('button'));
 })
