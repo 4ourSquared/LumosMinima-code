@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LampItem from "../types/LampItem";
 
 const LampGuastiTable: React.FC<{ areaId: number }> = ({ areaId }) => {
@@ -39,6 +39,7 @@ const LampGuastiTable: React.FC<{ areaId: number }> = ({ areaId }) => {
     };
 
   return (
+    <div>
     <table
       className="table table-hover align-middle"
       style={{ width: "90%" }} // Da spostare in un file CSS dedicato
@@ -76,6 +77,10 @@ const LampGuastiTable: React.FC<{ areaId: number }> = ({ areaId }) => {
         ))}
       </tbody>
     </table>
+    <Link to={`/api/aree/${areaId}`} type="button" className="btn btn-primary">
+      Indietro
+    </Link>
+    </div>
   );
 };
 
