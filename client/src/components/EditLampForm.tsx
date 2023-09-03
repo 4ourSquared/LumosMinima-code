@@ -62,7 +62,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                 axios
                     .put(url, values)
                     .then(() => {
-                        navigate("/");
+                        navigate(`/api/aree/${areaId}`);
                     })
                     .catch((err) => console.log(err))
                     .finally(() => {

@@ -2,10 +2,12 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AreaItem from "../types/AreaItem";
+import { useConfirm } from "material-ui-confirm";
 
 export const AreaTable: React.FC = () => {
   const [aree, setAree] = useState<AreaItem[]>([]);
   const navigate = useNavigate();
+  const confirm = useConfirm();
 
   useEffect(() => {
     const loadAree = async () => {
@@ -21,16 +23,23 @@ export const AreaTable: React.FC = () => {
     loadAree();
   }, []);
 
-  const deleteArea = async (id: number) => {
-    const confirmed = window.confirm("Sei sicuro di voler eliminare l'area?");
-    try {
-      if (confirmed) {
+  const deleteArea = async (id: Number) => {
+    confirm({
+      title:"Eliminazione area",
+      description: "Sei sicuro di voler eliminare l'area?",
+      confirmationText: "OK",
+      cancellationText: "Annulla",
+    }).then(async () => {
+      try{
         await axios.delete(`http://localhost:5000/api/aree/${id}`);
         setAree((cur) => cur.filter((item) => item.id !== id));
+      }catch(error){
+        alert("Errore nella cancellazione dell'area.");
+        console.error("Errore nella cancellazione dell'area.");
       }
-    } catch (error) {
-      console.error("Errore nella cancellazione dell'area: ", error);
-    }
+    }).catch(() => {
+      console.log("Annullata cancellazione dell'area.")
+    });
   };
 
   return (

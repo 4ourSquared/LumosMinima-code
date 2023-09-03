@@ -1,32 +1,48 @@
 import axios from "axios";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SensorItem from "../types/SensorItem";
+import { useConfirm } from "material-ui-confirm";
 
 interface SensorTableProps {
-    sensori: SensorItem[];
-    onSensoreDeleted: (id: number) => void; // Aggiunta di una nuova prop
     areaId: number; // Aggiunta dell'ID dell'area come prop
 }
-const SensorTable: React.FC<SensorTableProps> = ({
-    sensori,
-    onSensoreDeleted,
-    areaId,
-}) => {
+const SensorTable: React.FC<SensorTableProps> = ({areaId}) => {
+    const [sensori, setSensori] = useState<SensorItem[]>([]);
     const navigate = useNavigate();
+    const confirm = useConfirm();
+
+    useEffect(() => {
+        const loadSensori = async () => {
+            try {
+                const response = await axios.get<SensorItem[]>(
+                    `http://localhost:5000/api/aree/${areaId}/sensori`
+                );
+                setSensori(response.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        loadSensori();
+    }, []);
 
     const deleteSensore = async (id: number) => {
-        const confirmed = window.confirm(
-            "Sei sicuro di voler eliminare il sensore?"
-        );
-        try {
-            if (confirmed) {
-                await axios.delete(`http://localhost:5000/api/aree/${areaId}/sensori/${id}`);
-                onSensoreDeleted(id); // Chiamata alla funzione di callback
+        confirm({
+            title:"Eliminazione sensore",
+            description:"Sei sicuro di voler eliminare il sensore?",
+            confirmationText:"OK",
+            cancellationText:"Annulla",
+        }).then(() => {
+            try{
+                axios.delete(`http://localhost:5000/api/aree/${areaId}/sensori/${id}`);
+                setSensori((cur) => cur.filter((item) => item.id !== id));
+            }catch(error){
+                alert("Errore nella cancellazione del sensore.");
+                console.error("Errore nella cancellazione del sensore: ", error);
             }
-        } catch (error) {
-            console.error("Errore nella cancellazione del sensore: ", error);
-        }
+        }).catch(() => {
+            console.error("Annullata cancellazione del sensore");
+        })
     };
 
     return (

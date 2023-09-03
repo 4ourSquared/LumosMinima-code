@@ -2,11 +2,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AreaItem from "../types/AreaItem";
-import LampItem from "../types/LampItem";
-import SensorItem from "../types/SensorItem";
 import LampTable from "./LampTable";
 import SensorTable from "./SensorTable";
-
+import { ConfirmProvider } from "material-ui-confirm";
 
 
 const AreaSingleView: React.FC = () => {
@@ -37,7 +35,7 @@ const AreaSingleView: React.FC = () => {
                 console.error("areaId is undefined");
                 return;
             }
-            let areaResponse, lampioniResponse, sensoriResponse;
+            let areaResponse;
 
             try {
                 areaResponse = await axios.get<AreaItem>(`/aree/${areaId}`);
@@ -46,28 +44,8 @@ const AreaSingleView: React.FC = () => {
                 console.error("Error fetching area:", error);
             }
 
-            try {
-                lampioniResponse = await axios.get<LampItem[]>(
-                    `/aree/${areaId}/lampioni`
-                );
-                console.log("Lampioni Response:", lampioniResponse.data);
-            } catch (error) {
-                console.error("Error fetching lampioni:", error);
-            }
-
-            try {
-                sensoriResponse = await axios.get<SensorItem[]>(
-                    `/aree/${areaId}/sensori`
-                );
-                console.log("Sensori Response:", sensoriResponse.data);
-            } catch (error) {
-                console.error("Error fetching sensori:", error);
-            }
-
-            if (areaResponse && lampioniResponse && sensoriResponse) {
+            if (areaResponse) {
                 const areaData = areaResponse.data;
-                areaData.lampioni = lampioniResponse.data;
-                areaData.sensori = sensoriResponse.data;
                 setArea(areaData);
                 setLoading(false);
             }
@@ -76,6 +54,7 @@ const AreaSingleView: React.FC = () => {
     }, [areaId]);
 
     return (
+        <ConfirmProvider>
         <div>
             {loading ? (
                 <p>Caricamento...</p>
@@ -109,45 +88,13 @@ const AreaSingleView: React.FC = () => {
                     <h2>Lampioni Collegati</h2>
                     <div className="row">
                         <LampTable
-                            lampioni={area.lampioni}
                             areaId={area.id}
-                            onLampioneDeleted={(id) => {
-                                setArea((currentArea) => {
-                                    if (currentArea) {
-                                        return {
-                                            ...currentArea,
-                                            lampioni:
-                                                currentArea.lampioni.filter(
-                                                    (lampione) =>
-                                                        lampione.id !== id
-                                                ),
-                                        };
-                                    } else {
-                                        return null;
-                                    }
-                                });
-                            }}
                         />
                     </div>
                     <h2>Sensori Collegati</h2>
                     <div className="row">
                         <SensorTable
-                            sensori={area.sensori}
                             areaId={area.id}
-                            onSensoreDeleted={(id) => {
-                                setArea((currentArea) => {
-                                    if (currentArea) {
-                                        return {
-                                            ...currentArea,
-                                            sensori: currentArea.sensori.filter(
-                                                (sensore) => sensore.id !== id
-                                            ),
-                                        };
-                                    } else {
-                                        return null;
-                                    }
-                                });
-                            }}
                         />
                     </div>
                 </div>
@@ -158,6 +105,7 @@ const AreaSingleView: React.FC = () => {
                 Indietro
             </Link>
         </div>
+        </ConfirmProvider>
     );
 };
 
