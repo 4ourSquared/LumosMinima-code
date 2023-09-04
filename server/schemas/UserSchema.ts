@@ -21,7 +21,7 @@ const userSchema: Schema = new mongoose.Schema({
     },
     privilege: {
         required: true,
-        default: "base",
+        default: "none",
         type: String,
     }
 })

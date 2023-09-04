@@ -1,9 +1,9 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
-import { isAmministratore, isManutentore } from "../auth/LoginState";
 import LampItem from "../types/LampItem";
+import {UserData,Role} from "../auth/Authorization"
 
 interface LampTableProps {
   lampioni: LampItem[];
@@ -17,8 +17,6 @@ const LampTable: React.FC<LampTableProps> = ({
   areaId,
 }) => {
   const navigate = useNavigate();
-  const [isAdmin] = useState(isAmministratore());
-  const [isManut] = useState(isManutentore());
 
   const deleteLampione = async (id: number) => {
     const confirmed = window.confirm(
@@ -52,6 +50,8 @@ const LampTable: React.FC<LampTableProps> = ({
     navigate(`/api/aree/${areaId}/lampioni/guasti`);
   };
 
+  const userData = useOutletContext<UserData>()
+  
   return (
     <div className="row justify-content-center">
       <Link
@@ -74,7 +74,7 @@ const LampTable: React.FC<LampTableProps> = ({
             <th scope="col">Info</th>
             <th scope="col">Modifica</th>
             <th scope="col">Elimina</th>
-            {/*{isAdmin && <th scope="col">Guasto</th>}*/}
+            {userData.role === Role.Amministratore && <th scope="col">Guasto</th>}
           </tr>
         </thead>
         <tbody id="tableBody">
@@ -114,8 +114,7 @@ const LampTable: React.FC<LampTableProps> = ({
                   Elimina
                 </button>
               </td>
-              {/*
-              {isAdmin && (
+              {userData.role === Role.Amministratore && (
                 <td>
                   {lampione.guasto ? (
                     <>
@@ -138,18 +137,15 @@ const LampTable: React.FC<LampTableProps> = ({
                   )}
                 </td>
               )}
-                  */}
             </tr>
           ))}
         </tbody>
       </table>
-      {/*
-      {isManut && (
+      {userData.role === Role.Manutentore && (
         <button className="btn btn-secondary" onClick={() => showListaGuasti()}>
           Vai alla lista guasti
         </button>
       )}
-      */}
     </div>
   );
 };

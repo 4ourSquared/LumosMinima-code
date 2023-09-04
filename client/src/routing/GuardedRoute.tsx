@@ -1,17 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import {isLogged} from '../auth/LoginState'
+import authorization,{Role,UserData} from '../auth/Authorization'
 import {useState, useEffect} from 'react'
 
+
 interface GuardedRouteProps {
-	/**
-	 * Permission check for route
-	 * @default false
-	 */
-     conditionCallback?: (() => Promise<boolean>)
-	/**
-	 * Route to be redirected to
-	 * @default '/'
-	 */
+	requiredRole ?: Role;
 	redirectRoute: string;
 }
 
@@ -33,19 +26,29 @@ interface GuardedRouteProps {
  * />
  * ```
  */
-const GuardedRoute = ({conditionCallback = isLogged, redirectRoute}: GuardedRouteProps): JSX.Element => {
+const GuardedRoute = ({requiredRole = Role.Any, redirectRoute}: GuardedRouteProps): JSX.Element => {
 
-	const [condition,setCondition] = useState<boolean>(false)
+	const [userData,setUserData] = useState<UserData>()
 
 	useEffect(()=>{
 		const retrieve = async () => {
-			const condition = await conditionCallback()
-			setCondition(condition)
-		retrieve()
+			const data = await authorization()
+			setUserData(data)
 		}
+		retrieve()
 	},[])
 
-	return condition ? <Outlet /> : <Navigate to={redirectRoute} replace />;
+	if(userData === undefined) return <p>Attendo...</p>
+
+	let success: boolean = false
+	const actualRole = userData.role
+	
+	if(requiredRole === Role.Any)
+		success = actualRole > Role.None
+	else
+		success = actualRole === requiredRole
+
+	return success ? <Outlet context={userData}/> : <Navigate to={redirectRoute} replace />;
 }
 
 export default GuardedRoute;

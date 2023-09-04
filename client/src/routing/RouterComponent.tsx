@@ -5,7 +5,6 @@ import {
   Routes,
   useParams,
 } from "react-router-dom";
-import { isManutentore } from "../auth/LoginState";
 import AreaSingleView from "../components/AreaSingleView";
 import EditAreaForm from "../components/EditAreaForm";
 import EditLampForm from "../components/EditLampForm";
@@ -19,6 +18,7 @@ import NewSensorPage from "../components/NewSensorPage";
 import PageFullView from "../components/PageFullView";
 import SensorSingleView from "../components/SensorSingleView";
 import GuardedRoute from "./GuardedRoute";
+import {Role} from "../auth/Authorization"
 
 const NotFoundPage: React.FC = () => {
   return <h1>Page not found</h1>;
@@ -87,6 +87,13 @@ const RouterComponent: React.FC = () => {
     <Router>
       <Routes>
         <Route path="login" element={<LoginPage />} />
+
+        <Route element={ <GuardedRoute requiredRole={Role.Manutentore} redirectRoute="/" />}>
+            <Route
+              path="api/aree/:areaId/lampioni/guasti"
+              element={<LampGuastiWrapper />}
+            />
+        </Route>
         <Route element={<GuardedRoute redirectRoute="/login" />}>
           <Route path="api/aree/add" element={<NewAreaPage />} />
           <Route
@@ -118,18 +125,9 @@ const RouterComponent: React.FC = () => {
             path="api/aree/:areaId/sensori/add"
             element={<NewSensPageWrapper />}
           />
-          <Route
-            element={
-              <GuardedRoute conditionCallback={isManutentore} redirectRoute="/" />
-            }
-          >
-            <Route
-              path="api/aree/:areaId/lampioni/guasti"
-              element={<LampGuastiWrapper />}
-            />
-          </Route>
           <Route path="" element={<PageFullView />} />
         </Route>
+
         <Route path="*" element={<NotFoundPage />} />{" "}
         {/* Pagina di fallback per tutte le altre route non corrispondenti */}
       </Routes>

@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 // INFO: Per validare un token generato, bisogna utilizzare la funzione verify() di jwt (https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
 const JWT_KEY =
-    "1KqcotIgrWMVyZq3SgC7uMIlRX8TNvEZ73hSenTUKt4dlyORcYfw4wehb0YvV4tD"; //64 byte
+    "gQbdVpDZY6tnLCHSRAEBND0K4rwvR7TN9zYMdQW0WBEKp6upCqnKJLarxgtpnT18LwACXJ65QZMdV3FwxankYKibK8H5dEME5VPpuwXy302avLrByYJSLx6AU4paJp13h7A0PtZ9UgpfCq8W8BfRH4J6e6HcyMS6i5kk1xfdXHmnAe1JpKdBE8cQ2PjYCuKgaNAVNaBXhduMxE2wnnvkD8AFiGzCPSchrrCL2K9nGwU7KQ2d6p9hvCZrU6vAkeNP"; //256 byte
 const accountRoutes = Router();
 
 // Logout
@@ -20,7 +20,7 @@ accountRoutes.post("/logout", (req: Request, res: Response) => {
     }
 
     return res
-        .cookie("auth-jwt", JSON.stringify(token), {
+        .cookie("auth-jwt", token, {
             sameSite: "strict",
             maxAge: -1,
             httpOnly: true, //fondamentale
@@ -60,7 +60,7 @@ accountRoutes.post("/login", async (req: Request, res: Response) => {
         console.log(token);
 
         return res
-            .cookie("auth-jwt", JSON.stringify(token), {
+            .cookie("auth-jwt", token, {
                 sameSite: "strict",
                 maxAge: 60 * 60 * 2 * 1000, //il cookie dopo 2 ore sparisce dal browser
                 httpOnly: true, //fondamentale
@@ -77,11 +77,11 @@ accountRoutes.post("/login", async (req: Request, res: Response) => {
 
 // Signup
 accountRoutes.post("/signup", async (req: Request, res: Response) => {
-    const { email, username, password } = req.body;
+    const { username, email, password, privilege } = req.body;
 
     try {
-        const query_username = { username: req.body.username.toString() };
-        const query_email = { email: req.body.email.toString() };
+        const query_username = { username: username.toString() };
+        const query_email = { email: email.toString() };
 
         const existingUser = await UserSchema.findOne(query_username);
         const existingMail = await UserSchema.findOne(query_email);
@@ -97,9 +97,10 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
         const hashedPassword = sha512.sha512(password).toString();
 
         const newUser = new UserSchema({
-            email,
-            username,
+            email: email,
+            username: username,
             password: hashedPassword,
+            privilege: privilege
         });
         await newUser.save();
 
@@ -113,18 +114,21 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
 accountRoutes.get("/verify", async (req: Request, res: Response) => {
     let token = req.cookies["auth-jwt"];
     console.log(token);
-    console.log(typeof(token));
     if (!token) {
         res.status(403).json({ error: "Nessun token fornito!" });
         console.log("nessun token fornito");
     } else {
-        jwt.verify(token, JWT_KEY, (err: any) => {
+        jwt.verify(token, JWT_KEY, (err: any, decoded: any) => {
             if (err) {
                 console.log(err);
                 res.status(500).json({
                     error: "Autenticazione del token fallita!",
                 });
-            } else res.status(200).json({ result: "Successo" });
+            }
+            else {
+                res.status(200).json({role:decoded.privilege})
+            }
+
         });
     }
 });
