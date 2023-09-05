@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import UserSchema from "../schemas/UserSchema";
 import sha512 from "js-sha512";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 
 // INFO: Per validare un token generato, bisogna utilizzare la funzione verify() di jwt (https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
 const JWT_KEY =
@@ -100,7 +101,7 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
             email: email,
             username: username,
             password: hashedPassword,
-            privilege: privilege
+            privilege: privilege,
         });
         await newUser.save();
 
@@ -124,13 +125,30 @@ accountRoutes.get("/verify", async (req: Request, res: Response) => {
                 res.status(500).json({
                     error: "Autenticazione del token fallita!",
                 });
+            } else {
+                res.status(200).json({ role: decoded.privilege });
             }
-            else {
-                res.status(200).json({role:decoded.privilege})
-            }
-
         });
     }
 });
+
+// Creazione primo utente admin
+const DOMAIN: string = "@admin.com"; // Inserire qui il dominio dell'azienda
+async function createAdmin() {
+    const res = await axios
+        .post("http://localhost:5000/accounting/signup", {
+            username: "admin",
+            email: "admin" + DOMAIN,
+            password: "password",
+            privilege: "manutentore",
+        });
+
+    if(res.status == 200)
+        console.log("Admin creato correttamente");
+    else
+        console.log("Errore nella creazione dell'admin");
+}
+
+createAdmin();
 
 export default accountRoutes;
