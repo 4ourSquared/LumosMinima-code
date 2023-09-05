@@ -9,14 +9,15 @@ const NewAreaForm: React.FC = () => {
   axios.defaults.baseURL = "http://localhost:5000/api";
   const navigate = useNavigate();
 
-    const initialValues: AreaItem = {
-        id: 0,
-        nome: "",
-        descrizione: "",
-        latitudine: "",
-        longitudine: "",
-        sensori: [], // Aggiunto
-        lampioni: [] // Aggiunto
+  const initialValues: AreaItem = {
+    id: 0,
+    nome: "",
+    descrizione: "",
+    latitudine: "",
+    longitudine: "",
+    polling: 10,
+    sensori: [], // Aggiunto
+    lampioni: [] // Aggiunto
   };
 
   const validationSchema = Yup.object({
@@ -24,7 +25,7 @@ const NewAreaForm: React.FC = () => {
     descrizione: Yup.string().required("Campo obbligatorio").trim(),
     latitudine: Yup.string().required("Campo obbligatorio").trim(),
     longitudine: Yup.string().required("Campo obbligatorio").trim(),
- });
+  });
 
   const handleSubmit = async (values: AreaItem, { setSubmitting }: any) => {
     try {
@@ -82,6 +83,18 @@ const NewAreaForm: React.FC = () => {
             component="div"
             className="text-danger"
           />
+        </div>
+        <div className="form-group">
+          <label htmlFor="polling">Polling Time</label>
+          <Field name="polling" type="text" className="form-control" />
+          <ErrorMessage
+            name="polling"
+            component="div"
+            className="text-danger"
+          />
+          <small id="intensityHelp" className="form-text text-muted">
+            Indica il tempo in secondi che deve intercorrere tra una verifica e l'altra per rendere possibile l'interazione dei lampioni in modalit&agrave; pull.
+          </small>
         </div>
 
         <button type="submit" className="btn btn-primary">

@@ -11,6 +11,7 @@ export interface IAreaSchema extends Document {
     descrizione: string;
     latitudine: string;
     longitudine: string;
+    polling: number;
     lampioni: ILampSchema[];
     sensori: ISensorSchema[];
 }
@@ -25,6 +26,7 @@ const areaSchema : Schema<IAreaSchema> = new mongoose.Schema<IAreaSchema>({
     descrizione: String,
     latitudine: String,
     longitudine: String,
+    polling: Number,
     lampioni: [{ type: lampioneSchema.schema }],
     sensori: [{ type: sensoreSchema.schema }],
 });

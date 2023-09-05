@@ -1,9 +1,14 @@
 import express, { Request, Response } from "express";
+import mongoose from "mongoose";
 import areaRoutes from "./routes/AreaRoutes";
 import lampRoutes from "./routes/LampRoutes"
 import sensRoutes from "./routes/SensorRoutes"
+
 import cors from "cors"; // Per la configurazione di un certificato valido che permetta lo scambio di informazioni tra due endpoint senza l'utilizzo di proxy
 import cookieParser from "cookie-parser"; //per estrarre i cookie dalle richieste HTTP
+
+import signalRoutes from "./routes/SignalRoutes";
+
 
 /*
     SERVER: questo file al momento rappresenta il server in tutto e per tutto. Al suo interno si trovano tutti i metodi attualmente sviluppati per la gestione delle richieste in arrivo
@@ -30,6 +35,7 @@ app.use(express.urlencoded({ extended: false }));
 */
 import mongoose from "mongoose";
 import accountRoutes from "./routes/AccountRoutes";
+
 
 const mongoURI = "mongodb://lumosminima-code-db-1:27017/lumosminima";
 const options : any = {
@@ -59,7 +65,11 @@ db.once("open", () => {
 app.use("/api/aree", areaRoutes);
 app.use("/api/aree", lampRoutes);
 app.use("/api/aree", sensRoutes);
+
 app.use("/accounting", accountRoutes)
+
+app.use("/api/segnale", signalRoutes)
+
 
 
 // Accesso alla pagina

@@ -3,11 +3,11 @@
 
 interface SensorItem {
   id: number;
-  iter: string;
   IP: string;
   luogo: string;
   raggio: number;
   area: number;
+  sig_time: number;
 }
 
 export default SensorItem;
