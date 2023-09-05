@@ -33,7 +33,6 @@ app.use(express.urlencoded({ extended: false }));
                         COLLEGAMENTO AL DATABASE
 ------------------------------------------------------------------------------
 */
-import mongoose from "mongoose";
 import accountRoutes from "./routes/AccountRoutes";
 
 
