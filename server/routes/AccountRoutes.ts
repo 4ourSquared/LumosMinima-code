@@ -36,7 +36,7 @@ accountRoutes.post("/login", async (req: Request, res: Response) => {
     const { username, password } = req.body;
 
     try {
-        const query_username = { username: username };
+        const query_username = { username: username.toString() };
         const user = await UserSchema.findOne(query_username);
 
         if (!user || user.password !== password) {
