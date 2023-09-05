@@ -134,6 +134,8 @@ accountRoutes.get("/verify", async (req: Request, res: Response) => {
 
 // Creazione primo utente admin
 const DOMAIN: string = "@admin.com"; // Inserire qui il dominio dell'azienda
+const PASSWORD: string = "password"; // Inserire qui la password dell'admin
+
 async function createAdmin() {
     if(await UserSchema.findOne({username: "admin"})){
         console.log("Admin già presente");
@@ -144,8 +146,8 @@ async function createAdmin() {
         .post("http://localhost:5000/accounting/signup", {
             username: "admin",
             email: "admin" + DOMAIN,
-            password: "password",
-            privilege: "manutentore",
+            password: PASSWORD,
+            privilege: "amministratore",
         });
 
     if(res.status == 200)
