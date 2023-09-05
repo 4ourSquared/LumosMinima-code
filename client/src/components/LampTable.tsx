@@ -7,7 +7,6 @@ import LampItem from "../types/LampItem";
 import {UserData,Role} from "../auth/Authorization"
 import { useConfirm } from "material-ui-confirm";
 
-
 interface LampTableProps {
   areaId: number; // Aggiunta dell'ID dell'area come prop
 }
@@ -54,7 +53,7 @@ const LampTable: React.FC<LampTableProps> = ({areaId}) => {
 
   const markGuasto = async (id: number) => {
     confirm({
-      title:"Segnalzione lampione guasto",
+      title:"Segnalazione lampione guasto",
       description:"Sei sicuro di voler segnare il seguente lampione come guasto?",
       confirmationText:"OK",
       cancellationText:"Annulla",
