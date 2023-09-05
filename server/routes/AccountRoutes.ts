@@ -10,8 +10,9 @@ const JWT_KEY =
 const accountRoutes = Router();
 
 // Logout
-accountRoutes.post("/logout", (req: Request, res: Response) => {
+accountRoutes.post("/logout", async (req: Request, res: Response) => {
     const token = req.cookies["auth-jwt"];
+    console.log(token);
 
     if (!token) {
         return res.status(401).json({
@@ -20,6 +21,7 @@ accountRoutes.post("/logout", (req: Request, res: Response) => {
         });
     }
 
+    console.log("Logout");
     return res
         .cookie("auth-jwt", token, {
             sameSite: "strict",
@@ -137,7 +139,7 @@ accountRoutes.get("/verify", async (req: Request, res: Response) => {
 */
 
 
-const DOMAIN: string = "@admin.com"; // Inserire qui il dominio dell'azienda
+const DOMAIN: string = "@azienda.com"; // Inserire qui il dominio dell'azienda
 const PASSWORD: string = "password"; // Inserire qui la password dell'admin
 
 async function createAdmin() {
@@ -201,9 +203,11 @@ async function createManutentore(id: number) {
 }
 
 createAdmin();
+
 for(let i = 1; i <= 10; i++){
     createUsers(i);
 }
+
 for(let i = 1; i <= 10; i++){
     createManutentore(i);
 }

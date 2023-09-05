@@ -3,9 +3,10 @@ import axios from "axios";
 export enum Role {
 	Invalid = -1,
 	None = 0,
-	Manutentore = 1,
-	Amministratore = 2,
-    Any = 3
+    Base = 1,
+	Manutentore = 2,
+	Amministratore = 3,
+    Any = 4
 }
 
 export interface UserData {
@@ -15,6 +16,7 @@ export interface UserData {
 export default async function getAuthorizationLevel() : Promise<UserData>
 {
     const map = new Map([
+        ["base",Role.Base],
         ["manutentore",Role.Manutentore],
         ["amministratore",Role.Amministratore]
     ])

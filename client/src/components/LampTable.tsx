@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import LampItem from "../types/LampItem";
 import {UserData,Role} from "../auth/Authorization"
@@ -13,9 +13,8 @@ interface LampTableProps {
 
 const LampTable: React.FC<LampTableProps> = ({areaId}) => {
   const [lampioni, setLampioni] = useState<LampItem[]>([]);
+  const userData = useOutletContext<UserData>();
   const navigate = useNavigate();
-  const [isAdmin] = useState(isAmministratore());
-  const [isManut] = useState(isManutentore());
   const confirm = useConfirm();
 
   useEffect(() => {
@@ -73,7 +72,6 @@ const LampTable: React.FC<LampTableProps> = ({areaId}) => {
     navigate(`/api/aree/${areaId}/lampioni/guasti`);
   };
 
-  const userData = useOutletContext<UserData>()
   
   return (
     <div className="row justify-content-center">
