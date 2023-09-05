@@ -132,7 +132,11 @@ accountRoutes.get("/verify", async (req: Request, res: Response) => {
     }
 });
 
-// Creazione primo utente admin
+/*
+ * CREAZIONE DEI DEMO USER
+*/
+
+
 const DOMAIN: string = "@admin.com"; // Inserire qui il dominio dell'azienda
 const PASSWORD: string = "password"; // Inserire qui la password dell'admin
 
@@ -156,6 +160,53 @@ async function createAdmin() {
         console.log("Errore nella creazione dell'admin");
 }
 
+async function createUsers(id: number) {
+    if(await UserSchema.findOne({username: "user" + id})){
+        console.log("User" + id + " già presente");
+        return;
+    }
+
+    const res = await axios
+        .post("http://localhost:5000/accounting/signup", {
+            username: "user" + id,
+            email: "user" + id + DOMAIN,
+            password: PASSWORD,
+            privilege: "base",
+        });
+
+    if(res.status == 200)
+        console.log("User" + id + " creato correttamente");
+    else
+        console.log("Errore nella creazione dell'user" + id);
+}
+
+async function createManutentore(id: number) {
+    if(await UserSchema.findOne({username: "manutentore" + id})){
+        console.log("Manutentore" + id + " già presente");
+        return;
+    }
+
+    const res = await axios
+        .post("http://localhost:5000/accounting/signup", {
+            username: "manutentore" + id,
+            email: "manutentore" + id + DOMAIN,
+            password: PASSWORD,
+            privilege: "manutentore",
+        });
+
+    if(res.status == 200)
+        console.log("Manutentore" + id + " creato correttamente");
+    else
+        console.log("Errore nella creazione del manutentore" + id);
+}
+
 createAdmin();
+for(let i = 1; i <= 10; i++){
+    createUsers(i);
+}
+for(let i = 1; i <= 10; i++){
+    createManutentore(i);
+}
+
 
 export default accountRoutes;
