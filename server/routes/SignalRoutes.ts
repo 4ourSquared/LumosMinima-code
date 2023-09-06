@@ -155,7 +155,7 @@ signalRoutes.get("/area/:id/token", async (req: Request, res: Response) => {
 
                 console.log("Inizio accensione lampioni");
                 areaMod.lampioni.forEach((lamp) => {
-                    if (lamp.mode === "manuale") {
+                    if (lamp.mode === "manuale" && lamp.stato === "Attivo") {
                         console.log("Accensione Lampione:", lamp.id);
                         lamp.lum = 10;
                     }
@@ -197,7 +197,7 @@ signalRoutes.get("/area/:id", async (req: Request, res: Response) => {
             // Accensione lampioni
             console.log("Inizio accensione lampioni");
             areaMod.lampioni.forEach((lamp: ILampSchema) => {
-                if (lamp.mode == "automatico") lamp.lum = 10;
+                if (lamp.mode == "automatico" && lamp.stato === "Attivo") lamp.lum = 10;
             });
             console.log("Fine accensione lampioni");
             await areaMod.save();
