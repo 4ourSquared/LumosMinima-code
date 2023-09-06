@@ -16,7 +16,7 @@ class Breadcrumb extends Component {
                     </li>
                 </ol>
             </nav>
-        );
+        )
     }
 }
 
