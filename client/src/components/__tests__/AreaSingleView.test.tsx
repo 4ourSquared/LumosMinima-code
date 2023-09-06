@@ -6,47 +6,62 @@ import axios from 'axios'
 import { ConfirmProvider } from 'material-ui-confirm';
 import AreaItem from "../../types/AreaItem";
 
-const mockData = [
-    { 
-        id: 1,
-        nome: "test",
-        descrizione: "test",
-        latitudine: "1.1",
-        longitudine: "1.1",
-        polling: 10,
-        sensori: [
-            {
-                id: 1,
-                IP: "1.1.1.1",
-                luogo: "test",
-                raggio: 10,
-                area: 1,
-                sig_time: 20
-            }
-        ],
-        lampioni: [
-            {
-                id: 1,
-                stato: "attivo",
-                lum: 5,
-                luogo: "test",
-                area: 1,
-                guasto: false,
-                mode: "manuale"
-            }
-        ]
-    }
-]
+
+
+jest.mock("axios")
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 test("Test del fetch", async () => {
+
+    mockedAxios.get.mockResolvedValue({ 
+        data:{
+            id: 1,
+            nome: "test",
+            descrizione: "test",
+            latitudine: "1.1",
+            longitudine: "1.1",
+            polling: 10,
+            sensori: [
+                {
+                    id: 1,
+                    IP: "1.1.1.1",
+                    luogo: "test",
+                    raggio: 10,
+                    area: 1,
+                    sig_time: 20
+                }
+            ],
+            lampioni: [
+                {
+                    id: 1,
+                    stato: "attivo",
+                    lum: 5,
+                    luogo: "test",
+                    area: 1,
+                    guasto: false,
+                    mode: "manuale"
+                }
+            ]
+        }
+    })
+
+    mockedAxios.put.mockResolvedValue({
+        status: 200
+    });
+
     render(
         <MemoryRouter initialEntries={["/tests"]}>
             <Routes>
                 <Route path="/:areaId" element={<AreaSingleView/>} />
             </Routes>
         </MemoryRouter>
-        
     )
+
+    await waitFor(() => {
+        userEvent.selectOptions(screen.getByRole("combobox"),["10"]);
+        expect(screen.getByRole("option",{name:"10"}).ariaSelected);
+    })
+
 })
 
 /*

@@ -7,16 +7,18 @@ import LampItem from "../types/LampItem";
 import { useConfirm } from "material-ui-confirm";
 
 interface LampTableProps {
+  lum: LampItem[];
   areaId: number; // Aggiunta dell'ID dell'area come prop
 }
 
-const LampTable: React.FC<LampTableProps> = ({areaId}) => {
-  const [lampioni, setLampioni] = useState<LampItem[]>([]);
+const LampTable: React.FC<LampTableProps> = ({areaId, lum}) => {
+  const [lampioni, setLampioni] = useState<LampItem[]>(lum);
   const navigate = useNavigate();
   const [isAdmin] = useState(isAmministratore());
   const [isManut] = useState(isManutentore());
   const confirm = useConfirm();
 
+  /*
   useEffect(() => {
     const loadLampioni = async () => {
         try {
@@ -30,6 +32,7 @@ const LampTable: React.FC<LampTableProps> = ({areaId}) => {
     };
     loadLampioni();
   }, []);
+  */
 
   const deleteLampione = async (id: number) => {
     confirm({

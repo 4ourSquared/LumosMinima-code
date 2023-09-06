@@ -72,7 +72,7 @@ const AreaSingleView: React.FC = () => {
                     <label htmlFor="edit-lum">
                         Modifica Luminosit&agrave; Area: <span> </span>
                     </label>
-                    <select value={this} name="edit-lum" className="form-group" onChange={e => getValueAndSend(e)}>
+                    <select value={this} name="edit-lum" className="form-group" size={1} onChange={e => getValueAndSend(e)}>
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -88,12 +88,14 @@ const AreaSingleView: React.FC = () => {
                     <h2>Lampioni Collegati</h2>
                     <div className="row">
                         <LampTable
+                            lum={area.lampioni}
                             areaId={area.id}
                         />
                     </div>
                     <h2>Sensori Collegati</h2>
                     <div className="row">
                         <SensorTable
+                            sens = {area.sensori}
                             areaId={area.id}
                         />
                     </div>
