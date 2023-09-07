@@ -3,11 +3,11 @@ mongoose.pluralize(null);
 
 export interface ISensorSchema extends Document{
     id: number;
-    iter: string;
     IP: string;
     luogo: string;
     raggio: number;
     area: number;
+    sig_time: number;
 }
 
 const sensoreSchema : Schema= new mongoose.Schema({
@@ -15,14 +15,15 @@ const sensoreSchema : Schema= new mongoose.Schema({
         type: Number,
         required: true,
     },
-    iter: { type: String, default: "manuale" },
+    
     IP: String,
     luogo: String,
     raggio: Number,
     area: {
         type: Number,
         required: true,
-    }
+    },
+    sig_time: Number,
 });
 
 export default mongoose.model("sensori", sensoreSchema);

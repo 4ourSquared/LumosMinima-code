@@ -4,11 +4,15 @@
 
 import { Router, Request, Response } from "express";
 import AreaSchema from "../schemas/AreaSchema";
+import { updateSchedule } from "../utils/Schedule";
 
 const areaRouter = Router();
 
-
+// Recupero della lista di aree illuminate
 areaRouter.get("/", async (req: Request, res: Response) => {
+    console.log(
+        `Ricevuta richiesta GET su /api/aree/`
+    );
     try {
         const aree = await AreaSchema.find();
         res.status(200).json(aree);
@@ -23,29 +27,38 @@ areaRouter.get("/", async (req: Request, res: Response) => {
     }
 });
 
+// Recupero delle informazioni di una singola area
 areaRouter.get("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
+    console.log(
+        `Ricevuta richiesta GET su /api/aree/${id}/`
+    );
     try {
         const area = await AreaSchema.findOne({ id: parseInt(id, 10) });
         if (area) {
             res.status(200).json(area);
         } else {
-            res.status(404).json({ error: "Area illuminata non trovato." });
+            res.status(404).json({ error: "Errore nel recupero di una singola area illuminata: area illuminata non trovata." });
         }
     } catch (error) {
         console.error(
-            "Errore durante il recupero dell'area illuminata dal database:",
+            "Errore nel recupero di una singola area illuminata:",
             error
         );
         res.status(500).send(
-            "Errore durante il recupero dell'area illuminata dal database"
+            "Errore nel recupero di una singola area illuminata"
         );
     }
 });
 
+// Creazione di una nuova area
 areaRouter.post("/", async (req: Request, res: Response) => {
-    const { nome, descrizione, latitudine, longitudine, sensori, lampioni } =
-        req.body;
+    console.log(
+        `Ricevuta richiesta POST su /api/aree/`
+    );
+    const { nome, descrizione, latitudine, longitudine, polling, sensori, lampioni } = req.body;
+    parseInt(polling, 10);
+
     const id: number = await generateIdAree();
     const newArea = new AreaSchema({
         id,
@@ -53,20 +66,22 @@ areaRouter.post("/", async (req: Request, res: Response) => {
         descrizione,
         latitudine,
         longitudine,
+        polling,
         sensori,
         lampioni,
     });
 
     try {
         const savedArea = await newArea.save();
+        updateSchedule(savedArea._id);
         res.status(200).json(savedArea);
     } catch (error) {
         console.error(
-            "Errore durante l'inserimento dell'area illuminata nel database:",
+            "Errore durante la creazione dell'area illuminata nel database:",
             error
         );
         res.status(500).send(
-            "Errore durante l'inserimento dell'area illuminata nel database"
+            "Errore durante la creazione dell'area illuminata nel database"
         );
     }
 });
@@ -84,16 +99,16 @@ async function generateIdAree(): Promise<number> {
     }
 }
 
+// Modifica di una area
 areaRouter.put("/edit/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     try {
         const areaToUpdate = await AreaSchema.findOne({ id });
 
         console.log(`Ricevuta richiesta PUT su /api/aree/edit -> ID: ${id}`);
-        console.log("Richiesta aggiornamento di un'area illuminata esistente");
 
         if (!areaToUpdate) {
-            res.status(404).send(`Area con id = ${id} non trovato`);
+            res.status(404).send(`Errore nel processo di modifica di un'area: area con id = ${id} non trovato`);
             return;
         }
 
@@ -110,44 +125,58 @@ areaRouter.put("/edit/:id", async (req: Request, res: Response) => {
             areaToUpdate.longitudine = req.body.longitudine;
         }
 
+        if(req.body.polling !== undefined){
+            areaToUpdate.polling = parseInt(req.body.polling, 10);
+        }
+
         await areaToUpdate.save();
+        updateSchedule(areaToUpdate._id);
 
         res.status(200).send(
             `Area illuminata con id = ${id} aggiornato con successo`
         );
     } catch (error) {
         console.error(
-            "Errore durante l'aggiornamento dell'area illuminata:",
+            "Errore nel processo di modifica di un'area:",
             error
         );
         res.status(500).send(
-            "Errore durante l'aggiornamento dell'area illuminata"
+            "Errore nel processo di modifica di un'area"
         );
     }
 });
 
+// Eliminazione di una area
 areaRouter.delete("/:id", async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
+    console.log(
+        `Ricevuta richiesta DELETE su /api/aree/${id}/`
+    );
     try {
+        const deletedArea = await AreaSchema.findOne({ id });
         const result = await AreaSchema.deleteOne({ id });
 
         if (result.deletedCount === 0) {
-            res.status(404).send(`Area illuminata con id = ${id} non trovato`);
+            res.status(404).send(`Errore nel processo di eliminazione di un'area: area illuminata con id = ${id} non trovata`);
             return;
         }
 
+        if(deletedArea)
+            updateSchedule(deletedArea._id);
+        
         res.status(200).send(
             `Area illuminata con id = ${id} eliminato con successo`
         );
     } catch (error) {
         console.error(
-            "Errore durante l'eliminazione dell'area illuminata:",
+            "Errore nel processo di eliminazione di un'area:",
             error
         );
         res.status(500).send(
-            "Errore durante l'eliminazione dell'area illuminata"
+            "Errore nel processo di eliminazione di un'area"
         );
     }
 });
+
 
 export default areaRouter;
