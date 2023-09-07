@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { useConfirm } from "material-ui-confirm";
 import { useNavigate } from "react-router-dom";
 import useLogoutMechanism from "../auth/LogoutMechanism";
 import Breadcrumb from "./Breadcrumb";
@@ -12,7 +12,6 @@ export default function Header() {
 
   const prepareLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
-
     if (await logout()) navigate("/login");
   };
 

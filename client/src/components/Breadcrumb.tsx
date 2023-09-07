@@ -4,10 +4,16 @@ import { Link, useLocation } from "react-router-dom";
 interface BreadcrumbProps {}
 
 const breadcrumbMap: { [key: string]: string } = {
-  "/": "Home",
+  "/": "",
   "/api/aree/add": "Aggiunta Area",
   "/api/aree/:id": "Info Area",
   "/api/aree/:areaId/lampioni/add": "Aggiunta Lampione",
+  "/api/aree/:areaId/sensori/add": "Aggiunta Sensore",
+  "/api/aree/:areaId/lampioni/:id": "Info Lampione",
+  "/api/aree/:areaId/sensori/:id": "Info Sensore",
+  "/api/aree/edit/:id": "Modifica Area",
+  "/api/aree/:areaId/sensori/edit/:id": "Modifica Sensore",
+  "/api/aree/:areaId/lampioni/edit/:id": "Modifica Lampione",
   //Aggiungere qui gli altri path
 };
 

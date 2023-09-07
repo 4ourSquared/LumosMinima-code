@@ -70,7 +70,7 @@ footer {
   margin-top: 1em;
 }
 
-/* ALERT DANGER */
+/* SEZIONE STILE BOTTONI E ALERT */
 .alert-danger {
   margin-top: 0.5em;
 }
@@ -80,6 +80,7 @@ footer {
   margin-right: 1em;
 }
 
+/* SEZIONE BOTTONI DI CREAZIONE, RESET E INDIETRO*/
 .add,
 .back,
 .reset {

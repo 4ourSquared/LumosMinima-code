@@ -13,18 +13,27 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
 
   return (
     <Formik
-      initialValues={{ id: 0, IP: "", luogo: "", raggio: 0, sig_time: 20, area: areaId }}
+      initialValues={{
+        id: 0,
+        IP: "",
+        luogo: "",
+        raggio: 0,
+        sig_time: 20,
+        area: areaId,
+      }}
       validationSchema={Yup.object({
         IP: Yup.string()
-          .matches(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, "Deve essere un indirizzo IP valido")
+          .matches(
+            /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/,
+            "Deve essere un indirizzo IP valido"
+          )
           .required("Campo obbligatorio")
           .trim(),
         luogo: Yup.string()
           .min(2, "Inserisci almeno 2 caratteri")
           .required("Campo obbligatorio")
-          .trim()
+          .trim(),
       })}
-
       onSubmit={(values, { setSubmitting }) => {
         console.log(values);
         axios.post(`/aree/${values.area.toString()}/sensori`, values); // Solito invio dei dati al server
@@ -58,7 +67,11 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
             aria-describedby="luogoHelp"
             placeholder=""
           />
-          <ErrorMessage name="luogo" component="div" className="error-message" />
+          <ErrorMessage
+            name="luogo"
+            component="div"
+            className="error-message"
+          />
           <small id="locazioneHelp" className="form-text text-muted">
             Indica il luogo in cui è situato il sensore.
           </small>
@@ -92,22 +105,31 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
             aria-describedby="sig_timeHelp"
             placeholder=""
           />
-          <ErrorMessage name="sig_time" component="div" className="error-message" />
+          <ErrorMessage
+            name="sig_time"
+            component="div"
+            className="error-message"
+          />
           <small id="sig_timeHelp" className="form-text text-muted">
-            Indica la durata in secondi della segnalazione di movimento, utile qualora un lampione della zona interagisca in modalità pull.
+            Indica la durata in secondi della segnalazione di movimento, utile
+            qualora un lampione della zona interagisca in modalità pull.
           </small>
         </div>
         <div className="form-group">
           <label htmlFor="area">ID Area di Riferimento</label>
           <Field name="area" type="number" className="form-control" readOnly />
         </div>
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-primary add">
           Crea
         </button>
-        <button type="reset" className="btn btn-secondary">
+        <button type="reset" className="btn btn-secondary reset">
           Resetta
         </button>
-        <Link to={`/api/aree/${areaId}`} type="button" className="btn btn-outline-primary">
+        <Link
+          to={`/api/aree/${areaId}`}
+          type="button"
+          className="btn btn-outline-primary back"
+        >
           Indietro
         </Link>
       </Form>
