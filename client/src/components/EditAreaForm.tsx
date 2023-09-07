@@ -4,14 +4,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import AreaItem from "../types/AreaItem";
-import Sensore from "../types/SensorItem";
 import Lampione from "../types/LampItem";
+import Sensore from "../types/SensorItem";
 
-interface EditAreaFormProps{
+interface EditAreaFormProps {
   areaId: number;
 }
 
-const EditAreaForm: React.FC<EditAreaFormProps> = ({areaId}) => {
+const EditAreaForm: React.FC<EditAreaFormProps> = ({ areaId }) => {
   axios.defaults.baseURL = "http://localhost:5000/api";
   const navigate = useNavigate();
   const { id: paramId } = useParams<{ id: string }>();
@@ -31,8 +31,12 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({areaId}) => {
   const [availableLampioni, setAvailableLampioni] = useState<Lampione[]>([]);
 
   useEffect(() => {
-    axios.get(`aree/${areaId}/sensori`).then(response => setAvailableSensori(response.data));
-    axios.get(`aree/${areaId}/lampioni`).then(response => setAvailableLampioni(response.data));
+    axios
+      .get(`aree/${areaId}/sensori`)
+      .then((response) => setAvailableSensori(response.data));
+    axios
+      .get(`aree/${areaId}/lampioni`)
+      .then((response) => setAvailableLampioni(response.data));
 
     if (area.id !== 0) {
       axios
@@ -135,36 +139,16 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({areaId}) => {
             className="text-danger"
           />
           <small id="intensityHelp" className="form-text text-muted">
-            Indica il tempo in secondi che deve intercorrere tra una verifica e l'altra per rendere possibile l'interazione dei lampioni in modalit&agrave; pull.
+            Indica il tempo in secondi che deve intercorrere tra una verifica e
+            l'altra per rendere possibile l'interazione dei lampioni in
+            modalit&agrave; pull.
           </small>
         </div>
-        
-        {/*
-        <div className="form-group">
-          <label htmlFor="sensori">Sensori</label>
-          <Field name="sensori" as="select" multiple className="form-control">
-            {availableSensori.map(sensore => (
-              <option value={sensore.id}>{sensore.id}</option> //da controllare
-            ))}
-          </Field>
-          <ErrorMessage name="sensori" />
-        </div>
 
-        <div className="form-group">
-          <label htmlFor="lampioni">Lampioni</label>
-          <Field name="lampioni" as="select" multiple className="form-control">
-            {availableLampioni.map(lampione => (
-              <option value={lampione.id}>{lampione.id}</option> //da controllare
-            ))}
-          </Field>
-          <ErrorMessage name="lampioni" />
-        </div>
-        */}
-
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-primary add">
           Modifica
         </button>
-        <Link to="/" type="button" className="btn btn-outline-primary">
+        <Link to="/" type="button" className="btn btn-outline-primary back">
           Indietro
         </Link>
       </Form>

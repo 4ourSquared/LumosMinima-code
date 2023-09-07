@@ -67,4 +67,31 @@ footer {
   left: 0;
   bottom: 0;
   width: 100%;
+  margin-top: 1em;
+}
+
+/* ALERT DANGER */
+.alert-danger {
+  margin-top: 0.5em;
+}
+.logout {
+  float: right;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.add,
+.back,
+.reset {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-right: 1.5em;
+}
+
+form {
+  margin-left: 1em;
+}
+
+.form-group {
+  margin-bottom: 1em;
 }
