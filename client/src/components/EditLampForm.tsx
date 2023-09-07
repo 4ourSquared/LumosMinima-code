@@ -103,10 +103,12 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
               <option value="9">9</option>
               <option value="10">10</option>
             </Field>
-            <small id="intensityHelp" className="form-text text-muted">
-              Indica l'intensit&agrave; luminosa del lampione qualora fosse
-              importato lo stato di attivazione.
-            </small>
+            <div>
+              <small id="intensityHelp" className="form-text text-muted">
+                Indica l'intensit&agrave; luminosa del lampione qualora fosse
+                importato lo stato di attivazione.
+              </small>
+            </div>
           </div>
 
           <div className="form-group">
