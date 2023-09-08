@@ -8,8 +8,6 @@ import * as Yup from "yup"; //Libreria per la validazione del form: si può usar
   CLASSE NEWLAMPFORM: classe che renderizza automaticamente la struttura HTML della pagina di aggiunta di un lampione, definendo anche il metodo per la trasmissione dei dati al server. Stile associato a Bootstrap.
 */
 
-// TODO - Sistemare le routes
-
 const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
   axios.defaults.baseURL = "http://localhost:5000/api"; //URL base, così una volta in produzione basta cambiare questo
   const navigate = useNavigate();
@@ -40,11 +38,6 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
     >
       <Form>
         <div className="form-group">
-          <label htmlFor="id">ID (Automatico)</label>
-          <Field name="id" type="text" className="form-control" readOnly />
-        </div>
-
-        <div className="form-group">
           <label htmlFor="stato">Stato</label>
           <Field name="stato" as="select">
             <option value="Attivo">Attivo</option>
@@ -67,10 +60,12 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
             <option value="9">9</option>
             <option value="10">10</option>
           </Field>
-          <small id="intensityHelp" className="form-text text-muted">
-            Indica l'intensit&agrave; luminosa del lampione qualora fosse
-            importato lo stato di attivazione.
-          </small>
+          <div>
+            <small id="intensityHelp" className="form-text text-muted">
+              Indica l'intensit&agrave; luminosa del lampione qualora fosse
+              importato lo stato di attivazione.
+            </small>
+          </div>
         </div>
 
         <div className="form-group">
@@ -94,14 +89,12 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
             <option value="manuale">Manuale</option>
             <option value="automatico">Automatico</option>
           </Field>
-          <small id="statusHelp" className="form-text text-muted">
-            Indica se il sensore ha un controllo sui lampioni (automatico) o se
-            i lampioni saranno modificati manualmente da un utente
-          </small>
-        </div>
-        <div className="form-group">
-          <label htmlFor="area">ID Area di Riferimento</label>
-          <Field name="area" type="number" className="form-control" readOnly />
+          <div>
+            <small id="statusHelp" className="form-text text-muted">
+              Indica se il sensore ha un controllo sui lampioni (automatico) o
+              se i lampioni saranno modificati manualmente da un utente
+            </small>
+          </div>
         </div>
         <button type="submit" className="btn btn-primary add">
           Crea

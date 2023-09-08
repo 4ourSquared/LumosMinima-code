@@ -95,7 +95,10 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
             <small id="IPHelp" className="form-text text-muted">
               Indica l'indirizzo IP del sensore.
             </small>
-            <ErrorMessage name="IP" />
+            <ErrorMessage
+              name="IP"
+              className="error-message alert alert-danger"
+            />
           </div>
 
           <div className="form-group">
@@ -104,7 +107,10 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
             <small id="locazioneHelp" className="form-text text-muted">
               Indica il luogo in cui è situato il sensore.
             </small>
-            <ErrorMessage name="luogo" />
+            <ErrorMessage
+              name="luogo"
+              className="error-message alert alert-danger"
+            />
           </div>
 
           <div className="form-group">
@@ -139,16 +145,12 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
             <ErrorMessage
               name="sig_time"
               component="div"
-              className="error-message"
+              className="error-message alert alert-danger"
             />
             <small id="sig_timeHelp" className="form-text text-muted">
               Indica la durata in secondi della segnalazione di movimento, utile
               qualora un lampione della zona interagisca in modalità pull.
             </small>
-          </div>
-          <div className="form-group">
-            <label htmlFor="area">ID Area di Riferimento</label>
-            <Field name="area" type="text" className="form-control" readOnly />
           </div>
 
           <button type="submit" className="btn btn-primary add">

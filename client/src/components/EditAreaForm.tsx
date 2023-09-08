@@ -142,11 +142,13 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({ areaId }) => {
               component="div"
               className="text-danger"
             />
-            <small id="intensityHelp" className="form-text text-muted">
-              Indica il tempo in secondi che deve intercorrere tra una verifica
-              e l'altra per rendere possibile l'interazione dei lampioni in
-              modalit&agrave; pull.
-            </small>
+            <div>
+              <small id="intensityHelp" className="form-text text-muted">
+                Indica il tempo in secondi che deve intercorrere tra una
+                verifica e l'altra per rendere possibile l'interazione dei
+                lampioni in modalit&agrave; pull.
+              </small>
+            </div>
           </div>
 
           <button type="submit" className="btn btn-primary add">

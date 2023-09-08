@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import useLogoutMechanism from "../auth/LogoutMechanism";
 
 interface BreadcrumbProps {}
 
@@ -9,12 +10,12 @@ const breadcrumbMap: { [key: string]: string } = {
   "/api/aree/:id": "Info Area",
   "/api/aree/:areaId/lampioni/add": "Aggiunta Lampione",
   "/api/aree/:areaId/sensori/add": "Aggiunta Sensore",
+  "/api/aree/:areaId/lampioni/edit/:id": "Modifica Lampione",
   "/api/aree/:areaId/lampioni/:id": "Info Lampione",
   "/api/aree/:areaId/sensori/:id": "Info Sensore",
   "/api/aree/edit/:id": "Modifica Area",
   "/api/aree/:areaId/sensori/edit/:id": "Modifica Sensore",
-  "/api/aree/:areaId/lampioni/edit/:id": "Modifica Lampione",
-  //Aggiungere qui gli altri path
+  "/api/aree/:areaId/lampioni/guasti": "Lista Lampioni Guasti",
 };
 
 /*
@@ -28,6 +29,14 @@ const Breadcrumb: React.FC<BreadcrumbProps> = () => {
     new RegExp(`^${key.replace(/:\w+/g, "\\w+")}$`).test(path)
   );
 
+  const navigate = useNavigate();
+  const logout = useLogoutMechanism();
+
+  const prepareLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (await logout()) navigate("/login");
+  };
+
   return (
     <nav aria-label="breadcrumb">
       <ol className="breadcrumb">
@@ -37,6 +46,15 @@ const Breadcrumb: React.FC<BreadcrumbProps> = () => {
         <li className="breadcrumb-item">
           {descrizione ? breadcrumbMap[descrizione] : "Pagina Sconosciuta"}
         </li>
+        <button
+          onClick={(e) => {
+            prepareLogout(e);
+          }}
+          className="btn btn-danger logout"
+        >
+          {" "}
+          Esci{" "}
+        </button>
       </ol>
     </nav>
   );

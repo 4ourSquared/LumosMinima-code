@@ -24,7 +24,7 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
       validationSchema={Yup.object({
         IP: Yup.string()
           .matches(
-            /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/,
+            /^(?:[0-255]{1,3}\.){3}[0-255]{1,3}$/,
             "Deve essere un indirizzo IP valido"
           )
           .required("Campo obbligatorio")
@@ -43,10 +43,6 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
     >
       <Form>
         <div className="form-group">
-          <label htmlFor="id">ID (Automatico)</label>
-          <Field name="id" type="text" className="form-control" readOnly />
-        </div>
-        <div className="form-group">
           <label htmlFor="IP">Indirizzo IP</label>
           <Field
             name="IP"
@@ -55,7 +51,11 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
             id="IP"
             placeholder=""
           />
-          <ErrorMessage name="IP" component="div" className="error-message" />
+          <ErrorMessage
+            name="IP"
+            component="div"
+            className="error-message alert alert-danger"
+          />
         </div>
         <div className="form-group">
           <label htmlFor="Locazione">Luogo di Installazione</label>
@@ -70,7 +70,7 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
           <ErrorMessage
             name="luogo"
             component="div"
-            className="error-message"
+            className="error-message alert alert-danger"
           />
           <small id="locazioneHelp" className="form-text text-muted">
             Indica il luogo in cui è situato il sensore.
@@ -91,9 +91,11 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
             <option value="9">9</option>
             <option value="10">10</option>
           </Field>
-          <small id="intensityHelp" className="form-text text-muted">
-            Indica il raggio d'azione (in metri) del sensore.
-          </small>
+          <div>
+            <small id="intensityHelp" className="form-text text-muted">
+              Indica il raggio d'azione (in metri) del sensore.
+            </small>
+          </div>
         </div>
         <div className="form-group">
           <label htmlFor="sig_time">Durata della Segnalazione</label>
@@ -114,10 +116,6 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
             Indica la durata in secondi della segnalazione di movimento, utile
             qualora un lampione della zona interagisca in modalità pull.
           </small>
-        </div>
-        <div className="form-group">
-          <label htmlFor="area">ID Area di Riferimento</label>
-          <Field name="area" type="number" className="form-control" readOnly />
         </div>
         <button type="submit" className="btn btn-primary add">
           Crea
