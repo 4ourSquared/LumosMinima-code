@@ -24,7 +24,7 @@ h1 {
 /* SEZIONE NAV */
 .breadcrumb {
   font-size: 1.5em;
-  border: solid 1px black;
+  /*border: solid 1px black;*/
 }
 
 .breadcrumb li {
@@ -38,7 +38,7 @@ main {
 
 h2 {
   padding: 0.2em 0 0.2em 0.5em;
-  border-bottom: 1px dashed black;
+  /*border-bottom: 1px dashed black;*/
 }
 
 /* TABELLA */
