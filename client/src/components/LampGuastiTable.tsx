@@ -74,7 +74,7 @@ const LampGuastiTable: React.FC<{ areaId: number }> = ({ areaId }) => {
   return (
     <div>
     <table
-      className="table table-hover align-middle"
+      className="table-responsive table table-hover align-middle"
       style={{ width: "90%" }} // Da spostare in un file CSS dedicato
     >
       <thead>

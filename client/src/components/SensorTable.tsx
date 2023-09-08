@@ -46,7 +46,7 @@ const SensorTable: React.FC<SensorTableProps> = ({areaId}) => {
     };
 
     return (
-        <div className="row justify-content-center">
+        <div className="table-responsive row">
             <Link
                 to={`/api/aree/${areaId}/sensori/add`}
                 type="button"
