@@ -1,57 +1,78 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
-import { isAmministratore, isManutentore } from "../auth/LoginState";
 import LampItem from "../types/LampItem";
+import {UserData,Role} from "../auth/Authorization"
+import { useConfirm } from "material-ui-confirm";
 
 interface LampTableProps {
-  lampioni: LampItem[];
-  onLampioneDeleted: (id: number) => void; // Aggiunta di una nuova prop
   areaId: number; // Aggiunta dell'ID dell'area come prop
 }
 
-const LampTable: React.FC<LampTableProps> = ({
-  lampioni,
-  onLampioneDeleted,
-  areaId,
-}) => {
+const LampTable: React.FC<LampTableProps> = ({areaId}) => {
+  const [lampioni, setLampioni] = useState<LampItem[]>([]);
+  const userData = useOutletContext<UserData>();
   const navigate = useNavigate();
-  const [isAdmin] = useState(isAmministratore());
-  const [isManut] = useState(isManutentore());
+  const confirm = useConfirm();
+
+  useEffect(() => {
+    const loadLampioni = async () => {
+        try {
+            const response = await axios.get<LampItem[]>(
+              `http://localhost:5000/api/aree/${areaId}/lampioni`
+            );
+            setLampioni(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+    loadLampioni();
+  }, []);
 
   const deleteLampione = async (id: number) => {
-    const confirmed = window.confirm(
-      "Sei sicuro di voler eliminare il lampione?"
-    );
-    try {
-      if (confirmed) {
-        await axios.delete(
-          `http://localhost:5000/api/aree/${areaId}/lampioni/${id}`
-        );
-        onLampioneDeleted(id); // Chiamata alla funzione di callback
+    confirm({
+      title:"Eliminazione lampione",
+      description:"Sei sicuro di voler eliminare il lampione?",
+      confirmationText:"OK",
+      cancellationText:"Annulla",
+    }).then(() => {
+      try{
+        axios.delete(`http://localhost:5000/api/aree/${areaId}/lampioni/${id}`);
+        setLampioni((cur) => cur.filter((item) => item.id !== id));
+      }catch(error){
+        alert("Errore nella cancellazione del lampione.");
+        console.error("Errore nella cancellazione del lampione: ", error);
       }
-    } catch (error) {
-      console.error("Errore nella cancellazione del lampione: ", error);
-    }
+    }).catch(() => {
+      console.log("Annulata cancellazione del lampione.")
+    })
   };
 
   const markGuasto = async (id: number) => {
-    try {
-      const response = await axios.put(
-        `http://localhost:5000/api/aree/${areaId}/lampioni/guasti/${id}`
-      );
-      const confirmed = window.confirm(response.data);
-    } catch (error: any) {
-      window.confirm(error.response.data);
-      console.error("Errore nell'aggiunta guasto:", error);
-    }
+    confirm({
+      title:"Segnalazione lampione guasto",
+      description:"Sei sicuro di voler segnare il seguente lampione come guasto?",
+      confirmationText:"OK",
+      cancellationText:"Annulla",
+    }).then(() => {
+      try{
+        axios.put(`http://localhost:5000/api/aree/${areaId}/lampioni/guasti/${id}`);
+        setLampioni((cur) => cur.map((item) => item.id===id?{...item,guasto:true}:item));
+      }catch(error){
+        console.error("Errore nella segnalazione del lampione come guasto: ", error);
+      }
+    }).catch(() => {
+      console.log("Annullata la segnalazione del lampione come guasto.")
+    });
   };
 
   const showListaGuasti = async () => {
     navigate(`/api/aree/${areaId}/lampioni/guasti`);
   };
 
+  
   return (
     <div className="row justify-content-center">
       <Link
@@ -74,7 +95,7 @@ const LampTable: React.FC<LampTableProps> = ({
             <th scope="col">Info</th>
             <th scope="col">Modifica</th>
             <th scope="col">Elimina</th>
-            {isAdmin && <th scope="col">Guasto</th>}
+            {userData.role === Role.Amministratore && <th scope="col">Guasto</th>}
           </tr>
         </thead>
         <tbody id="tableBody">
@@ -114,7 +135,7 @@ const LampTable: React.FC<LampTableProps> = ({
                   Elimina
                 </button>
               </td>
-              {isAdmin && (
+              {userData.role === Role.Amministratore && (
                 <td>
                   {lampione.guasto ? (
                     <>
@@ -141,7 +162,7 @@ const LampTable: React.FC<LampTableProps> = ({
           ))}
         </tbody>
       </table>
-      {isManut && (
+      {userData.role === Role.Manutentore && (
         <button className="btn btn-secondary" onClick={() => showListaGuasti()}>
           Vai alla lista guasti
         </button>

@@ -1,16 +1,18 @@
-export default function UseLoginMechanism() {
-    return (username:String,password:String): boolean => {
+import axios from "axios";
+import sha512 from "js-sha512";
 
-        if(username.startsWith("manut"))
-        {
-            document.cookie="user-type=manutentore"
-            return true
+
+export default function useLoginMechanism() : (username:string,password:string) => Promise<boolean> {
+    
+    return async (username: string, password: string) => {
+
+        try {
+            axios.defaults.baseURL = "http://localhost:5000/";
+            const response = await axios.post("/accounting/login", { username: username, password: sha512.sha512(password) });
+            return response.status === 200
+        } catch (error) {
+            console.log(error)
+            return false;
         }
-        else if(username.startsWith("admin"))
-        {
-            document.cookie="user-type=amministratore"
-            return true
-        }
-        return false
     }
 }

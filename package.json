@@ -9,8 +9,13 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@emotion/styled": "^11.11.0",
         "formik": "^2.4.2",
+        "material-ui-confirm": "^3.0.9",
         "mongoose": "^7.3.1",
         "yup": "^1.2.0"
+    },
+    "devDependencies": {
+        "@babel/preset-typescript": "^7.22.11"
     }
 }
