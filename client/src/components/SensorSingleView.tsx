@@ -14,7 +14,7 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
 
   useEffect(() => {
     fetchData();
-  }); //Anche se il compilatore da warning, mantenere l'array vuoto per evitare loop infiniti, dato che
+  }, [areaId, sensoreId]); //Anche se il compilatore da warning, mantenere l'array vuoto per evitare loop infiniti, dato che
   //effettua la richiesta ad ogni render della pagina
 
   const fetchData = async () => {
@@ -36,10 +36,10 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
           <h1>Info sul sensore {sens.id}</h1>
           <h3>Id: {sens.id}</h3>
           <ul>
-            <li>Interazione: {sens.iter}</li>
             <li>Indirizzo IP: {sens.IP}</li>
             <li>Luogo: {sens.luogo}</li>
             <li>Raggio d'azione: {sens.raggio}</li>
+            <li>Durata: {sens.sig_time} secondi</li>
             <li>ID Area di Riferimento: {sens.area}</li>
           </ul>
         </div>
@@ -49,8 +49,19 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
       <Link to={`/api/aree/${areaId}`} type="button" className="btn btn-primary">
         Indietro
       </Link>
+      <button onClick={() => sendSignal(areaId, sensoreId)} className="btn btn-warning">
+        Invia Segnale
+      </button>
     </div>
   );
 };
+
+function sendSignal(idA: number, idS: number) : void{
+  axios.defaults.baseURL = "http://localhost:5000/api/segnale/area";
+  axios.post(`/${idA}/sensore/${idS}/new`);
+  
+}
+
+
 
 export default SensorSingleView;
