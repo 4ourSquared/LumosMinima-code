@@ -8,28 +8,15 @@ import {UserData,Role} from "../auth/Authorization"
 import { useConfirm } from "material-ui-confirm";
 
 interface LampTableProps {
+  lamp: LampItem[];
   areaId: number; // Aggiunta dell'ID dell'area come prop
 }
 
-const LampTable: React.FC<LampTableProps> = ({areaId}) => {
-  const [lampioni, setLampioni] = useState<LampItem[]>([]);
+const LampTable: React.FC<LampTableProps> = ({lamp, areaId}) => {
+  const [lampioni, setLampioni] = useState<LampItem[]>(lamp);
   const userData = useOutletContext<UserData>();
   const navigate = useNavigate();
   const confirm = useConfirm();
-
-  useEffect(() => {
-    const loadLampioni = async () => {
-        try {
-            const response = await axios.get<LampItem[]>(
-              `http://localhost:5000/api/aree/${areaId}/lampioni`
-            );
-            setLampioni(response.data);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
-    loadLampioni();
-  }, []);
 
   const deleteLampione = async (id: number) => {
     confirm({

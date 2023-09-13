@@ -4,7 +4,6 @@ import { Link, useParams } from "react-router-dom";
 import AreaItem from "../types/AreaItem";
 import LampTable from "./LampTable";
 import SensorTable from "./SensorTable";
-import { ConfirmProvider } from "material-ui-confirm";
 
 
 const AreaSingleView: React.FC = () => {
@@ -54,7 +53,7 @@ const AreaSingleView: React.FC = () => {
     }, [areaId]);
 
     return (
-        <ConfirmProvider>
+        
         <div>
             {loading ? (
                 <p>Caricamento...</p>
@@ -72,7 +71,7 @@ const AreaSingleView: React.FC = () => {
                     <label htmlFor="edit-lum">
                         Modifica Luminosit&agrave; Area: <span> </span>
                     </label>
-                    <select value={this} name="edit-lum" className="form-group" onChange={e => getValueAndSend(e)}>
+                    <select value={this} name="edit-lum" className="form-group" size={1} onChange={e => getValueAndSend(e)}>
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -88,12 +87,14 @@ const AreaSingleView: React.FC = () => {
                     <h2>Lampioni Collegati</h2>
                     <div className="row">
                         <LampTable
+                            lamp={area.lampioni}
                             areaId={area.id}
                         />
                     </div>
                     <h2>Sensori Collegati</h2>
                     <div className="row">
                         <SensorTable
+                            sens = {area.sensori}
                             areaId={area.id}
                         />
                     </div>
@@ -105,7 +106,7 @@ const AreaSingleView: React.FC = () => {
                 Indietro
             </Link>
         </div>
-        </ConfirmProvider>
+        
     );
 };
 

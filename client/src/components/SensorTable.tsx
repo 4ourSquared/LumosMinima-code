@@ -5,26 +5,13 @@ import SensorItem from "../types/SensorItem";
 import { useConfirm } from "material-ui-confirm";
 
 interface SensorTableProps {
+    sens: SensorItem[];
     areaId: number; // Aggiunta dell'ID dell'area come prop
 }
-const SensorTable: React.FC<SensorTableProps> = ({areaId}) => {
-    const [sensori, setSensori] = useState<SensorItem[]>([]);
+const SensorTable: React.FC<SensorTableProps> = ({areaId, sens}) => {
+    const [sensori, setSensori] = useState<SensorItem[]>(sens);
     const navigate = useNavigate();
     const confirm = useConfirm();
-
-    useEffect(() => {
-        const loadSensori = async () => {
-            try {
-                const response = await axios.get<SensorItem[]>(
-                    `http://localhost:5000/api/aree/${areaId}/sensori`
-                );
-                setSensori(response.data);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-        loadSensori();
-    }, []);
 
     const deleteSensore = async (id: number) => {
         confirm({

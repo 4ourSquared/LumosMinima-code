@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
@@ -7,15 +6,16 @@ import 'react-tooltip/dist/react-tooltip.css'
 
 // Framework Grafici
 import 'bootstrap/dist/css/bootstrap.css'
+import { ConfirmProvider } from 'material-ui-confirm';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
 root.render(
-  <React.StrictMode>
+  <ConfirmProvider>
     <App />
-  </React.StrictMode>
+  </ConfirmProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
