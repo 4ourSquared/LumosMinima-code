@@ -1,17 +1,17 @@
 import axios from "axios";
 
+import { useConfirm } from "material-ui-confirm";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
+import { Role, UserData } from "../auth/Authorization";
 import LampItem from "../types/LampItem";
-import {UserData,Role} from "../auth/Authorization"
-import { useConfirm } from "material-ui-confirm";
 
 interface LampTableProps {
   areaId: number; // Aggiunta dell'ID dell'area come prop
 }
 
-const LampTable: React.FC<LampTableProps> = ({areaId}) => {
+const LampTable: React.FC<LampTableProps> = ({ areaId }) => {
   const [lampioni, setLampioni] = useState<LampItem[]>([]);
   const userData = useOutletContext<UserData>();
   const navigate = useNavigate();
@@ -19,62 +19,77 @@ const LampTable: React.FC<LampTableProps> = ({areaId}) => {
 
   useEffect(() => {
     const loadLampioni = async () => {
-        try {
-            const response = await axios.get<LampItem[]>(
-              `http://localhost:5000/api/aree/${areaId}/lampioni`
-            );
-            setLampioni(response.data);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
+      try {
+        const response = await axios.get<LampItem[]>(
+          `http://localhost:5000/api/aree/${areaId}/lampioni`
+        );
+        setLampioni(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
     loadLampioni();
   }, []);
 
   const deleteLampione = async (id: number) => {
     confirm({
-      title:"Eliminazione lampione",
-      description:"Sei sicuro di voler eliminare il lampione?",
-      confirmationText:"OK",
-      cancellationText:"Annulla",
-    }).then(() => {
-      try{
-        axios.delete(`http://localhost:5000/api/aree/${areaId}/lampioni/${id}`);
-        setLampioni((cur) => cur.filter((item) => item.id !== id));
-      }catch(error){
-        alert("Errore nella cancellazione del lampione.");
-        console.error("Errore nella cancellazione del lampione: ", error);
-      }
-    }).catch(() => {
-      console.log("Annulata cancellazione del lampione.")
+      title: "Eliminazione lampione",
+      description: "Sei sicuro di voler eliminare il lampione?",
+      confirmationText: "OK",
+      cancellationText: "Annulla",
     })
+      .then(() => {
+        try {
+          axios.delete(
+            `http://localhost:5000/api/aree/${areaId}/lampioni/${id}`
+          );
+          setLampioni((cur) => cur.filter((item) => item.id !== id));
+        } catch (error) {
+          alert("Errore nella cancellazione del lampione.");
+          console.error("Errore nella cancellazione del lampione: ", error);
+        }
+      })
+      .catch(() => {
+        console.log("Annulata cancellazione del lampione.");
+      });
   };
 
   const markGuasto = async (id: number) => {
     confirm({
-      title:"Segnalazione lampione guasto",
-      description:"Sei sicuro di voler segnare il seguente lampione come guasto?",
-      confirmationText:"OK",
-      cancellationText:"Annulla",
-    }).then(() => {
-      try{
-        axios.put(`http://localhost:5000/api/aree/${areaId}/lampioni/guasti/${id}`);
-        setLampioni((cur) => cur.map((item) => item.id===id?{...item,guasto:true}:item));
-      }catch(error){
-        console.error("Errore nella segnalazione del lampione come guasto: ", error);
-      }
-    }).catch(() => {
-      console.log("Annullata la segnalazione del lampione come guasto.")
-    });
+      title: "Segnalazione lampione guasto",
+      description:
+        "Sei sicuro di voler segnare il seguente lampione come guasto?",
+      confirmationText: "OK",
+      cancellationText: "Annulla",
+    })
+      .then(() => {
+        try {
+          axios.put(
+            `http://localhost:5000/api/aree/${areaId}/lampioni/guasti/${id}`
+          );
+          setLampioni((cur) =>
+            cur.map((item) =>
+              item.id === id ? { ...item, guasto: true } : item
+            )
+          );
+        } catch (error) {
+          console.error(
+            "Errore nella segnalazione del lampione come guasto: ",
+            error
+          );
+        }
+      })
+      .catch(() => {
+        console.log("Annullata la segnalazione del lampione come guasto.");
+      });
   };
 
   const showListaGuasti = async () => {
     navigate(`/api/aree/${areaId}/lampioni/guasti`);
   };
 
-  
   return (
-    <div className="row justify-content-center">
+    <div className="table-responsive row">
       <Link
         to={`/api/aree/${areaId}/lampioni/add`}
         type="button"
@@ -82,10 +97,7 @@ const LampTable: React.FC<LampTableProps> = ({areaId}) => {
       >
         Aggiungi Lampione
       </Link>
-      <table
-        className="table table-hover align-middle"
-        style={{ width: "90%" }}
-      >
+      <table className="table table-hover align-middle">
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -95,7 +107,9 @@ const LampTable: React.FC<LampTableProps> = ({areaId}) => {
             <th scope="col">Info</th>
             <th scope="col">Modifica</th>
             <th scope="col">Elimina</th>
-            {userData.role === Role.Amministratore && <th scope="col">Guasto</th>}
+            {userData.role === Role.Amministratore && (
+              <th scope="col">Guasto</th>
+            )}
           </tr>
         </thead>
         <tbody id="tableBody">

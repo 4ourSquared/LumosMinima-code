@@ -2,16 +2,20 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import LampItem from "../types/LampItem";
+import Breadcrumb from "./Breadcrumb";
+import Footer from "./Footer";
 
-interface LampSingleViewProps{
+interface LampSingleViewProps {
   areaId: number;
   lampioneId: number;
 }
 
-const LampSingleView: React.FC<LampSingleViewProps> = ({areaId, lampioneId}) => {
+const LampSingleView: React.FC<LampSingleViewProps> = ({
+  areaId,
+  lampioneId,
+}) => {
   const [lamp, setLamp] = useState<LampItem | null>(null);
   const { id } = useParams<{ id: string }>(); // Accesso al parametro id passandolo a useParams()
-  
 
   useEffect(() => {
     fetchData();
@@ -21,7 +25,9 @@ const LampSingleView: React.FC<LampSingleViewProps> = ({areaId, lampioneId}) => 
   const fetchData = async () => {
     axios.defaults.baseURL = "http://localhost:5000/api/";
     try {
-      const response = await axios.get<LampItem>(`aree/${areaId}/lampioni/${lampioneId}`);
+      const response = await axios.get<LampItem>(
+        `aree/${areaId}/lampioni/${lampioneId}`
+      );
       setLamp(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -35,6 +41,7 @@ const LampSingleView: React.FC<LampSingleViewProps> = ({areaId, lampioneId}) => 
       {lamp ? (
         <div key={lamp.id}>
           <h1>Info sul lampione {lamp.id}</h1>
+          <Breadcrumb />
           <h3>Id: {lamp.id}</h3>
           <ul>
             <li>Stato: {lamp.stato}</li>
@@ -46,14 +53,19 @@ const LampSingleView: React.FC<LampSingleViewProps> = ({areaId, lampioneId}) => 
         </div>
       ) : (
         <div>
-        <p>Nessun dato disponibile</p>
-        <p>{areaId}</p>
-        <p>{lamp}</p>
+          <p>Nessun dato disponibile</p>
+          <p>{areaId}</p>
+          <p>{lamp}</p>
         </div>
       )}
-      <Link to={`/api/aree/${areaId}`} type="button" className="btn btn-primary">
+      <Link
+        to={`/api/aree/${areaId}`}
+        type="button"
+        className="btn btn-primary"
+      >
         Indietro
       </Link>
+      <Footer />
     </div>
   );
 };
