@@ -1,7 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams,useOutletContext } from "react-router-dom";
 import SensorItem from "../types/SensorItem";
+import {UserData,Role} from "../auth/Authorization"
+
 
 interface SensorSingleViewProps{
   areaId: number;
@@ -10,6 +12,7 @@ interface SensorSingleViewProps{
 
 const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) => {
   const [sens, setSens] = useState<SensorItem | null>(null);
+  const userData = useOutletContext<UserData>();
   const { id } = useParams<{ id: string }>(); // Accesso al parametro id passandolo a useParams()
 
   useEffect(() => {
@@ -49,9 +52,13 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
       <Link to={`/api/aree/${areaId}`} type="button" className="btn btn-primary">
         Indietro
       </Link>
+      {(userData.role === Role.Amministratore || userData.role === Role.Manutentore) &&
+       
       <button onClick={() => sendSignal(areaId, sensoreId)} className="btn btn-warning">
         Invia Segnale
       </button>
+
+      }
     </div>
   );
 };

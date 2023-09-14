@@ -1,5 +1,4 @@
 import axios from "axios";
-
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
@@ -75,13 +74,15 @@ const LampTable: React.FC<LampTableProps> = ({areaId}) => {
   
   return (
     <div className="row justify-content-center">
-      <Link
-        to={`/api/aree/${areaId}/lampioni/add`}
-        type="button"
-        className="btn btn-primary"
-      >
-        Aggiungi Lampione
-      </Link>
+      {userData.role === Role.Amministratore &&
+        <Link
+          to={`/api/aree/${areaId}/lampioni/add`}
+          type="button"
+          className="btn btn-primary"
+        >
+          Aggiungi Lampione
+        </Link>
+      }
       <table
         className="table table-hover align-middle"
         style={{ width: "90%" }}
@@ -93,9 +94,14 @@ const LampTable: React.FC<LampTableProps> = ({areaId}) => {
             <th scope="col">Intensità</th>
             <th scope="col">Zona Illuminata</th>
             <th scope="col">Info</th>
-            <th scope="col">Modifica</th>
-            <th scope="col">Elimina</th>
-            {userData.role === Role.Amministratore && <th scope="col">Guasto</th>}
+
+            {userData.role === Role.Amministratore &&
+                    <>
+                      <th scope="col">Modifica</th>
+                      <th scope="col">Elimina</th>
+                      <th scope="col">Guasto</th>
+                    </>
+            }
           </tr>
         </thead>
         <tbody id="tableBody">
@@ -115,48 +121,50 @@ const LampTable: React.FC<LampTableProps> = ({areaId}) => {
                   Info
                 </button>
               </td>
-              <td>
-                <button
-                  className="btn btn-outline-warning"
-                  onClick={() => {
-                    navigate(
-                      `/api/aree/${areaId}/lampioni/edit/${lampione.id}`
-                    );
-                  }}
-                >
-                  Modifica
-                </button>
-              </td>
-              <td>
-                <button
-                  className="btn btn-outline-danger"
-                  onClick={() => deleteLampione(lampione.id)}
-                >
-                  Elimina
-                </button>
-              </td>
               {userData.role === Role.Amministratore && (
+                <>
                 <td>
-                  {lampione.guasto ? (
-                    <>
-                      <span
-                        style={{ cursor: "default" }}
-                        data-tooltip-id={`x${lampione.id}`}
-                        data-tooltip-content="Già marcato come guasto"
-                      >
-                        {"\u274c"}
-                      </span>
-                      <Tooltip id={`x${lampione.id}`} />
-                    </>
-                  ) : (
-                    <button
-                      className="btn btn-dark"
-                      onClick={() => markGuasto(lampione.id)}
-                    >
-                      Segnala guasto
-                    </button>
-                  )}
+                  <button
+                    className="btn btn-outline-warning"
+                    onClick={() => {
+                      navigate(
+                        `/api/aree/${areaId}/lampioni/edit/${lampione.id}`
+                      );
+                    }}
+                  >
+                    Modifica
+                  </button>
                 </td>
+                <td>
+                <button
+                   className="btn btn-outline-danger"
+                   onClick={() => deleteLampione(lampione.id)}
+                 >
+                  Elimina
+                 </button>
+                 </td>
+                  <td>
+                    {lampione.guasto ? (
+                      <>
+                        <span
+                          style={{ cursor: "default" }}
+                          data-tooltip-id={`x${lampione.id}`}
+                          data-tooltip-content="Già marcato come guasto"
+                        >
+                          {"\u274c"}
+                        </span>
+                        <Tooltip id={`x${lampione.id}`} />
+                      </>
+                    ) : (
+                      <button
+                        className="btn btn-dark"
+                        onClick={() => markGuasto(lampione.id)}
+                      >
+                        Segnala guasto
+                      </button>
+                    )}
+                  </td>
+                  </>
               )}
             </tr>
           ))}

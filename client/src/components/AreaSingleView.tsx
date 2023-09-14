@@ -1,14 +1,17 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useOutletContext } from "react-router-dom";
 import AreaItem from "../types/AreaItem";
 import LampTable from "./LampTable";
 import SensorTable from "./SensorTable";
 import { ConfirmProvider } from "material-ui-confirm";
+import {UserData,Role} from "../auth/Authorization";
+
 
 
 const AreaSingleView: React.FC = () => {
     const [area, setArea] = useState<AreaItem | null>(null);
+    const userData = useOutletContext<UserData>();
     const [loading, setLoading] = useState(true);
     const { areaId } = useParams<{ areaId: string }>();
 
@@ -69,22 +72,26 @@ const AreaSingleView: React.FC = () => {
                         <li>Longitudine: {area.longitudine}</li>
                         <li>Polling Time: {area.polling}</li>
                     </ul>
-                    <label htmlFor="edit-lum">
-                        Modifica Luminosit&agrave; Area: <span> </span>
-                    </label>
-                    <select value={this} name="edit-lum" className="form-group" onChange={e => getValueAndSend(e)}>
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                    </select>
+                    {userData.role === Role.Operatore &&
+                        <>
+                        <label htmlFor="edit-lum">
+                            Modifica Luminosit&agrave; Area: <span> </span>
+                        </label>
+                        <select value={this} name="edit-lum" className="form-group" onChange={e => getValueAndSend(e)}>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                        </>
+                    }
                     <h2>Lampioni Collegati</h2>
                     <div className="row">
                         <LampTable

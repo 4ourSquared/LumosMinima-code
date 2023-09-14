@@ -88,23 +88,35 @@ const RouterComponent: React.FC = () => {
       <Routes>
         <Route path="login" element={<LoginPage />} />
 
-        <Route element={ <GuardedRoute requiredRole={Role.Manutentore} redirectRoute="/" />}>
+        <Route element={ <GuardedRoute requiredRole={Role.Manutentore} redirectRoute="/login" />}>
             <Route
               path="api/aree/:areaId/lampioni/guasti"
               element={<LampGuastiWrapper />}
             />
         </Route>
-        <Route element={<GuardedRoute redirectRoute="/login" />}>
-          <Route path="api/aree/add" element={<NewAreaPage />} />
-          <Route
+
+        <Route element={<GuardedRoute requiredRole={Role.Amministratore} redirectRoute="/login" />}>
+            <Route path="api/aree/add" element={<NewAreaPage />} />
+
+            <Route
             path="api/aree/edit/:areaId"
             element={<EditAreaFormWrapper />}
-          />
+            />
+
+        </Route>
+
+        <Route element={<GuardedRoute redirectRoute="/login" />}>
+
           <Route path="api/aree/:areaId" element={<AreaSingleView />} />
           <Route
             path="api/aree/:areaId/lampioni/:lampioneId"
             element={<LampSingleViewWrapper />}
           />
+
+        </Route>
+
+        <Route element={<GuardedRoute requiredRole={Role.Amministratore} redirectRoute="/login" />}>
+
           <Route
             path="api/aree/:areaId/lampioni/edit/:lampioneId"
             element={<EditLampFormWrapper />}
@@ -113,10 +125,19 @@ const RouterComponent: React.FC = () => {
             path="api/aree/:areaId/lampioni/add"
             element={<NewLampPageWrapper />}
           />
+        
+        </Route>
+
+        <Route element={<GuardedRoute redirectRoute="/login" />}>
+
           <Route
             path="api/aree/:areaId/sensori/:sensoreId"
             element={<SensSingleViewWrapper />}
           />
+        </Route>
+
+        <Route element={<GuardedRoute requiredRole={Role.Amministratore} redirectRoute="/login" />}>
+
           <Route
             path="api/aree/:areaId/sensori/edit/:sensoreId"
             element={<EditSensFormWrapper />}
@@ -125,7 +146,13 @@ const RouterComponent: React.FC = () => {
             path="api/aree/:areaId/sensori/add"
             element={<NewSensPageWrapper />}
           />
+
+        </Route>
+
+        <Route element={<GuardedRoute redirectRoute="/login" />}>
+
           <Route path="" element={<PageFullView />} />
+          
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />{" "}
