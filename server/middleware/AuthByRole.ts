@@ -3,7 +3,7 @@ import type {RequestHandler} from "express"
 export enum Role {
 	Invalid = -1,
 	None = 0,
-  Base = 1,
+  Operatore = 1,
 	Manutentore = 2,
 	Amministratore = 3,
   Any = 4
@@ -11,10 +11,10 @@ export enum Role {
 
 const authByRole : (requiredRole:Role[]) => RequestHandler = (requiredRole:Role[]) => {
     return (req,res,next) => {
-        const actualRole = res.locals.role
+      const actualRole : number = parseInt(res.locals.role)
 
        let success: boolean = false
-       
+         
        if(requiredRole.at(0) === Role.Any)
          success = actualRole > Role.None
        else

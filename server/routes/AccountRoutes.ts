@@ -155,7 +155,7 @@ async function createAdmin() {
             username: "admin",
             email: "admin" + DOMAIN,
             password: PASSWORD,
-            privilege: "amministratore",
+            privilege: 3,
         });
 
     if(res.status == 200)
@@ -164,7 +164,7 @@ async function createAdmin() {
         console.log("Errore nella creazione dell'admin");
 }
 
-async function createUsers(id: number) {
+async function createOperators(id: number) {
     if(await UserSchema.findOne({username: "user" + id})){
         console.log("User" + id + " già presente");
         return;
@@ -175,7 +175,7 @@ async function createUsers(id: number) {
             username: "user" + id,
             email: "user" + id + DOMAIN,
             password: PASSWORD,
-            privilege: "base",
+            privilege: 1,
         });
 
     if(res.status == 200)
@@ -195,7 +195,7 @@ async function createManutentore(id: number) {
             username: "manutentore" + id,
             email: "manutentore" + id + DOMAIN,
             password: PASSWORD,
-            privilege: "manutentore",
+            privilege: 2,
         });
 
     if(res.status == 200)
@@ -207,7 +207,7 @@ async function createManutentore(id: number) {
 createAdmin();
 
 for(let i = 1; i <= 10; i++){
-    createUsers(i);
+    createOperators(i);
 }
 
 for(let i = 1; i <= 10; i++){

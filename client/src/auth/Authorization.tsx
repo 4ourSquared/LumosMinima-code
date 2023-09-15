@@ -15,11 +15,6 @@ export interface UserData {
 
 export default async function getAuthorizationLevel() : Promise<UserData>
 {
-    const map = new Map([
-        ["operatore",Role.Operatore],
-        ["manutentore",Role.Manutentore],
-        ["amministratore",Role.Amministratore]
-    ])
 
     try {
         console.log("Spedisco la richiesta di autenticazione")
@@ -27,8 +22,8 @@ export default async function getAuthorizationLevel() : Promise<UserData>
         const response = await axios.get("/accounting/verify");
         if(response.status === 200)
         {
-            const role: string = response.data.role
-            return {role: map.get(role)!}
+            const role: number = response.data.role
+            return {role: role}
         }
         else if (response.status === 403)
             return {role:Role.None}
