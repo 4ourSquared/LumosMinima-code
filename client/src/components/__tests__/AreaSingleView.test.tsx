@@ -1,227 +1,77 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, render, renderHook, fireEvent, screen, waitFor, getByTestId, queryByTestId, getByPlaceholderText } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axios from "axios";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import AreaSingleView from "../AreaSingleView";
+import React from "react";
+import { getValue } from "@testing-library/user-event/dist/utils";
 
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-test("del fetch", async () => {
-  mockedAxios.get.mockResolvedValue({
-    data: {
-      id: 1,
-      nome: "test",
-      descrizione: "test",
-      latitudine: "1.1",
-      longitudine: "1.1",
-      polling: 10,
-      sensori: [
-        {
+test("fetch dei dati", async () => {
+
+    mockedAxios.get.mockResolvedValue({
+        data: {
           id: 1,
-          IP: "1.1.1.1",
-          luogo: "test",
-          raggio: 10,
-          area: 1,
-          sig_time: 20,
+          nome: "test",
+          descrizione: "test",
+          latitudine: "1.1",
+          longitudine: "1.1",
+          polling: 10,
+          sensori: [
+            {
+              id: 1,
+              IP: "1.1.1.1",
+              luogo: "test",
+              raggio: 10,
+              area: 1,
+              sig_time: 20,
+            },
+          ],
+          lampioni: [
+            {
+              id: 1,
+              stato: "attivo",
+              lum: 5,
+              luogo: "test",
+              area: 1,
+              guasto: false,
+              mode: "manuale",
+            },
+          ],
         },
-      ],
-      lampioni: [
-        {
-          id: 1,
-          stato: "attivo",
-          lum: 5,
-          luogo: "test",
-          area: 1,
-          guasto: false,
-          mode: "manuale",
-        },
-      ],
-    },
-  });
-
-  mockedAxios.put.mockResolvedValue({
-    status: 200,
-  });
-
-  render(
-    <MemoryRouter initialEntries={["/tests"]}>
-      <Routes>
-        <Route path="/:areaId" element={<AreaSingleView />} />
-      </Routes>
-    </MemoryRouter>
-  );
-
-  await act(async () => {
-    userEvent.selectOptions(screen.getByRole("select"), ["10"]);
-    await waitFor(() => {
-      expect(
-        screen.getByRole("option", { name: "10" }).ariaSelected
-      ).toBeInTheDocument();
     });
-  });
+
+    mockedAxios.put.mockResolvedValue({
+        status: 200,
+    });
+
+    const{getByText} = render(
+    <MemoryRouter initialEntries={["/:areaId"]}>
+        <Routes>
+            <Route path="/:areaId" element={<AreaSingleView />} />
+        </Routes>
+    </MemoryRouter>
+    );
+
+    expect(getByText("Caricamento...")).toBeInTheDocument();
+    await waitFor(()=>{
+        fireEvent.click(screen.getByRole("combobox"));
+        fireEvent.change(screen.getByRole("combobox"), {target: {value: 10}});
+    })
 });
 
-/*
-jest.mock("axios")
-const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-describe("Test del modulo AreaSingleView", () => {
+test("errore nel fetch dei dati", async () => {
 
-    test("Test del fetch", async () => {
-        //mock in beforeAll() non funziona, problema già documentato
-        mockedAxios.get.mockResolvedValue({
-            data: [
-                { 
-                    id: 1,
-                    nome: "test",
-                    descrizione: "test",
-                    latitudine: "test",
-                    longitudine: "test",
-                    sensori: [
-                        {
-                            id: 1,
-                            iter: "manuale",
-                            IP: "1.1.1.1",
-                            luogo: "test",
-                            raggio: 10,
-                            area: 1
-                        }
-                    ],
-                    lampioni: [
-                        {
-                            id: 1,
-                            stato: "test",
-                            lum: 5,
-                            luogo: "test",
-                            area: 1,
-                            guasto:false
-                        }
-                    ]
-                }
-            ]
-        })
-    
-        render(
-            <MemoryRouter initialEntries={["/tests"]}>
-                <Routes>
-                    <Route path="/:areaId" element={<AreaSingleView/>} />
-                </Routes>
-            </MemoryRouter>
-            
-        )
+    const{getByText} = render(
+    <MemoryRouter initialEntries={["/:areaId"]}>
+        <Routes>
+            <Route path="/:areaId" element={<AreaSingleView />} />
+        </Routes>
+    </MemoryRouter>
+    );
 
-        await waitFor(()=> {
-            const rows = screen.getAllByRole("table")
-            //renderizza le tabelle?
-            expect(rows.length).toEqual(2)
-            //ci sono lampione e sensore?
-            const headers = screen.getAllByRole("rowheader")
-            expect(headers.length).toEqual(2)
-            }
-        )
-
-    })
-    
-    /*
-    test("Scomparsa del lampione dopo cancellazione", async () => {
-        mockedAxios.get.mockResolvedValue({
-            data: [
-                { 
-                    id: 1,
-                    nome: "test",
-                    descrizione: "test",
-                    latitudine: "test",
-                    longitudine: "test",
-                    lampioni: [
-                        {
-                            id: 1,
-                            stato: "test",
-                            lum: 5,
-                            luogo: "test",
-                            area: 1,
-                            guasto:false
-                        }
-                    ],
-                    sensori: []
-                }
-            ]
-        })
-    
-        mockedAxios.delete.mockResolvedValue("OK")
-
-        render(
-            <ConfirmProvider>
-                <MemoryRouter initialEntries={["/tests"]}>
-                    <Routes>
-                        <Route path="/:areaId" element={<AreaSingleView/>} />
-                    </Routes>
-                </MemoryRouter>
-            </ConfirmProvider>
-        )
-
-        let button: HTMLElement | null = null
-        await waitFor(() => {
-                button = screen.getByText("Elimina",{selector:"button"})
-        })
-        
-        userEvent.click(button!)
-        const ok = await screen.findByText("OK",{selector:"button"});
-        userEvent.click(ok)
-
-        const headers = await screen.findAllByRole("rowheader")        
-        expect(headers.length).toEqual(1)
-    })
-    
-    
-    test("Scomparsa del sensore dopo cancellazione", async () => {
-        mockedAxios.get.mockResolvedValue({
-            data: [
-                { 
-                    id: 1,
-                    nome: "aaaa",
-                    descrizione: "test",
-                    latitudine: "test",
-                    longitudine: "test",
-                    lampioni: [],
-                    sensori: [
-                        {
-                            id: 1,
-                            iter: "manuale",
-                            IP: "1.1.1.1",
-                            luogo: "test",
-                            raggio: 10,
-                            area: 1
-                        }
-                    ]
-                }
-            ]
-        })
-    
-        mockedAxios.delete.mockResolvedValue("OK")
-
-        render(
-            <ConfirmProvider>
-                <MemoryRouter initialEntries={["/tests"]}>
-                    <Routes>
-                        <Route path="/:areaId" element={<AreaSingleView/>} />
-                    </Routes>
-                </MemoryRouter>
-            </ConfirmProvider>
-        )
-
-        let button: HTMLElement | null = null
-        await waitFor(() => {
-                //button = screen.getAllByText("Elimina",{selector:"button"}).at(0)!
-                button = screen.getByText("Elimina",{selector:"button"})
-        })
-        
-        userEvent.click(button!)
-        const ok = await screen.findByText("OK",{selector:"button"});
-        userEvent.click(ok)
-
-        const headers = await screen.findAllByRole("rowheader")        
-        expect(headers.length).toEqual(1)
-    })
-    
-})*/
+    expect(getByText("Caricamento...")).toBeInTheDocument();
+});
