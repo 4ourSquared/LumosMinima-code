@@ -1,15 +1,22 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import {MemoryRouter,Routes,Route} from 'react-router-dom'
 import LampGuastiTable from "../LampGuastiTable";
 import axios from 'axios'
 import AreaSingleView from "../AreaSingleView";
 import { ConfirmProvider } from "material-ui-confirm";
-
-import LampGuastiPage from "../LampGuastiPage";
+import {Role} from "../../auth/Authorization"
 
 
 jest.mock("axios")
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+const mockUserData = {role:Role.Amministratore}
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom"),
+    useOutletContext: () => mockUserData
+    })
+);
 
 describe("Test del modulo LampGuastiTable", () => {
     test("Test della funzione load", async () => {
@@ -75,19 +82,18 @@ describe("Test del modulo LampGuastiTable", () => {
 
         render(
                 <ConfirmProvider>
-                    <MemoryRouter initialEntries={["/tests"]}>
+                    <MemoryRouter initialEntries={["/"]}>
                         <Routes>
-                            <Route path="/:areaId" element={<AreaSingleView/>} />
+                            <Route path="/" element={<LampGuastiTable areaId={0}/>}/>
                         </Routes>
                     </MemoryRouter>
                 </ConfirmProvider>
-            
         )
         
         
         let button: HTMLElement | null = null
         await waitFor(() => {
-                button = screen.getByText("Elimina",{selector:"button"})
+                button = screen.getByText("Marca come riparato",{selector:"button"})
         })
         let header = await screen.findAllByRole("rowheader")        
         expect(header.length).toEqual(1)
@@ -102,5 +108,42 @@ describe("Test del modulo LampGuastiTable", () => {
 
     test("Test click su Annulla al momento di conferma della rimozione della lista", async () => {
 
+        mockedAxios.get.mockResolvedValue({ 
+            data:[
+            {
+                id: 1,
+                stato: "test",
+                lum: 5,
+                luogo: "test",
+                area: 1,
+                guasto:true
+            }
+        ]})
+
+        render(
+            <ConfirmProvider>
+                <MemoryRouter initialEntries={["/"]}>
+                    <Routes>
+                        <Route path="/" element={<LampGuastiTable areaId={0}/>}/>
+                    </Routes>
+                </MemoryRouter>
+            </ConfirmProvider>
+        )
+
+        let button: HTMLElement | null = null
+        await waitFor(() => {
+            button = screen.getByText("Marca come riparato",{selector:"button"})
+        })
+        let header = await screen.findAllByRole("rowheader")        
+        expect(header.length).toEqual(1)
+
+        userEvent.click(button!)
+        const cancel = await screen.findByText("Annulla",{selector:"button"});
+
+        userEvent.click(cancel)
+        
+        header = await screen.findAllByRole("rowheader")        
+        expect(header.length).toEqual(1)
+        
     })
 })
