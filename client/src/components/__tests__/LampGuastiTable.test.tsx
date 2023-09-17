@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 import {MemoryRouter,Routes,Route} from 'react-router-dom'
 import LampGuastiTable from "../LampGuastiTable";
 import axios from 'axios'
-import AreaSingleView from "../AreaSingleView";
 import { ConfirmProvider } from "material-ui-confirm";
 import {Role} from "../../auth/Authorization"
 

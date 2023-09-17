@@ -64,6 +64,7 @@ describe("Test del modulo AreaSingleView", () => {
             </MemoryRouter>
         )
 
+        expect(screen.getByText("Caricamento...")).toBeInTheDocument();
         await waitFor(()=> {
             const rows = screen.getAllByRole("table")
             //renderizza le tabelle?
@@ -187,3 +188,4 @@ describe("Test del modulo AreaSingleView", () => {
     })
     
 })
+

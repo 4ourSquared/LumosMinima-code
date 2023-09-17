@@ -1,19 +1,25 @@
 import { render, screen } from "@testing-library/react";
-import Content from "../Content";
+import axios from "axios";
 import { BrowserRouter as Router } from "react-router-dom";
+import Content from "../Content";
 
-test("Render della pagina 'Content' dove 'AreaTable' è vuota", () => {
-    render(
-        <Router>
-            <Content />
-        </Router>
-    );
+jest.mock("axios");
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+mockedAxios.get.mockResolvedValue([]);
 
-    const title = screen.getByText(/Aree illuminate/i);
-    const button = screen.getByText(/Aggiungi Area/i);
-    const table = screen.getByRole("table");
+test("Render della pagina 'Content' dove 'AreaTable' è vuota", async () => {
+  render(
+    <Router>
+      <Content />
+    </Router>
+  );
 
-    expect(title).toBeInTheDocument();
-    expect(button).toBeInTheDocument();
-    expect(table).toBeInTheDocument();
-}); 
+  await screen.findByText(/Aree illuminate/i);
+  const title = screen.getByText(/Aree illuminate/i);
+
+  const table = screen.getByRole("table");
+  expect(table).toBeInTheDocument();
+  expect(title).toBeInTheDocument();
+
+  expect(mockedAxios.get).toHaveBeenCalled();
+});

@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import {MemoryRouter,Routes,Route} from 'react-router-dom'
 import SensorSingleView from "../SensorSingleView";
 import axios from 'axios'
@@ -31,6 +32,34 @@ describe("Test del modulo SensorSingleView", () => {
         await waitFor(() => {
             const title = screen.getByText("Info sul sensore 1")
             expect(title).not.toBeNull()
+        })
+    })
+
+    test("Test della funzione sendSignal", async () => {
+
+        const sendSignal = jest.fn(()=>{console.log("Segnale inviato")})
+        
+        mockedAxios.post.mockImplementation(async ()=>{ 
+            sendSignal();
+            return null
+        })
+
+        render(
+            <MemoryRouter initialEntries={["/"]}>
+                <Routes>
+                    <Route path="/" element={<SensorSingleView areaId={1} sensoreId={1}/>} />
+                </Routes>
+            </MemoryRouter>
+        )
+
+        let button: Element | null = null
+        await waitFor(() => {
+            button = screen.getByText("Invia Segnale")            
+        })
+        userEvent.click(button!)
+
+        await waitFor(() => {
+            expect(sendSignal).toBeCalledTimes(1)
         })
     })
 })

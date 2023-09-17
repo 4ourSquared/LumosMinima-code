@@ -32,3 +32,17 @@ describe("Test del modulo Header", () => {
 
     })
 })
+test("Render del footer", async () => {
+    render(
+        <MemoryRouter>
+            <Header />
+        </MemoryRouter>
+    );
+
+    const nome = screen.getByText(/Lumos Minima/i);
+    const breadcrumb = screen.getByText(/Home/i);
+
+    expect(nome).toBeInTheDocument();
+    expect(breadcrumb).toBeInTheDocument();
+
+});

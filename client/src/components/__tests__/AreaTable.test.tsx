@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import AreaTable from "../AreaTable";
 import {MemoryRouter,Routes,Route} from 'react-router-dom'
 import axios from 'axios'
-import { ConfirmProvider } from "material-ui-confirm";
+import { ConfirmProvider } from 'material-ui-confirm';
 
 jest.mock("axios")
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -46,8 +46,7 @@ describe("Test del modulo AreaTable", () => {
         ]
     })
 
-    render(
-        
+    render(        
         <MemoryRouter initialEntries={["/"]}>
             <Routes>
                 <Route path="/" element={<AreaTable/>} />
@@ -63,93 +62,120 @@ describe("Test del modulo AreaTable", () => {
 
     })
 
-    test("Test della cancellazione", async () => {
+    test("Test pulsante Modifica", async () => {
 
-    //richiesta delete fittizia
-    mockedAxios.delete.mockResolvedValue("OK")
-
-    mockedAxios.get.mockResolvedValue({
-        data: [
-            { 
-                id: 1,
-                nome: "a1",
-                descrizione: "d1",
-                latitudine: "prova",
-                longitudine: "prova",
-                polling: 10,
-                sensori: [],
-                lampioni: []
-            }
-        ]
-    })
-
-    render(
-        
-        <ConfirmProvider>
-            <MemoryRouter initialEntries={["/"]}>
-                <Routes>
-                    <Route path="/" element={<AreaTable/>} />
-                </Routes>
-            </MemoryRouter>
-        </ConfirmProvider>
-        
-    )
-    
-    let button: Element | null = null
-    await waitFor(async () => {
-            button = screen.getByText("Elimina",{selector:"button"})
-    })
-    
-    userEvent.click(button!)
-    const ok = await screen.findByText("OK",{selector:"button"});
-    userEvent.click(ok)
-
-    const rows = await screen.findAllByRole("row")
-        
-    expect(rows.length).toEqual(1)
-           
-    })
-
-    test("Test click su Annulla al momento di conferma della cancellazione", async () => {
-        
         mockedAxios.get.mockResolvedValue({
             data: [
                 { 
                     id: 1,
-                    nome: "a1",
-                    descrizione: "d1",
-                    latitudine: "prova",
-                    longitudine: "prova",
+                    nome: "test",
+                    descrizione: "test",
+                    latitudine: "1.1",
+                    longitudine: "1.1",
                     polling: 10,
                     sensori: [],
                     lampioni: []
-                }
+                },
             ]
         })
 
         render(
-                <ConfirmProvider>
-                    <MemoryRouter initialEntries={["/"]}>
-                        <Routes>
-                            <Route path="/" element={<AreaTable/>} />
-                        </Routes>
-                    </MemoryRouter>
-                </ConfirmProvider>
-            
-        )
+            <MemoryRouter>
+                <AreaTable />
+            </MemoryRouter>
+        );
 
-        let button: Element | null = null
+
         await waitFor(async () => {
-            button = screen.getByText("Elimina",{selector:"button"})
+            let button = screen.getByText("Modifica",{selector:"button"});
+            userEvent.click(button!);
+        })
+    });
+
+    test("Test della cancellazione", async () => {
+
+        mockedAxios.get.mockResolvedValue({
+            data: [
+                { 
+                    id: 1,
+                    nome: "test",
+                    descrizione: "test",
+                    latitudine: "1.1",
+                    longitudine: "1.1",
+                    polling: 10,
+                    sensori: [],
+                    lampioni: []
+                },
+            ]
         })
 
+        render(
+            
+            <ConfirmProvider>
+                <MemoryRouter initialEntries={["/"]}>
+                    <Routes>
+                        <Route path="/" element={<AreaTable/>} />
+                    </Routes>
+                </MemoryRouter>
+            </ConfirmProvider>
+            
+        )
+        
+        let button: Element | null = null
+        await waitFor(async () => {
+                button = screen.getByText("Elimina",{selector:"button"})
+        })
+        
         userEvent.click(button!)
-        const annulla = await screen.findByText("Annulla",{selector:"button"});
-        userEvent.click(annulla)
+        const ok = await screen.findByText("OK",{selector:"button"});
+        userEvent.click(ok)
 
         const rows = await screen.findAllByRole("row")
-        
-        expect(rows.length).toEqual(2)
+            
+        expect(rows.length).toEqual(1)
+            
+    })
+
+    test("Test click su Annulla al momento di conferma della cancellazione", async () => {
+            
+            mockedAxios.get.mockResolvedValue({
+                data: [
+                    { 
+                        id: 1,
+                        nome: "a1",
+                        descrizione: "d1",
+                        latitudine: "prova",
+                        longitudine: "prova",
+                        polling: 10,
+                        sensori: [],
+                        lampioni: []
+                    }
+                ]
+            })
+
+            render(
+                    <ConfirmProvider>
+                        <MemoryRouter initialEntries={["/"]}>
+                            <Routes>
+                                <Route path="/" element={<AreaTable/>} />
+                            </Routes>
+                        </MemoryRouter>
+                    </ConfirmProvider>
+                
+            )
+
+            let button: Element | null = null
+            await waitFor(async () => {
+                button = screen.getByText("Elimina",{selector:"button"})
+            })
+
+            userEvent.click(button!)
+            const annulla = await screen.findByText("Annulla",{selector:"button"});
+            userEvent.click(annulla)
+
+            const rows = await screen.findAllByRole("row")
+            
+            expect(rows.length).toEqual(2)
     })
 })
 

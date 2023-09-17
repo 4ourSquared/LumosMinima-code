@@ -71,7 +71,7 @@ const AreaSingleView: React.FC = () => {
                     <label htmlFor="edit-lum">
                         Modifica Luminosit&agrave; Area: <span> </span>
                     </label>
-                    <select value={this} name="edit-lum" className="form-group" size={1} onChange={e => getValueAndSend(e)}>
+                    <select value={this} name="edit-lum" className="form-group" onChange={e => getValueAndSend(e)}>
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
