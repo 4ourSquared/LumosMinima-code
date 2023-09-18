@@ -6,6 +6,7 @@ import axios from "axios";
 import verifyToken from "../middleware/VerifyToken"
 import authByRole, {Role} from "../middleware/AuthByRole"
 
+
 // INFO: Per validare un token generato, bisogna utilizzare la funzione verify() di jwt (https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
 const JWT_KEY =
     "gQbdVpDZY6tnLCHSRAEBND0K4rwvR7TN9zYMdQW0WBEKp6upCqnKJLarxgtpnT18LwACXJ65QZMdV3FwxankYKibK8H5dEME5VPpuwXy302avLrByYJSLx6AU4paJp13h7A0PtZ9UgpfCq8W8BfRH4J6e6HcyMS6i5kk1xfdXHmnAe1JpKdBE8cQ2PjYCuKgaNAVNaBXhduMxE2wnnvkD8AFiGzCPSchrrCL2K9nGwU7KQ2d6p9hvCZrU6vAkeNP"; //256 byte
@@ -13,6 +14,7 @@ const accountRoutes = Router();
 
 // Logout: 0
 accountRoutes.post("/logout", [verifyToken, authByRole([Role.Any])], async (req: Request, res: Response) => {
+
     const token = req.cookies["auth-jwt"];
     console.log(token);
 
@@ -165,6 +167,7 @@ async function createAdmin() {
 }
 
 async function createOperators(id: number) {
+
     if(await UserSchema.findOne({username: "user" + id})){
         console.log("User" + id + " già presente");
         return;
@@ -208,6 +211,7 @@ createAdmin();
 
 for(let i = 1; i <= 10; i++){
     createOperators(i);
+
 }
 
 for(let i = 1; i <= 10; i++){

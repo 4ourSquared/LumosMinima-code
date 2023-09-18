@@ -15,7 +15,6 @@ export interface UserData {
 
 export default async function getAuthorizationLevel() : Promise<UserData>
 {
-
     try {
         console.log("Spedisco la richiesta di autenticazione")
         axios.defaults.baseURL = "http://localhost:5000/";
@@ -24,6 +23,7 @@ export default async function getAuthorizationLevel() : Promise<UserData>
         {
             const role: number = response.data.role
             return {role: role}
+
         }
         else if (response.status === 403)
             return {role:Role.None}

@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import SensorItem from "../types/SensorItem";
+import Footer from "./Footer";
+import Header from "./Header";
 
 interface EditSensorFormProps {
     areaId: number;

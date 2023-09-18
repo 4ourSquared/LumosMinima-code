@@ -119,7 +119,9 @@ lampRouter.put(
 // Recupero lista lampioni guasti
 lampRouter.get(
     "/:idA/lampioni/guasti/",
+
     [verifyToken, authByRole([Role.Manutentore])],
+
     async (req: Request, res: Response) => {
         const idA = req.params.idA;
         parseInt(idA, 10);

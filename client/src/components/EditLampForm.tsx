@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import LampItem from "../types/LampItem";
+import Footer from "./Footer";
+import Header from "./Header";
 
 interface EditLampFormProps {
     areaId: number;

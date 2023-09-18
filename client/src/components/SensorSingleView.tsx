@@ -3,14 +3,18 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams,useOutletContext } from "react-router-dom";
 import SensorItem from "../types/SensorItem";
 import {UserData,Role} from "../auth/Authorization"
+import Breadcrumb from "./Breadcrumb";
+import Footer from "./Footer";
 
-
-interface SensorSingleViewProps{
+interface SensorSingleViewProps {
   areaId: number;
   sensoreId: number;
 }
 
-const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) => {
+const SensorSingleView: React.FC<SensorSingleViewProps> = ({
+  areaId,
+  sensoreId,
+}) => {
   const [sens, setSens] = useState<SensorItem | null>(null);
   const userData = useOutletContext<UserData>();
   const { id } = useParams<{ id: string }>(); // Accesso al parametro id passandolo a useParams()
@@ -23,7 +27,9 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
   const fetchData = async () => {
     axios.defaults.baseURL = "http://localhost:5000/api";
     try {
-      const response = await axios.get<SensorItem>(`/aree/${areaId}/sensori/${sensoreId}`);
+      const response = await axios.get<SensorItem>(
+        `/aree/${areaId}/sensori/${sensoreId}`
+      );
       setSens(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -37,7 +43,8 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
       {sens ? (
         <div key={sens.id}>
           <h1>Info sul sensore {sens.id}</h1>
-          <h3>Id: {sens.id}</h3>
+          <Breadcrumb />
+          <h2>Id: {sens.id}</h2>
           <ul>
             <li>Indirizzo IP: {sens.IP}</li>
             <li>Luogo: {sens.luogo}</li>
@@ -49,7 +56,17 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
       ) : (
         <p>Nessun dato disponibile</p>
       )}
-      <Link to={`/api/aree/${areaId}`} type="button" className="btn btn-primary">
+      <button
+        onClick={() => sendSignal(areaId, sensoreId)}
+        className="btn btn-warning add"
+      >
+        Invia Segnale
+      </button>
+      <Link
+        to={`/api/aree/${areaId}`}
+        type="button"
+        className="btn btn-primary back"
+      >
         Indietro
       </Link>
       {(userData.role === Role.Amministratore || userData.role === Role.Manutentore) &&
@@ -59,6 +76,7 @@ const SensorSingleView: React.FC<SensorSingleViewProps> = ({areaId, sensoreId}) 
       </button>
 
       }
+      <Footer />
     </div>
   );
 };

@@ -8,8 +8,6 @@ import * as Yup from "yup"; //Libreria per la validazione del form: si può usar
   CLASSE NEWLAMPFORM: classe che renderizza automaticamente la struttura HTML della pagina di aggiunta di un lampione, definendo anche il metodo per la trasmissione dei dati al server. Stile associato a Bootstrap.
 */
 
-// TODO - Sistemare le routes
-
 const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
     axios.defaults.baseURL = "http://localhost:5000/api"; //URL base, così una volta in produzione basta cambiare questo
     const navigate = useNavigate();

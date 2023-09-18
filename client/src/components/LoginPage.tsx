@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useLoginMechanism from "../auth/LoginMechanism";
 
 export default function LoginPage() {
+    const [error, setError] = useState(false);
     const navigate = useNavigate();
     const login = useLoginMechanism();
 
     const prepareLogin = async (e: React.MouseEvent) => {
         e.preventDefault();
-        
+
         const username: string = (
             document.getElementById("username") as HTMLInputElement
         ).value;
@@ -19,7 +20,8 @@ export default function LoginPage() {
 
         if (await login(username, password)) {
             navigate("/");
-
+        } else {
+            setError(true);
         }
     };
     return (
@@ -45,6 +47,12 @@ export default function LoginPage() {
                             type="password"
                         />
                     </div>
+
+                    {error && (
+                        <div className="alert alert-danger">
+                            Nome utente o password errati.
+                        </div>
+                    )}
 
                     <div>
                         <button
