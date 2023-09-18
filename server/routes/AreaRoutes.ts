@@ -5,11 +5,15 @@
 import { Router, Request, Response } from "express";
 import AreaSchema from "../schemas/AreaSchema";
 import { updateSchedule } from "../utils/Schedule";
+import verifyToken from "../middleware/VerifyToken"
+import authByRole, {Role} from "../middleware/AuthByRole"
+
 
 const areaRouter = Router();
 
 // Recupero della lista di aree illuminate
-areaRouter.get("/", async (req: Request, res: Response) => {
+areaRouter.get("/", [verifyToken, authByRole([Role.Any])], async (req: Request, res: Response) => {
+
     console.log(
         `Ricevuta richiesta GET su /api/aree/`
     );
@@ -28,7 +32,8 @@ areaRouter.get("/", async (req: Request, res: Response) => {
 });
 
 // Recupero delle informazioni di una singola area
-areaRouter.get("/:id", async (req: Request, res: Response) => {
+areaRouter.get("/:id", [verifyToken, authByRole([Role.Any])], async (req: Request, res: Response) => {
+
     const { id } = req.params;
     console.log(
         `Ricevuta richiesta GET su /api/aree/${id}/`
@@ -52,7 +57,8 @@ areaRouter.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Creazione di una nuova area
-areaRouter.post("/", async (req: Request, res: Response) => {
+areaRouter.post("/", [verifyToken, authByRole([Role.Amministratore])], async (req: Request, res: Response) => {
+
     console.log(
         `Ricevuta richiesta POST su /api/aree/`
     );
@@ -100,7 +106,8 @@ async function generateIdAree(): Promise<number> {
 }
 
 // Modifica di una area
-areaRouter.put("/edit/:id", async (req: Request, res: Response) => {
+areaRouter.put("/edit/:id", [verifyToken, authByRole([Role.Amministratore])], async (req: Request, res: Response) => {
+
     const id = parseInt(req.params.id);
     try {
         const areaToUpdate = await AreaSchema.findOne({ id });
@@ -147,7 +154,8 @@ areaRouter.put("/edit/:id", async (req: Request, res: Response) => {
 });
 
 // Eliminazione di una area
-areaRouter.delete("/:id", async (req: Request, res: Response) => {
+areaRouter.delete("/:id", [verifyToken, authByRole([Role.Amministratore])], async (req: Request, res: Response) => {
+
     const id = parseInt(req.params.id);
     console.log(
         `Ricevuta richiesta DELETE su /api/aree/${id}/`

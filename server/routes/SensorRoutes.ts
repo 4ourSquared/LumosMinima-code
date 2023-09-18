@@ -5,6 +5,8 @@
 import { Router, Request, Response } from "express";
 import SensoreSchema, { ISensorSchema } from "../schemas/SensorSchema";
 import AreaSchema from "../schemas/AreaSchema";
+import verifyToken from "../middleware/VerifyToken"
+import authByRole, {Role} from "../middleware/AuthByRole"
 
 const sensRouter = Router();
 

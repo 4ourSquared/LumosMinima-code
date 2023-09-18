@@ -5,12 +5,15 @@
 import { Router, Request, Response } from "express";
 import LampioneSchema, { ILampSchema } from "../schemas/LampSchema";
 import AreaSchema from "../schemas/AreaSchema";
+import verifyToken from "../middleware/VerifyToken"
+import authByRole, {Role} from "../middleware/AuthByRole"
 
 const lampRouter = Router();
 
 // Segnalazione guasto lampione
 lampRouter.put(
     "/:idA/lampioni/guasti/:idL",
+    [verifyToken, authByRole([Role.Amministratore])],
     async (req: Request, res: Response) => {
         const idA = req.params.idA;
         const idL = req.params.idL;
@@ -65,6 +68,7 @@ lampRouter.put(
 // Rimozione guasto lampione
 lampRouter.put(
     "/:idA/lampioni/guasti/remove/:idL",
+    [verifyToken, authByRole([Role.Manutentore])],
     async (req: Request, res: Response) => {
         const idA = req.params.idA;
         const idL = req.params.idL;
@@ -115,6 +119,9 @@ lampRouter.put(
 // Recupero lista lampioni guasti
 lampRouter.get(
     "/:idA/lampioni/guasti/",
+
+    [verifyToken, authByRole([Role.Manutentore])],
+
     async (req: Request, res: Response) => {
         const idA = req.params.idA;
         parseInt(idA, 10);
@@ -152,7 +159,8 @@ lampRouter.get(
 );
 
 // RICHIESTA INFORMAZIONI SINGOLO LAMPIONE
-lampRouter.get("/:idA/lampioni/:idL", async (req: Request, res: Response) => {
+lampRouter.get("/:idA/lampioni/:idL", [verifyToken, authByRole([Role.Any])],
+async (req: Request, res: Response) => {
     const idA = req.params.idA;
     const idL = req.params.idL;
     parseInt(idA, 10);
