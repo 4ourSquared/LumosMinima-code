@@ -1,31 +1,36 @@
 import axios from "axios";
 import { ConfirmProvider } from "material-ui-confirm";
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useOutletContext } from "react-router-dom";
 import AreaItem from "../types/AreaItem";
 import Breadcrumb from "./Breadcrumb";
 import Footer from "./Footer";
 import LampTable from "./LampTable";
 import SensorTable from "./SensorTable";
+import {UserData,Role} from "../auth/Authorization";
+
+
 
 const AreaSingleView: React.FC = () => {
   const [area, setArea] = useState<AreaItem | null>(null);
+    const userData = useOutletContext<UserData>();
   const [loading, setLoading] = useState(true);
   const { areaId } = useParams<{ areaId: string }>();
 
-  async function getValueAndSend(option: React.ChangeEvent<HTMLSelectElement>) {
-    // Recupero del valore
-    const value = option.target.value;
-    console.log(value);
+    async function getValueAndSend(option : React.ChangeEvent<HTMLSelectElement>){
+        // Recupero del valore
+        const value = option.target.value;
+        console.log(value);
+    
+        // Invio della richiesta
+        axios.defaults.baseURL = "http://localhost:5000/api";
+        const response = await axios.put(`/aree/${areaId}/lampioni/${value}`);
 
-    // Invio della richiesta
-    axios.defaults.baseURL = "http://localhost:5000/api";
-    const response = await axios.put(`/aree/${areaId}/lampioni/${value}`);
-
-    if (response.status === 200) {
-      window.location.reload();
+        if (response.status === 200) {
+            window.location.reload();
+        }
+    
     }
-  }
 
   useEffect(() => {
     const fetchData = async () => {

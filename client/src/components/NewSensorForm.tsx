@@ -78,6 +78,7 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
         </div>
         <div className="form-group">
           <label htmlFor="raggio">Raggio d'azione</label>
+          <br/>
           <Field name="raggio" as="select" className="form-group">
             <option value="0">0</option>
             <option value="1">1</option>

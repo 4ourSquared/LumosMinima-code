@@ -5,6 +5,8 @@ import { generateSchedule } from "../utils/Schedule";
 import { ILampSchema } from "../schemas/LampSchema";
 import { turnOffLamps, generateTokenId } from "../utils/LightManagement";
 import axios from "axios";
+import verifyToken from "../middleware/VerifyToken"
+import authByRole, {Role} from "../middleware/AuthByRole"
 
 
 const signalRoutes = Router();

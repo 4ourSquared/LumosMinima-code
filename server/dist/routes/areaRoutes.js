@@ -2,6 +2,29 @@
 /*
     Lo scopo di questo script è quello di gestire le routes per le richieste relative alle aree illuminate in arrivo al server
 */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -18,9 +41,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const AreaSchema_1 = __importDefault(require("../schemas/AreaSchema"));
 const Schedule_1 = require("../utils/Schedule");
+const VerifyToken_1 = __importDefault(require("../middleware/VerifyToken"));
+const AuthByRole_1 = __importStar(require("../middleware/AuthByRole"));
 const areaRouter = (0, express_1.Router)();
 // Recupero della lista di aree illuminate
-areaRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+areaRouter.get("/", [VerifyToken_1.default, (0, AuthByRole_1.default)([AuthByRole_1.Role.Any])], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Ricevuta richiesta GET su /api/aree/`);
     try {
         const aree = yield AreaSchema_1.default.find();
@@ -32,7 +57,7 @@ areaRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 }));
 // Recupero delle informazioni di una singola area
-areaRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+areaRouter.get("/:id", [VerifyToken_1.default, (0, AuthByRole_1.default)([AuthByRole_1.Role.Any])], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     console.log(`Ricevuta richiesta GET su /api/aree/${id}/`);
     try {
@@ -50,7 +75,7 @@ areaRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 }));
 // Creazione di una nuova area
-areaRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+areaRouter.post("/", [VerifyToken_1.default, (0, AuthByRole_1.default)([AuthByRole_1.Role.Amministratore])], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Ricevuta richiesta POST su /api/aree/`);
     const { nome, descrizione, latitudine, longitudine, polling, sensori, lampioni } = req.body;
     parseInt(polling, 10);
@@ -91,7 +116,7 @@ function generateIdAree() {
     });
 }
 // Modifica di una area
-areaRouter.put("/edit/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+areaRouter.put("/edit/:id", [VerifyToken_1.default, (0, AuthByRole_1.default)([AuthByRole_1.Role.Amministratore])], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
     try {
         const areaToUpdate = yield AreaSchema_1.default.findOne({ id });
@@ -125,7 +150,7 @@ areaRouter.put("/edit/:id", (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 }));
 // Eliminazione di una area
-areaRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+areaRouter.delete("/:id", [VerifyToken_1.default, (0, AuthByRole_1.default)([AuthByRole_1.Role.Amministratore])], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id);
     console.log(`Ricevuta richiesta DELETE su /api/aree/${id}/`);
     try {

@@ -5,7 +5,7 @@ export default function useLogoutMechanism() {
 
         try {
             axios.defaults.baseURL = "http://localhost:5000/";
-            const response = await axios.post("/accounting/logout",{}, {withCredentials: true});
+            const response = await axios.post("/accounting/logout",{});
             return response.status === 200;
         } catch (error) {
             console.log(error)
