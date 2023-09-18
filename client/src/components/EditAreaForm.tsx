@@ -57,6 +57,7 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({ areaId }) => {
 
     return (
         <>
+        <Header/>
             <Formik
                 initialValues={{
                     id: area.id || 0,
@@ -104,16 +105,6 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({ areaId }) => {
                 }}
             >
                 <Form>
-                    <div className="form-group">
-                        <label htmlFor="id">ID (Automatico)</label>
-                        <Field
-                            name="id"
-                            type="text"
-                            className="form-control"
-                            readOnly
-                        />
-                    </div>
-
                     <div className="form-group">
                         <label htmlFor="nome">Nome</label>
                         <Field
@@ -174,41 +165,6 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({ areaId }) => {
                             una verifica e l'altra per rendere possibile
                             l'interazione dei lampioni in modalit&agrave; pull.
                         </small>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="longitudine">Longitudine</label>
-                        <Field
-                            name="longitudine"
-                            type="text"
-                            className="form-control"
-                        />
-                        <ErrorMessage name="longitudine" />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="polling">Polling Time</label>
-                        <Field
-                            name="polling"
-                            type="text"
-                            className="form-control"
-                        />
-                        <ErrorMessage
-                            name="polling"
-                            component="div"
-                            className="text-danger"
-                        />
-                        <div>
-                            <small
-                                id="intensityHelp"
-                                className="form-text text-muted"
-                            >
-                                Indica il tempo in secondi che deve intercorrere
-                                tra una verifica e l'altra per rendere possibile
-                                l'interazione dei lampioni in modalit&agrave;
-                                pull.
-                            </small>
-                        </div>
                     </div>
 
                     <button type="submit" className="btn btn-primary add">

@@ -46,6 +46,8 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
     }
 
     return (
+        <>
+        <Header/>
         <Formik
             initialValues={{
                 id: sens.id || 0,
@@ -82,16 +84,6 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
             }}
         >
             <Form>
-                <div className="form-group">
-                    <label htmlFor="id">ID (Automatico)</label>
-                    <Field
-                        name="id"
-                        type="text"
-                        className="form-control"
-                        readOnly
-                    />
-                </div>
-
                 <div className="form-group">
                     <label htmlFor="IP">Indirizzo IP</label>
                     <Field name="IP" type="text" className="form-control" />
@@ -150,15 +142,6 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
                         zona interagisca in modalità pull.
                     </small>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="area">ID Area di Riferimento</label>
-                    <Field
-                        name="area"
-                        type="text"
-                        className="form-control"
-                        readOnly
-                    />
-                </div>
 
                 <button type="submit" className="btn btn-primary">
                     Modifica
@@ -172,6 +155,8 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
                 </Link>
             </Form>
         </Formik>
+        <Footer/>
+        </>
     );
 };
 

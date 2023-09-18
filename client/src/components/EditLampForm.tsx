@@ -44,6 +44,8 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
     }
 
     return (
+        <>
+        <Header/>
         <Formik
             initialValues={{
                 id: lampioneData.id || 0,
@@ -74,17 +76,8 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
         >
             <Form>
                 <div className="form-group">
-                    <label htmlFor="id">ID (Automatico)</label>
-                    <Field
-                        name="id"
-                        type="text"
-                        className="form-control"
-                        readOnly
-                    />
-                </div>
-
-                <div className="form-group">
                     <label htmlFor="stato">Stato</label>
+                    <br/>
                     <Field name="stato" as="select">
                         <option value="Attivo">Attivo</option>
                         <option value="Disattivo">Disattivo</option>
@@ -93,6 +86,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
 
                 <div className="form-group">
                     <label htmlFor="lum">Intensit&agrave;</label>
+                    <br/>
                     <Field name="lum" as="select" className="form-group">
                         <option value="0">0</option>
                         <option value="1">1</option>
@@ -106,6 +100,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                         <option value="9">9</option>
                         <option value="10">10</option>
                     </Field>
+                    <br/>
                     <small id="intensityHelp" className="form-text text-muted">
                         Indica l'intensit&agrave; luminosa del lampione qualora
                         fosse importato lo stato di attivazione.
@@ -165,6 +160,8 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                 </Link>
             </Form>
         </Formik>
+        <Footer/>
+        </>
     );
 };
 
