@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import axios from "axios";
 import verifyToken from "../middleware/VerifyToken"
 import authByRole, {Role} from "../middleware/AuthByRole"
+import { trusted } from "mongoose";
 
 
 // INFO: Per validare un token generato, bisogna utilizzare la funzione verify() di jwt (https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
@@ -137,6 +138,52 @@ accountRoutes.get("/verify", async (req: Request, res: Response) => {
         });
     }
 });
+
+accountRoutes.get("/userList", [verifyToken, authByRole([Role.Amministratore])] ,async (req: Request, res: Response) => {
+    const users = await UserSchema.find().select("-password -_id -__v");
+
+    if(!users)
+        return res.status(500).json({message: "Errore nel recupero degli utenti"});
+    else
+        return res.status(200).json(users);
+});
+
+accountRoutes.put("/user", [verifyToken, authByRole([Role.Amministratore])] ,async (req: Request, res: Response) => {
+    try{
+        const user = await UserSchema.findOne({username: req.body.username});
+
+        if(!user)
+            return res.status(404).json({message: "Utente non trovato"});
+        else{
+            if(req.body.email !== undefined)
+                user.email = req.body.email;
+
+            if(req.body.privilege !== undefined)
+                user.privilege = req.body.privilege;
+
+
+                await user.save();
+                return res.status(200).json({message: "Utente modificato correttamente"});
+        }
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({message: "Errore nella modifica dell'utente"});
+    }
+});
+
+accountRoutes.get("/user/:username", [verifyToken, authByRole([Role.Amministratore])] ,async (req: Request, res: Response) => {
+    try{
+        const user = await UserSchema.findOne({username: req.params.username}).select("-password -_id -__v");
+
+        if(!user)
+            return res.status(404).json({message: "Utente non trovato"});
+        else
+            return res.status(200).json(user);
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({message: "Errore nella ricerca dell'utente"});
+    }
+})
 
 /*
  * CREAZIONE DEI DEMO USER
