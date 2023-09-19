@@ -115,6 +115,7 @@ const AreaSingleView: React.FC = () => {
       <Footer />
     </ConfirmProvider>
   );
+
 };
 
 export default AreaSingleView;

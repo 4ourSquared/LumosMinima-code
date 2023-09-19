@@ -1,9 +1,11 @@
 import axios from "axios";
+import { useConfirm } from "material-ui-confirm";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate,useOutletContext } from "react-router-dom";
 import AreaItem from "../types/AreaItem";
 import { useConfirm } from "material-ui-confirm";
 import {UserData,Role} from "../auth/Authorization";
+
 
 export const AreaTable: React.FC = () => {
   const [aree, setAree] = useState<AreaItem[]>([]);
@@ -17,7 +19,9 @@ export const AreaTable: React.FC = () => {
         const response = await axios.get<AreaItem[]>(
           "http://localhost:5000/api/aree"
         );
-        setAree(response.data);
+        if (response && response.data) {
+          setAree(response.data);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -27,21 +31,23 @@ export const AreaTable: React.FC = () => {
 
   const deleteArea = async (id: Number) => {
     confirm({
-      title:"Eliminazione area",
+      title: "Eliminazione area",
       description: "Sei sicuro di voler eliminare l'area?",
       confirmationText: "OK",
       cancellationText: "Annulla",
-    }).then(async () => {
-      try{
-        await axios.delete(`http://localhost:5000/api/aree/${id}`);
-        setAree((cur) => cur.filter((item) => item.id !== id));
-      }catch(error){
-        alert("Errore nella cancellazione dell'area.");
-        console.error("Errore nella cancellazione dell'area.");
-      }
-    }).catch(() => {
-      console.log("Annullata cancellazione dell'area.")
-    });
+    })
+      .then(async () => {
+        try {
+          await axios.delete(`http://localhost:5000/api/aree/${id}`);
+          setAree((cur) => cur.filter((item) => item.id !== id));
+        } catch (error) {
+          alert("Errore nella cancellazione dell'area.");
+          console.error("Errore nella cancellazione dell'area.");
+        }
+      })
+      .catch(() => {
+        console.log("Annullata cancellazione dell'area.");
+      });
   };
   console.log(typeof(userData.role))
   console.log(typeof(Role.Amministratore))

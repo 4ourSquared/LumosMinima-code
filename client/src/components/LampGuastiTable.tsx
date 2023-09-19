@@ -23,22 +23,6 @@ const LampGuastiTable: React.FC<{ areaId: number }> = ({ areaId }) => {
     loadLampioni();
   }, []);
 
-  /*useEffect(() => {
-    loadLampioni();
-  }, []);
-
-    const loadLampioni = async () => {
-        try {
-            const response = await axios.get<LampItem[]>(
-        `http://localhost:5000/api/aree/${areaId}/lampioni/guasti/`
-            );
-            setLampioni(response.data);
-
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };*/
-
   const removeLampione = async (id: Number) => {
     confirm({
       title:"Marcare lampione riparato",
@@ -56,19 +40,7 @@ const LampGuastiTable: React.FC<{ areaId: number }> = ({ areaId }) => {
     }).catch(() => {
       console.log("Annullata cancellazione del lampione dalla lista guasti.");
     })
-      
-      /*
-        try {
-            const response = await axios.put<LampItem[]>(
-        `http://localhost:5000/api/aree/${areaId}/lampioni/guasti/remove/${id}`
-            );
-            window.alert(response.data)
-            loadLampioni()
-        } catch (error: any) {
-            window.alert(error.response.data);
-            console.error("Error fetching data:", error);
-        }
-        */
+
   };
 
   return (

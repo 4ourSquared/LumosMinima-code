@@ -124,7 +124,6 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({ areaId }) => {
                         />
                         <ErrorMessage name="descrizione" />
                     </div>
-
                     <div className="form-group">
                         <label htmlFor="latitudine">Latitudine</label>
                         <Field
@@ -166,6 +165,7 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({ areaId }) => {
                             l'interazione dei lampioni in modalit&agrave; pull.
                         </small>
                     </div>
+
 
                     <button type="submit" className="btn btn-primary add">
                         Modifica
