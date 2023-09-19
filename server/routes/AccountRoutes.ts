@@ -3,10 +3,8 @@ import UserSchema from "../schemas/UserSchema";
 import sha512 from "js-sha512";
 import jwt from "jsonwebtoken";
 import axios from "axios";
-import verifyToken from "../middleware/VerifyToken"
-import authByRole, {Role} from "../middleware/AuthByRole"
-import { trusted } from "mongoose";
-
+import verifyToken from "../middleware/VerifyToken";
+import authByRole, { Role } from "../middleware/AuthByRole";
 
 // INFO: Per validare un token generato, bisogna utilizzare la funzione verify() di jwt (https://github.com/auth0/node-jsonwebtoken#jwtverifytoken-secretorpublickey-options-callback)
 const JWT_KEY =
@@ -14,28 +12,31 @@ const JWT_KEY =
 const accountRoutes = Router();
 
 // Logout: 0
-accountRoutes.post("/logout", [verifyToken, authByRole([Role.Any])], async (req: Request, res: Response) => {
+accountRoutes.post(
+    "/logout",
+    [verifyToken, authByRole([Role.Any])],
+    async (req: Request, res: Response) => {
+        const token = req.cookies["auth-jwt"];
+        console.log(token);
 
-    const token = req.cookies["auth-jwt"];
-    console.log(token);
+        if (!token) {
+            return res.status(401).json({
+                status: "error",
+                error: "Unauthorized",
+            });
+        }
 
-    if (!token) {
-        return res.status(401).json({
-            status: "error",
-            error: "Unauthorized",
-        });
+        console.log("Logout");
+        return res
+            .cookie("auth-jwt", token, {
+                sameSite: "strict",
+                maxAge: -1,
+                httpOnly: true, //fondamentale
+            })
+            .status(200)
+            .send();
     }
-
-    console.log("Logout");
-    return res
-        .cookie("auth-jwt", token, {
-            sameSite: "strict",
-            maxAge: -1,
-            httpOnly: true, //fondamentale
-        })
-        .status(200)
-        .send();
-});
+);
 
 // Login
 accountRoutes.post("/login", async (req: Request, res: Response) => {
@@ -139,132 +140,140 @@ accountRoutes.get("/verify", async (req: Request, res: Response) => {
     }
 });
 
-accountRoutes.get("/userList", [verifyToken, authByRole([Role.Amministratore])] ,async (req: Request, res: Response) => {
-    const users = await UserSchema.find().select("-password -_id -__v").sort({privilege: -1, username: 1});
+accountRoutes.get(
+    "/userList",
+    [verifyToken, authByRole([Role.Amministratore])],
+    async (req: Request, res: Response) => {
+        const users = await UserSchema.find()
+            .select("-password -_id -__v")
+            .sort({ privilege: -1, username: 1 });
 
-    if(!users)
-        return res.status(500).json({message: "Errore nel recupero degli utenti"});
-    else
-        return res.status(200).json(users);
-});
+        if (!users)
+            return res
+                .status(500)
+                .json({ message: "Errore nel recupero degli utenti" });
+        else return res.status(200).json(users);
+    }
+);
 
-accountRoutes.put("/user", [verifyToken, authByRole([Role.Amministratore])] ,async (req: Request, res: Response) => {
-    try{
-        const query = {username: req.body.username.toString()};
-        const user = await UserSchema.findOne(query);
+accountRoutes.put(
+    "/user",
+    [verifyToken, authByRole([Role.Amministratore])],
+    async (req: Request, res: Response) => {
+        try {
+            const query = { username: req.body.username.toString() };
+            const user = await UserSchema.findOne(query);
 
-        if(!user)
-            return res.status(404).json({message: "Utente non trovato"});
-        else{
-            if(req.body.email !== undefined)
-                user.email = req.body.email;
+            if (!user)
+                return res.status(404).json({ message: "Utente non trovato" });
+            else {
+                if (req.body.email !== undefined) user.email = req.body.email;
 
-            if(req.body.privilege !== undefined)
-                user.privilege = req.body.privilege;
-
+                if (req.body.privilege !== undefined)
+                    user.privilege = req.body.privilege;
 
                 await user.save();
-                return res.status(200).json({message: "Utente modificato correttamente"});
+                return res
+                    .status(200)
+                    .json({ message: "Utente modificato correttamente" });
+            }
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ message: "Errore nella modifica dell'utente" });
         }
-    }catch(error){
-        console.log(error);
-        return res.status(500).json({message: "Errore nella modifica dell'utente"});
     }
-});
+);
 
-accountRoutes.get("/user/:username", [verifyToken, authByRole([Role.Amministratore])] ,async (req: Request, res: Response) => {
-    try{
-        const user = await UserSchema.findOne({username: req.params.username}).select("-password -_id -__v");
+accountRoutes.get(
+    "/user/:username",
+    [verifyToken, authByRole([Role.Amministratore])],
+    async (req: Request, res: Response) => {
+        try {
+            const user = await UserSchema.findOne({
+                username: req.params.username,
+            }).select("-password -_id -__v");
 
-        if(!user)
-            return res.status(404).json({message: "Utente non trovato"});
-        else
-            return res.status(200).json(user);
-    }catch(error){
-        console.log(error);
-        return res.status(500).json({message: "Errore nella ricerca dell'utente"});
+            if (!user)
+                return res.status(404).json({ message: "Utente non trovato" });
+            else return res.status(200).json(user);
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ message: "Errore nella ricerca dell'utente" });
+        }
     }
-})
+);
 
 /*
  * CREAZIONE DEI DEMO USER
-*/
-
+ */
 
 const DOMAIN: string = "@azienda.com"; // Inserire qui il dominio dell'azienda
 const PASSWORD: string = "password"; // Inserire qui la password dell'admin
 
 async function createAdmin() {
-    if(await UserSchema.findOne({username: "admin"})){
+    if (await UserSchema.findOne({ username: "admin" })) {
         console.log("Admin già presente");
         return;
     }
 
-    const res = await axios
-        .post("http://localhost:5000/accounting/signup", {
-            username: "admin",
-            email: "admin" + DOMAIN,
-            password: PASSWORD,
-            privilege: 3,
-        });
+    const res = await axios.post("http://localhost:5000/accounting/signup", {
+        username: "admin",
+        email: "admin" + DOMAIN,
+        password: PASSWORD,
+        privilege: 3,
+    });
 
-    if(res.status == 200)
-        console.log("Admin creato correttamente");
-    else
-        console.log("Errore nella creazione dell'admin");
+    if (res.status == 200) console.log("Admin creato correttamente");
+    else console.log("Errore nella creazione dell'admin");
 }
 
 async function createOperators(id: number) {
-
-    if(await UserSchema.findOne({username: "user" + id})){
+    if (await UserSchema.findOne({ username: "user" + id })) {
         console.log("User" + id + " già presente");
         return;
     }
 
-    const res = await axios
-        .post("http://localhost:5000/accounting/signup", {
-            username: "user" + id,
-            email: "user" + id + DOMAIN,
-            password: PASSWORD,
-            privilege: 1,
-        });
+    const res = await axios.post("http://localhost:5000/accounting/signup", {
+        username: "user" + id,
+        email: "user" + id + DOMAIN,
+        password: PASSWORD,
+        privilege: 1,
+    });
 
-    if(res.status == 200)
-        console.log("User" + id + " creato correttamente");
-    else
-        console.log("Errore nella creazione dell'user" + id);
+    if (res.status == 200) console.log("User" + id + " creato correttamente");
+    else console.log("Errore nella creazione dell'user" + id);
 }
 
 async function createManutentore(id: number) {
-    if(await UserSchema.findOne({username: "manutentore" + id})){
+    if (await UserSchema.findOne({ username: "manutentore" + id })) {
         console.log("Manutentore" + id + " già presente");
         return;
     }
 
-    const res = await axios
-        .post("http://localhost:5000/accounting/signup", {
-            username: "manutentore" + id,
-            email: "manutentore" + id + DOMAIN,
-            password: PASSWORD,
-            privilege: 2,
-        });
+    const res = await axios.post("http://localhost:5000/accounting/signup", {
+        username: "manutentore" + id,
+        email: "manutentore" + id + DOMAIN,
+        password: PASSWORD,
+        privilege: 2,
+    });
 
-    if(res.status == 200)
+    if (res.status == 200)
         console.log("Manutentore" + id + " creato correttamente");
-    else
-        console.log("Errore nella creazione del manutentore" + id);
+    else console.log("Errore nella creazione del manutentore" + id);
 }
 
 createAdmin();
 
-for(let i = 1; i <= 10; i++){
+for (let i = 1; i <= 10; i++) {
     createOperators(i);
-
 }
 
-for(let i = 1; i <= 10; i++){
+for (let i = 1; i <= 10; i++) {
     createManutentore(i);
 }
-
 
 export default accountRoutes;

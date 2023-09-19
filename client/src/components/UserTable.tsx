@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
-
 import { UserData } from "../auth/Authorization";
 import UserItem from "../types/UserItem";
 import Footer from "./Footer";
@@ -9,7 +8,6 @@ import Header from "./Header";
 
 export const UserTable: React.FC = () => {
     const [users, setUsers] = useState<UserItem[]>([]);
-    const userData = useOutletContext<UserData>();
     const navigate = useNavigate();
 
     useEffect(() => {

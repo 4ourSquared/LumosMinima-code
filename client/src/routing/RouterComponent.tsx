@@ -77,12 +77,6 @@ const EditAreaFormWrapper: React.FC = () => {
     return <EditAreaForm areaId={areaIdNumber} />;
 };
 
-const GuastiPageWrapper: React.FC = () => {
-    const { areaId } = useParams();
-    const areaIdNumber = areaId ? parseInt(areaId) : 0;
-    return <LampGuastiPage areaId={areaIdNumber} />;
-};
-
 const LampGuastiWrapper: React.FC = () => {
     const { areaId } = useParams();
     const areaIdNumber = areaId ? parseInt(areaId) : 0;
