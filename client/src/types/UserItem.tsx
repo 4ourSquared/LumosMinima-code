@@ -1,8 +1,8 @@
 interface UserItem {
     username: string;
     email: string;
-    password?: string;
     privilege: number;
+    password?: string;
 }
 
 export default UserItem;

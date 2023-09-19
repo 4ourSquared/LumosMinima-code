@@ -29,7 +29,8 @@ export const UserTable: React.FC = () => {
     return (
         <>
         <Header/>
-            <table className="table table-hover align-middle caption-top">
+        <div className="table-responsive row ">
+            <table className=" table table-hover align-middle caption-top col">
                 <caption>Lista degli Utenti</caption>
                 <thead>
                     <tr>
@@ -60,6 +61,7 @@ export const UserTable: React.FC = () => {
                     ))}
                 </tbody>
             </table>
+            </div>
             <Footer/>
         </>
     );

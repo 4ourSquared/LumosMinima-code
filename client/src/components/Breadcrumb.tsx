@@ -24,6 +24,7 @@ const breadcrumbMap: { [key: string]: string } = {
     "/api/aree/:areaId/lampioni/guasti": "Lista Lampioni Guasti",
     "/accounting/userList": "Lista Utenti",
     "/accounting/users/:username": "Modifica Utente",
+    "/accounting/signup": "Aggiunta Utente",
 };
 
 /*
@@ -62,14 +63,14 @@ const Breadcrumb: React.FC<BreadcrumbProps> = () => {
                         <Link
                             to="/accounting/userList"
                             type="button"
-                            className="btn btn-warning"
+                            className="btn btn-warning modifica"
                         >
                             Modifica Utente
                         </Link>
                         <Link
                             to="/accounting/signup"
                             type="button"
-                            className="btn btn-warning"
+                            className="btn btn-warning aggiunta"
                         >
                             Aggiungi Utente
                         </Link>
