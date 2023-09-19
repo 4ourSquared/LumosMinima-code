@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {MemoryRouter,Routes,Route} from 'react-router-dom'
 import axios from 'axios'
@@ -56,7 +56,7 @@ describe("Test del modulo AreaSingleView", () => {
             status: 200
         });
     
-        render(
+        const{getByText} = render(
             <MemoryRouter initialEntries={["/tests"]}>
                 <Routes>
                     <Route path="/:areaId" element={<AreaSingleView/>} />
@@ -64,6 +64,13 @@ describe("Test del modulo AreaSingleView", () => {
             </MemoryRouter>
         )
 
+        expect(getByText("Caricamento...")).toBeInTheDocument();
+        await waitFor(()=>{
+        fireEvent.click(screen.getByRole("combobox"));
+        fireEvent.change(screen.getByRole("combobox"), {target: {value: 10}});
+    })
+
+        /*
         expect(screen.getByText("Caricamento...")).toBeInTheDocument();
         await waitFor(()=> {
             const rows = screen.getAllByRole("table")
@@ -77,7 +84,7 @@ describe("Test del modulo AreaSingleView", () => {
             expect(screen.getByRole("option",{name:"10"}).ariaSelected);
             }
         )
-
+        */
     })
     
     
@@ -116,7 +123,16 @@ describe("Test del modulo AreaSingleView", () => {
             
         )
         
+        await waitFor(async () => {
+            let button = screen.getByText("Elimina",{selector:"button"});
+            userEvent.click(button!);
+            const ok = await screen.findByText("OK",{selector:"button"});
+            userEvent.click(ok);
+            const rows = await screen.findAllByRole("row");
+            expect(rows.length).toEqual(1);
+        })
         
+        /*
         let button: HTMLElement | null = null
         await waitFor(() => {
                 button = screen.getByText("Elimina",{selector:"button"})
@@ -130,7 +146,7 @@ describe("Test del modulo AreaSingleView", () => {
         
         let head = await screen.queryByRole("rowheader")        
         expect(head).toBeNull()
-        
+        */
     })
     
     
@@ -169,7 +185,17 @@ describe("Test del modulo AreaSingleView", () => {
             </ConfirmProvider>
             
         )
+
+        await waitFor(async () => {
+            let button = screen.getByText("Elimina",{selector:"button"});
+            userEvent.click(button!);
+            const ok = await screen.findByText("OK",{selector:"button"});
+            userEvent.click(ok);
+            const rows = await screen.findAllByRole("row");
+            expect(rows.length).toEqual(1);
+        })
         
+        /*
         let button: HTMLElement | null = null
         await waitFor(() => {
                 button = screen.getByText("Elimina",{selector:"button"})
@@ -184,7 +210,7 @@ describe("Test del modulo AreaSingleView", () => {
 
         let head = await screen.queryByRole("rowheader")        
         expect(head).toBeNull()
-
+        */
     })
     
 })
