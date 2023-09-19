@@ -89,7 +89,15 @@ describe("Test del modulo LampGuastiTable", () => {
                 </ConfirmProvider>
         )
         
-        
+        await waitFor(async () => {
+            let button = screen.getByText("Marca come riparato",{selector:"button"});
+            userEvent.click(button!);
+            const ok = await screen.findByText("OK",{selector:"button"});
+            userEvent.click(ok);
+            const rows = await screen.findAllByRole("row");
+            expect(rows.length).toEqual(1);
+        })
+        /*
         let button: HTMLElement | null = null
         await waitFor(() => {
                 button = screen.getByText("Marca come riparato",{selector:"button"})
@@ -103,6 +111,7 @@ describe("Test del modulo LampGuastiTable", () => {
         
         let head = await screen.queryByRole("rowheader")        
         expect(head).toBeNull()
+        */
     })
 
     test("Test click su Annulla al momento di conferma della rimozione della lista", async () => {
@@ -129,6 +138,16 @@ describe("Test del modulo LampGuastiTable", () => {
             </ConfirmProvider>
         )
 
+        await waitFor(async () => {
+            let button = screen.getByText("Marca come riparato",{selector:"button"});
+            userEvent.click(button!);
+            const ok = await screen.findByText("Annulla",{selector:"button"});
+            userEvent.click(ok);
+            const rows = await screen.findAllByRole("row");
+            expect(rows.length).toEqual(2);
+        })
+
+        /*
         let button: HTMLElement | null = null
         await waitFor(() => {
             button = screen.getByText("Marca come riparato",{selector:"button"})
@@ -143,6 +162,6 @@ describe("Test del modulo LampGuastiTable", () => {
         
         header = await screen.findAllByRole("rowheader")        
         expect(header.length).toEqual(1)
-        
+        */
     })
 })
