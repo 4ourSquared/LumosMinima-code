@@ -29,8 +29,8 @@ export const UserTable: React.FC = () => {
     return (
         <>
         <Header/>
-        <div className="table-responsive row ">
-            <table className=" table table-hover align-middle caption-top col">
+        <div className="row table-responsive">
+            <table className=" table table-hover align-middle caption-top">
                 <caption>Lista degli Utenti</caption>
                 <thead>
                     <tr>
