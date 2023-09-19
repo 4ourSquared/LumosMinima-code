@@ -18,6 +18,7 @@ import NewSensorPage from "../components/NewSensorPage";
 import PageFullView from "../components/PageFullView";
 import SensorSingleView from "../components/SensorSingleView";
 import UserTable from "../components/UserTable";
+import EditUserForm from "../components/EditUserForm";
 import GuardedRoute from "./GuardedRoute";
 import { Role } from "../auth/Authorization";
 
@@ -85,6 +86,12 @@ const LampGuastiWrapper: React.FC = () => {
     const { areaId } = useParams();
     const areaIdNumber = areaId ? parseInt(areaId) : 0;
     return <LampGuastiPage areaId={areaIdNumber} />;
+};
+
+const EditUserFormWrapper: React.FC = () => {
+    const { username } = useParams();
+    const usernameString = username ? username : "";
+    return <EditUserForm username={usernameString} />;
 };
 
 const RouterComponent: React.FC = () => {
@@ -170,6 +177,7 @@ const RouterComponent: React.FC = () => {
                         element={<NewSensPageWrapper />}
                     />
                     <Route path="accounting/userList" element={<UserTable />} />{" "}
+                    <Route path="accounting/users/:username" element={<EditUserFormWrapper/>} />{" "}
                 </Route>
                 <Route element={<GuardedRoute redirectRoute="/login" />}>
                     <Route path="" element={<PageFullView />} />

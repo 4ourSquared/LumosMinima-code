@@ -18,6 +18,7 @@ const breadcrumbMap: { [key: string]: string } = {
   "/api/aree/:areaId/sensori/edit/:id": "Modifica Sensore",
   "/api/aree/:areaId/lampioni/guasti": "Lista Lampioni Guasti",
   "/accounting/userList": "Lista Utenti",
+  "/accounting/users/:username": "Modifica Utente",
 };
 
 /*

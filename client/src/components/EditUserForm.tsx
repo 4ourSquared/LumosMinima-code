@@ -15,6 +15,7 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ username }) => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState({
+        username: username,
         email: "",
         privilege: "",
     });
@@ -38,11 +39,12 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ username }) => {
             <Header />
             <Formik
                 initialValues={{
+                    username: user.username || "",
                     email: user.email || "",
                     privilege: user.privilege || 0,
                 }}
                 onSubmit={(values, { setSubmitting }) => {
-                    const url = "/user";
+                    const url = "http://localhost:5000/accounting/user";
                     axios
                         .put(url, values)
                         .then(() => {
@@ -67,6 +69,7 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ username }) => {
 
                     <div className="form-group">
                         <label htmlFor="privilege">Privilege</label>
+                        <br/>
                         <Field
                             name="privilege"
                             as="select"
@@ -93,6 +96,9 @@ const EditUserForm: React.FC<EditUserFormProps> = ({ username }) => {
                     </Link>
                 </Form>
             </Formik>
+            <Footer/>
         </>
     );
 };
+
+export default EditUserForm;
