@@ -140,7 +140,7 @@ accountRoutes.get("/verify", async (req: Request, res: Response) => {
 });
 
 accountRoutes.get("/userList", [verifyToken, authByRole([Role.Amministratore])] ,async (req: Request, res: Response) => {
-    const users = await UserSchema.find().select("-password -_id -__v");
+    const users = await UserSchema.find().select("-password -_id -__v").sort({privilege: -1, username: 1});
 
     if(!users)
         return res.status(500).json({message: "Errore nel recupero degli utenti"});
