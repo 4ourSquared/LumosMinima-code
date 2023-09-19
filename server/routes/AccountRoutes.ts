@@ -150,7 +150,8 @@ accountRoutes.get("/userList", [verifyToken, authByRole([Role.Amministratore])] 
 
 accountRoutes.put("/user", [verifyToken, authByRole([Role.Amministratore])] ,async (req: Request, res: Response) => {
     try{
-        const user = await UserSchema.findOne({username: req.body.username});
+        const query = {username: req.body.username.toString()};
+        const user = await UserSchema.findOne(query);
 
         if(!user)
             return res.status(404).json({message: "Utente non trovato"});
