@@ -2,7 +2,6 @@ import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import * as Yup from "yup";
 import UserItem from "../types/UserItem";
 
 const NewUserForm: React.FC = () => {

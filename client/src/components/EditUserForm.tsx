@@ -2,7 +2,6 @@ import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import * as Yup from "yup";
 import Footer from "./Footer";
 import Header from "./Header";
 

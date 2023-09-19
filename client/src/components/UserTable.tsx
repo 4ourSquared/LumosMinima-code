@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
-import { useConfirm } from "material-ui-confirm";
-import { UserData, Role } from "../auth/Authorization";
+import { useNavigate, useOutletContext } from "react-router-dom";
+
+import { UserData } from "../auth/Authorization";
 import UserItem from "../types/UserItem";
 import Footer from "./Footer";
 import Header from "./Header";
