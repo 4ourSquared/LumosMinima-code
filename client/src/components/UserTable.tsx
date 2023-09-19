@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import { UserData } from "../auth/Authorization";
+import { useNavigate } from "react-router-dom";
 import UserItem from "../types/UserItem";
 import Footer from "./Footer";
 import Header from "./Header";

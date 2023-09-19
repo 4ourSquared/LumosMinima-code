@@ -85,7 +85,7 @@ const LampGuastiWrapper: React.FC = () => {
 
 const EditUserFormWrapper: React.FC = () => {
     const { username } = useParams();
-    const usernameString = username ? username : "";
+    const usernameString = username || "";
     return <EditUserForm username={usernameString} />;
 };
 
