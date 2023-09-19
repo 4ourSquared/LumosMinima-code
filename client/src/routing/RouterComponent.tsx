@@ -19,6 +19,7 @@ import PageFullView from "../components/PageFullView";
 import SensorSingleView from "../components/SensorSingleView";
 import UserTable from "../components/UserTable";
 import EditUserForm from "../components/EditUserForm";
+import NewUserPage from "../components/NewUserPage";
 import GuardedRoute from "./GuardedRoute";
 import { Role } from "../auth/Authorization";
 
@@ -178,6 +179,7 @@ const RouterComponent: React.FC = () => {
                     />
                     <Route path="accounting/userList" element={<UserTable />} />{" "}
                     <Route path="accounting/users/:username" element={<EditUserFormWrapper/>} />{" "}
+                    <Route path="accounting/signup" element={<NewUserPage />} />{" "}
                 </Route>
                 <Route element={<GuardedRoute redirectRoute="/login" />}>
                     <Route path="" element={<PageFullView />} />
