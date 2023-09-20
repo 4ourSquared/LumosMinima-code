@@ -6,7 +6,7 @@ import '@testing-library/jest-dom'
 import * as module from "../../auth/LogoutMechanism"
 import LoginPage from "../LoginPage";
 
-describe("Test del modulo Header", () => {
+describe("Test del modulo Header", async () => {
     test("Logout", async () => {
 
     //mock della funzione che dovrebbe essere restituita dallo hook
@@ -25,27 +25,29 @@ describe("Test del modulo Header", () => {
         
     )
     
-    
-     const button = await screen.findByText("Esci")
-     userEvent.click(button)
+    await waitFor( async () => {
+        const button = await screen.findByText("Esci")
+        userEvent.click(button)
+    })
      
 
      //expect(mockLogout).toHaveBeenCalledTimes(1)         
 
 
-    })
-})
-test("Render del footer", async () => {
-    render(
-        <MemoryRouter>
-            <Header />
-        </MemoryRouter>
-    );
+    });
+    
+    test("Render del footer", async () => {
+        render(
+            <MemoryRouter>
+                <Header />
+            </MemoryRouter>
+        );
 
-    const nome = screen.getByText(/Lumos Minima/i);
-    const breadcrumb = screen.getByText(/Home/i);
+        const nome = screen.getByText(/Lumos Minima/i);
+        const breadcrumb = screen.getByText(/Home/i);
 
-    expect(nome).toBeInTheDocument();
-    expect(breadcrumb).toBeInTheDocument();
+        expect(nome).toBeInTheDocument();
+        expect(breadcrumb).toBeInTheDocument();
 
+    });
 });
