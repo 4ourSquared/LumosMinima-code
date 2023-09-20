@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import LoginPage from "../LoginPage";
 import { MemoryRouter, BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
+import '@testing-library/jest-dom'
 import * as login from "../../auth/LoginMechanism"
 
 //mock della funzione che dovrebbe essere restituita dallo hook

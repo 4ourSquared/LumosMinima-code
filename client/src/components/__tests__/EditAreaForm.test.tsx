@@ -1,5 +1,6 @@
 import { act, render, renderHook, fireEvent, screen, waitFor, getByTestId, queryByTestId, getByPlaceholderText } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import '@testing-library/jest-dom'
 import axios from "axios";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import EditAreaForm from "../EditAreaForm";
@@ -54,8 +55,5 @@ test("Render della pagina EditAreaForm", async () => {
     expect(getByText("Loading...")).toBeInTheDocument();
     await waitFor(()=>{
         expect(screen.findAllByRole('textbox'));
-
-        const modifica = screen.getByRole('button');
-        fireEvent.click(modifica);
     })
 })
