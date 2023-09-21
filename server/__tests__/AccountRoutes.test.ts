@@ -1,37 +1,132 @@
-import { sign } from "jsonwebtoken";
-import supertest from "supertest";
-import verifyToken from "../middleware/VerifyToken";
-import UserSchema from "../schemas/UserSchema"; // Importa il tuo schema utente
-import { app } from "../server"; // Assicurati che il percorso sia corretto
-
-// Crea un mock della funzione findUserByUsername
-const userPayload = {
-  username: "testuser",
-  email: "testuser@example.com",
-  password: "testpassword",
-  privilege: 3,
-};
-
-const JWT_KEY =
-  "gQbdVpDZY6tnLCHSRAEBND0K4rwvR7TN9zYMdQW0WBEKp6upCqnKJLarxgtpnT18LwACXJ65QZMdV3FwxankYKibK8H5dEME5VPpuwXy302avLrByYJSLx6AU4paJp13h7A0PtZ9UgpfCq8W8BfRH4J6e6HcyMS6i5kk1xfdXHmnAe1JpKdBE8cQ2PjYCuKgaNAVNaBXhduMxE2wnnvkD8AFiGzCPSchrrCL2K9nGwU7KQ2d6p9hvCZrU6vAkeNP";
+import { Response } from "express";
+import request from "supertest";
+import UserSchema from "../schemas/UserSchema";
+import { app } from "../server";
 
 describe("AccountRoutes", () => {
-  beforeEach(() => {
-    // Resetta lo stato dei mock prima di ogni test
-    jest.clearAllMocks();
+  let token: string;
+
+  beforeAll(async () => {
+    // Login before running tests
+    const response = await request(app)
+      .post("/accounting/login")
+      .send({ username: "admin", password: "password" });
+
+    token = response.header["set-cookie"][0].split(";")[0].split("=")[1];
   });
 
-  it("should return an error when logging in with invalid credentials", async () => {
-    // Esegui una richiesta di login con credenziali errate
-    const jwt = sign(userPayload, JWT_KEY);
-    const { statusCode, body } = await supertest(app)
-      .post("/account/login")
-      .set("Authorization", `${jwt}`)
-      .send(userPayload);
-
-    expect(statusCode).toBe(200);
-    expect(body).toEqual({});
+  afterAll(async () => {
+    // Logout after running tests
+    await request(app)
+      .post("/accounting/logout")
+      .set("Cookie", `auth-jwt=${token}`)
+      .expect(200);
   });
 
-  // Aggiungi altri test per le tue rotte qui
+  describe("POST /accounting/signup", () => {
+    it("should create a new user", async () => {
+      const response = await request(app)
+        .post("/accounting/signup")
+        .send({
+          username: "newuser",
+          email: "newuser@example.com",
+          password: "newpassword",
+          privilege: 4,
+        })
+        .expect(200);
+
+      expect(response.body).toEqual({});
+    });
+
+    it("should return an error if the username is already in use", async () => {
+      const response = await request(app)
+        .post("/accounting/signup")
+        .send({
+          username: "testuser",
+          email: "testuser@example.com",
+          password: "testpassword",
+          privilege: 4,
+        })
+        .expect(409);
+
+      expect(response.body).toEqual({ message: "Username già in uso" });
+    });
+
+    it("should return an error if the email is already in use", async () => {
+      const response = await request(app)
+        .post("/accounting/signup")
+        .send({
+          username: "newuser2",
+          email: "testuser@example.com",
+          password: "newpassword",
+          privilege: 4,
+        })
+        .expect(409);
+
+      expect(response.body).toEqual({ message: "Email già in uso" });
+    });
+  });
+
+  describe("POST /api/account/login", () => {
+    it("should log in a user and return a JWT token", async () => {
+      const response = await request(app)
+        .post("/accounting/login")
+        .send({ username: "testuser", password: "testpassword" })
+        .expect(200);
+
+      expect(response.header["set-cookie"][0]).toContain("auth-jwt=");
+    });
+
+    it("should return an error if the username or password is incorrect", async () => {
+      const response = await request(app)
+        .post("/accounting/login")
+        .send({ username: "testuser", password: "wrongpassword" })
+        .expect(401);
+
+      expect(response.body).toEqual({ message: "Credenziali non valide" });
+    });
+  });
+
+  describe("POST /api/account/logout", () => {
+    it("should log out a user and delete the JWT token", async () => {
+      const response = await request(app)
+        .post("/accounting/logout")
+        .set("Cookie", `auth-jwt=${token}`)
+        .expect(200);
+
+      expect(response.header["set-cookie"][0]).toContain(
+        "auth-jwt=; Max-Age=-1"
+      );
+    });
+
+    it("should return an error if the user is not authenticated", async () => {
+      const response = await request(app)
+        .post("/accounting/logout")
+        .expect(401);
+
+      expect(response.body).toEqual({ status: "error", error: "Unauthorized" });
+    });
+  });
+
+  describe("GET /api/account/verify", () => {
+    it("should return the user's privilege if the JWT token is valid", async () => {
+      const response = await request(app)
+        .get("/accounting/verify")
+        .set("Cookie", `auth-jwt=${token}`)
+        .expect(200);
+
+      expect(response.body).toEqual({ role: 4 });
+    });
+
+    it("should return an error if the JWT token is invalid", async () => {
+      const response = await request(app)
+        .get("/accounting/verify")
+        .set("Cookie", "auth-jwt=invalidtoken")
+        .expect(500);
+
+      expect(response.body).toEqual({
+        error: "Autenticazione del token fallita!",
+      });
+    });
+  });
 });
