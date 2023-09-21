@@ -48,7 +48,7 @@ export const AreaTable: React.FC = () => {
 
   return (
     <>
-      <div className="table-responsive row justify-content-center">
+      <div className="table-responsive row ">
       {
         userData.role === Role.Amministratore && 
         <Link to="/api/aree/add" type="button" className="btn btn-primary">

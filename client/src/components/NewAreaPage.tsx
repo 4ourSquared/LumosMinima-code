@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import {Component} from "react";
 import NewAreaForm from "./NewAreaForm";
 import Header from "./Header";
 import Footer from "./Footer";
