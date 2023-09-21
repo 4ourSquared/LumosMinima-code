@@ -93,7 +93,7 @@ const LampTable: React.FC<LampTableProps> = ({ areaId }) => {
     };
 
     return (
-        <div className="row justify-content-center">
+        <div className="row">
             {userData.role === Role.Amministratore && (
                 <Link
                     to={`/api/aree/${areaId}/lampioni/add`}
