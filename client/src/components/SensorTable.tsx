@@ -48,7 +48,7 @@ const SensorTable: React.FC<SensorTableProps> = ({areaId}) => {
     };
 
     return (
-        <div className="row justify-content-center">
+        <div className="row ">
             {userData.role === Role.Amministratore &&
                 <Link
                     to={`/api/aree/${areaId}/sensori/add`}
