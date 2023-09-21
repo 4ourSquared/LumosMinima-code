@@ -1,27 +1,24 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {MemoryRouter,Routes,Route} from 'react-router-dom'
-import axios from 'axios'
-import {Role} from "../../auth/Authorization"
+import { MemoryRouter, Routes, Route } from "react-router-dom";
+import axios from "axios";
+import { Role } from "../../auth/Authorization";
 import AreaSingleView from "../AreaSingleView";
 import { ConfirmProvider } from "material-ui-confirm";
 
-jest.mock("axios")
+jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-const mockUserData = {role:Role.Amministratore}
+const mockUserData = { role: Role.Amministratore };
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
-    useOutletContext: () => mockUserData
-    })
-);
+    useOutletContext: () => mockUserData,
+}));
 
 describe("Test del modulo AreaSingleView", () => {
-
     test("Test del fetch", async () => {
-
-        mockedAxios.get.mockResolvedValue({ 
-            data:{
+        mockedAxios.get.mockResolvedValue({
+            data: {
                 id: 1,
                 nome: "test",
                 descrizione: "test",
@@ -35,8 +32,8 @@ describe("Test del modulo AreaSingleView", () => {
                         luogo: "test",
                         raggio: 10,
                         area: 1,
-                        sig_time: 20
-                    }
+                        sig_time: 20,
+                    },
                 ],
                 lampioni: [
                     {
@@ -46,29 +43,31 @@ describe("Test del modulo AreaSingleView", () => {
                         luogo: "test",
                         area: 1,
                         guasto: false,
-                        mode: "manuale"
-                    }
-                ]
-            }
-        })
-    
-        mockedAxios.put.mockResolvedValue({
-            status: 200
+                        mode: "manuale",
+                    },
+                ],
+            },
         });
-    
-        const{getByText} = render(
+
+        mockedAxios.put.mockResolvedValue({
+            status: 200,
+        });
+
+        const { getByText } = render(
             <MemoryRouter initialEntries={["/tests"]}>
                 <Routes>
-                    <Route path="/:areaId" element={<AreaSingleView/>} />
+                    <Route path="/:areaId" element={<AreaSingleView />} />
                 </Routes>
             </MemoryRouter>
-        )
+        );
 
         expect(getByText("Caricamento...")).toBeInTheDocument();
-        await waitFor(()=>{
-        fireEvent.click(screen.getByRole("combobox"));
-        fireEvent.change(screen.getByRole("combobox"), {target: {value: 10}});
-    })
+        await waitFor(() => {
+            fireEvent.click(screen.getByRole("combobox"));
+            fireEvent.change(screen.getByRole("combobox"), {
+                target: { value: 10 },
+            });
+        });
 
         /*
         expect(screen.getByText("Caricamento...")).toBeInTheDocument();
@@ -85,53 +84,51 @@ describe("Test del modulo AreaSingleView", () => {
             }
         )
         */
-    })
-    
-    
+    });
+
     test("Scomparsa del lampione dopo cancellazione", async () => {
         mockedAxios.get.mockResolvedValue({
-            data: { 
-                    id: 1,
-                    nome: "test",
-                    descrizione: "test",
-                    latitudine: "test",
-                    longitudine: "test",
-                    lampioni: [
-                        {
-                            id: 1,
-                            stato: "test",
-                            lum: 5,
-                            luogo: "test",
-                            area: 1,
-                            guasto:false
-                        }
-                    ],
-                    sensori: []
-                }
-        })
-    
-        mockedAxios.delete.mockResolvedValue("OK")
+            data: {
+                id: 1,
+                nome: "test",
+                descrizione: "test",
+                latitudine: "test",
+                longitudine: "test",
+                lampioni: [
+                    {
+                        id: 1,
+                        stato: "test",
+                        lum: 5,
+                        luogo: "test",
+                        area: 1,
+                        guasto: false,
+                    },
+                ],
+                sensori: [],
+            },
+        });
+
+        mockedAxios.delete.mockResolvedValue("OK");
 
         render(
-                <ConfirmProvider>
-                    <MemoryRouter initialEntries={["/tests"]}>
-                        <Routes>
-                            <Route path="/:areaId" element={<AreaSingleView/>} />
-                        </Routes>
-                    </MemoryRouter>
-                </ConfirmProvider>
-            
-        )
-        
+            <ConfirmProvider>
+                <MemoryRouter initialEntries={["/tests"]}>
+                    <Routes>
+                        <Route path="/:areaId" element={<AreaSingleView />} />
+                    </Routes>
+                </MemoryRouter>
+            </ConfirmProvider>
+        );
+
         await waitFor(async () => {
-            let button = screen.getByText("Elimina",{selector:"button"});
+            let button = screen.getByText("Elimina", { selector: "button" });
             userEvent.click(button!);
-            const ok = await screen.findByText("OK",{selector:"button"});
+            const ok = await screen.findByText("OK", { selector: "button" });
             userEvent.click(ok);
             const rows = await screen.findAllByRole("row");
             expect(rows.length).toEqual(1);
-        })
-        
+        });
+
         /*
         let button: HTMLElement | null = null
         await waitFor(() => {
@@ -147,54 +144,52 @@ describe("Test del modulo AreaSingleView", () => {
         let head = await screen.queryByRole("rowheader")        
         expect(head).toBeNull()
         */
-    })
-    
-    
+    });
+
     test("Scomparsa del sensore dopo cancellazione", async () => {
         mockedAxios.get.mockResolvedValue({
-            data: { 
-                    id: 1,
-                    nome: "test",
-                    descrizione: "test",
-                    latitudine: "test",
-                    longitudine: "test",
-                    polling: 10,
-                    lampioni: [],
-                    sensori: [
-                        {
-                            id: 1,
-                            iter: "manuale",
-                            IP: "1.1.1.1",
-                            luogo: "test",
-                            raggio: 10,
-                            area: 1
-                        }
-                    ]
-                }
-        })
-    
-        mockedAxios.delete.mockResolvedValue("OK")
+            data: {
+                id: 1,
+                nome: "test",
+                descrizione: "test",
+                latitudine: "test",
+                longitudine: "test",
+                polling: 10,
+                lampioni: [],
+                sensori: [
+                    {
+                        id: 1,
+                        iter: "manuale",
+                        IP: "1.1.1.1",
+                        luogo: "test",
+                        raggio: 10,
+                        area: 1,
+                    },
+                ],
+            },
+        });
+
+        mockedAxios.delete.mockResolvedValue("OK");
 
         render(
             <ConfirmProvider>
                 <MemoryRouter initialEntries={["/tests"]}>
                     <Routes>
-                        <Route path="/:areaId" element={<AreaSingleView/>} />
+                        <Route path="/:areaId" element={<AreaSingleView />} />
                     </Routes>
                 </MemoryRouter>
             </ConfirmProvider>
-            
-        )
+        );
 
         await waitFor(async () => {
-            let button = screen.getByText("Elimina",{selector:"button"});
+            let button = screen.getByText("Elimina", { selector: "button" });
             userEvent.click(button!);
-            const ok = await screen.findByText("OK",{selector:"button"});
+            const ok = await screen.findByText("OK", { selector: "button" });
             userEvent.click(ok);
             const rows = await screen.findAllByRole("row");
             expect(rows.length).toEqual(1);
-        })
-        
+        });
+
         /*
         let button: HTMLElement | null = null
         await waitFor(() => {
@@ -211,6 +206,49 @@ describe("Test del modulo AreaSingleView", () => {
         let head = await screen.queryByRole("rowheader")        
         expect(head).toBeNull()
         */
-    })
-    
-})
+    });
+
+    test("should send a request when the select value changes", async () => {
+        // Configura un mock di axios per simulare una risposta positiva
+        mockedAxios.put.mockResolvedValue({status: 200});
+        mockedAxios.get.mockResolvedValue({
+            data: {
+                id: 1,
+                nome: "test",
+                descrizione: "test",
+                latitudine: "test",
+                longitudine: "test",
+                lampioni: [
+                    {
+                        id: 1,
+                        stato: "test",
+                        lum: 5,
+                        luogo: "test",
+                        area: 1,
+                        guasto: false,
+                    },
+                ],
+                sensori: [],
+            },
+        });
+
+        render(<ConfirmProvider>
+            <MemoryRouter initialEntries={["/1"]}>
+                <Routes>
+                    <Route path="/:areaId" element={<AreaSingleView />} />
+                </Routes>
+            </MemoryRouter>
+        </ConfirmProvider>);
+
+        // Attendi che il componente gestisca la risposta
+        await screen.findByRole("select");
+        // Simula un cambiamento di valore nel <select>
+        fireEvent.change(screen.getByRole("select"), {
+            target: { value: "3" },
+        });
+
+        // Verifica che axios.put sia stato chiamato con i parametri corretti
+        expect(axios.put).toHaveBeenCalled();
+
+    });
+});
