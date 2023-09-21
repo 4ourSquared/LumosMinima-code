@@ -24,7 +24,7 @@ const NewSensorForm: React.FC<{ areaId: number }> = ({ areaId }) => {
       validationSchema={Yup.object({
         IP: Yup.string()
           .matches(
-            /^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$/,
+            /^((25[0-5]|(2[0-4]|1[\d]|[1-9]|)[\d])(\.(?!$)|$)){4}$/,
             "Deve essere un indirizzo IP valido"
           )
           .required("Campo obbligatorio")

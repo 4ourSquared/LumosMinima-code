@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ConfirmProvider } from "material-ui-confirm";
 import React, { useEffect, useState } from "react";
-import { Link, useParams, useOutletContext } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import AreaItem from "../types/AreaItem";
 import Breadcrumb from "./Breadcrumb";
 import Footer from "./Footer";
