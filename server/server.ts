@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
+import accountRoutes from "./routes/AccountRoutes";
 import areaRoutes from "./routes/AreaRoutes";
 import lampRoutes from "./routes/LampRoutes";
 import sensRoutes from "./routes/SensorRoutes";
@@ -32,15 +33,10 @@ app.use(express.urlencoded({ extended: false }));
                         COLLEGAMENTO AL DATABASE
 ------------------------------------------------------------------------------
 */
-import accountRoutes from "./routes/AccountRoutes";
 
 const mongoURI = "mongodb://lumosminima-code-db-1:27017/lumosminima";
-const options: any = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
 
-mongoose.connect(mongoURI /*, options*/);
+mongoose.connect(mongoURI);
 mongoose.pluralize(null);
 
 const db = mongoose.connection;
@@ -70,6 +66,6 @@ app.get("/", (req, res) => {
 });
 
 // Porta di ascolto predefinita per il server
-const server = app.listen(port, () => {
+app.listen(port, () => {
   console.log("Il server è in ascolto sulla porta 5000");
 });
