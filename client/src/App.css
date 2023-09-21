@@ -24,7 +24,7 @@ h1 {
 /* SEZIONE NAV */
 .breadcrumb {
   font-size: 1.5em;
-  /*border: solid 1px black;*/
+  align-items: center;
 }
 
 .breadcrumb li {
@@ -87,11 +87,6 @@ footer {
 .modifica{
   margin-left: auto;
   margin-right: 1em;
-}
-
-.breadcrumb {
-  margin-right: 1em;
-  align-items: center;
 }
 
 /* SEZIONE BOTTONI DI CREAZIONE, RESET E INDIETRO*/
