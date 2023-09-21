@@ -5,15 +5,18 @@ import userEvent from "@testing-library/user-event";
 import '@testing-library/jest-dom'
 import * as module from "../../auth/LogoutMechanism"
 import LoginPage from "../LoginPage";
+import axios from "axios";
 
-describe("Test del modulo Header", async () => {
-    test("Logout", async () => {
+describe("Test del modulo Header", () => {
+
+    it("Logout", async () => {
 
     //mock della funzione che dovrebbe essere restituita dallo hook
-    //const mockLogout = jest.fn(async () => true)
+    const mockLogout = jest.fn(async () => true)
 
     //mock dell'implementazione dello hook
-    //jest.spyOn(module, 'default').mockImplementation(() => mockLogout);
+    jest.spyOn(module, 'default').mockImplementation(() => mockLogout);
+    
     render(
         
         <MemoryRouter initialEntries={["/"]}>
@@ -36,7 +39,7 @@ describe("Test del modulo Header", async () => {
 
     });
     
-    test("Render del footer", async () => {
+    it("Render del footer", async () => {
         render(
             <MemoryRouter>
                 <Header />

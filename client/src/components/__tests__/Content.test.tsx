@@ -1,13 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import axios from "axios";
 import { BrowserRouter as Router } from "react-router-dom";
+import '@testing-library/jest-dom'
 import Content from "../Content";
 
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
-mockedAxios.get.mockResolvedValue([]);
 
 test("Render della pagina 'Content' dove 'AreaTable' è vuota", async () => {
+  
+
   render(
     <Router>
       <Content />
