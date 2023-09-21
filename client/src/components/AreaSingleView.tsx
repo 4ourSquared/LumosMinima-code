@@ -7,13 +7,11 @@ import Breadcrumb from "./Breadcrumb";
 import Footer from "./Footer";
 import LampTable from "./LampTable";
 import SensorTable from "./SensorTable";
-import {UserData,Role} from "../auth/Authorization";
 
 
 
 const AreaSingleView: React.FC = () => {
   const [area, setArea] = useState<AreaItem | null>(null);
-    const userData = useOutletContext<UserData>();
   const [loading, setLoading] = useState(true);
   const { areaId } = useParams<{ areaId: string }>();
 
