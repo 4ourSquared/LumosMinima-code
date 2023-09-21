@@ -4,9 +4,15 @@ import AreaTable from "../AreaTable";
 import {MemoryRouter,Routes,Route} from 'react-router-dom'
 import axios from 'axios'
 import { ConfirmProvider } from 'material-ui-confirm';
+import { Role } from "../../auth/Authorization";
 
 jest.mock("axios")
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+const mockUserData = { role: Role.Amministratore };
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom"),
+    useOutletContext: () => mockUserData,
+}));
 
 describe("Test del modulo AreaTable", () => {
     test("Test della funzione load", async () => {
