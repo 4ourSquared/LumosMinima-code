@@ -11,12 +11,13 @@ test("Test del loading dei dati", async () => {
     mockedAxios.get.mockResolvedValue({
         data: {
             id: 1,
-            IP: "1.1.1.1",
+            stato: "attivo",
+            lum: 5,
             luogo: "test",
-            raggio: 10,
             area: 1,
-            sig_time: 20,
-          },
+            guasto: false,
+            mode: "manuale",
+        },
     });
 
     render(

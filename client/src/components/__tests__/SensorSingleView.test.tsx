@@ -3,22 +3,27 @@ import userEvent from "@testing-library/user-event";
 import {MemoryRouter,Routes,Route} from 'react-router-dom'
 import SensorSingleView from "../SensorSingleView";
 import axios from 'axios'
+import { Role } from "../../auth/Authorization";
 
 jest.mock("axios")
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+const mockUserData = { role: Role.Amministratore };
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom"),
+    useOutletContext: () => mockUserData,
+}));
 
-describe("Test del modulo SensorSingleView", () => {
     test("Test della funzione load", async () => {
 
         mockedAxios.get.mockResolvedValue({
             data: {
                 id: 1,
-                iter: "test",
-                IP: "test",
+                IP: "125.125.125.125",
                 luogo: "test",
-                raggio: 1,
-                area: 1
-            }
+                raggio: 10,
+                area: 1,
+                sig_time: 20,
+            },
         })
 
         render(
@@ -62,4 +67,3 @@ describe("Test del modulo SensorSingleView", () => {
             expect(sendSignal).toBeCalledTimes(1)
         })
     })
-})
