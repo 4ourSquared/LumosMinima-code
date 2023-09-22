@@ -108,11 +108,12 @@ const EditAreaForm: React.FC<EditAreaFormProps> = ({ areaId }) => {
                     <div className="form-group">
                         <label htmlFor="nome">Nome</label>
                         <Field
+                            data-testid="nome"
                             name="nome"
                             type="text"
                             className="form-control"
                         />
-                        <ErrorMessage name="nome" />
+                        <ErrorMessage name="nome" data-testid="erroreNome"/>
                     </div>
 
                     <div className="form-group">
