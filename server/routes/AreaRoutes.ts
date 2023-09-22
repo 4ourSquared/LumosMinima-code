@@ -43,12 +43,10 @@ areaRouter.get(
       if (area) {
         res.status(200).json(area);
       } else {
-        res
-          .status(404)
-          .json({
-            error:
-              "Errore nel recupero di una singola area illuminata: area illuminata non trovata.",
-          });
+        res.status(404).json({
+          error:
+            "Errore nel recupero di una singola area illuminata: area illuminata non trovata.",
+        });
       }
     } catch (error) {
       console.error(

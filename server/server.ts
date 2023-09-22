@@ -66,6 +66,10 @@ app.get("/", (req, res) => {
 });
 
 // Porta di ascolto predefinita per il server
-app.listen(port, () => {
+export const server = app.listen(port, () => {
   console.log("Il server è in ascolto sulla porta 5000");
+});
+
+server.close(() => {
+  console.log("Il server è stato chiuso");
 });
