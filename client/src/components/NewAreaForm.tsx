@@ -27,6 +27,7 @@ const NewAreaForm: React.FC = () => {
     longitudine: Yup.string().required("Campo obbligatorio").trim(),
   });
 
+  /*
   const handleSubmit = async (values: AreaItem, { setSubmitting }: any) => {
     try {
       await axios.post("/aree", values);
@@ -37,6 +38,7 @@ const NewAreaForm: React.FC = () => {
       setSubmitting(false);
     }
   };
+  */
 
   return (
     <Formik
@@ -51,7 +53,7 @@ const NewAreaForm: React.FC = () => {
       <Form>
         <div className="form-group">
           <label htmlFor="nome">Nome</label>
-          <Field name="nome" type="text" className="form-control" />
+          <Field data-testid="nome" name="nome" type="text" className="form-control" />
           <ErrorMessage name="nome" component="div" className="text-danger" />
         </div>
 
