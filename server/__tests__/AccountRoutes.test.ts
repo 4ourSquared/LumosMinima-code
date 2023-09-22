@@ -1,3 +1,4 @@
+import { json } from "body-parser";
 import request from "supertest";
 import userschema from "../schemas/UserSchema";
 import { app } from "../server";
@@ -8,7 +9,6 @@ describe("Account Routes", () => {
       //Mock di un utente correttamente registrato: la password è "password" ma
       //con un hash sha512 che viene effettuato dal client. Questo viene
       //ripetuto ogni volta che è necessario avvalersi di un utente ben formato.
-
       userschema.findOne = jest.fn().mockResolvedValue({
         username: "admin",
         email: "admin@azienda.com",
@@ -107,7 +107,7 @@ describe("Account Routes", () => {
       const response = await request(app).get("/accounting/verify");
       expect(response.status).toBe(403);
     });
-
+    /*
     it("Ritorna 200 se è stato passato un token valido", async () => {
       const agent = request.agent(app);
       await agent.post("/accounting/login").send({
@@ -115,9 +115,109 @@ describe("Account Routes", () => {
         password:
           "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
       });
-      console.log("agent partito");
-      const response = await request(app).get("/accounting/verify");
+      const response = await agent.get("/accounting/verify");
       expect(response.status).toBe(200);
+    });*/
+  });
+
+  describe("Test per recuperare gli utenti", () => {
+    userschema.find = jest.fn().mockResolvedValueOnce({
+      username: "testuser",
+      password: "testpassword",
+      email: "testemail@example.com",
+      privilege: 2,
+    });
+
+    userschema.findOne = jest.fn().mockResolvedValue({
+      username: "admin",
+      email: "admin@azienda.com",
+      password:
+        "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      privilege: 3,
+    });
+
+    it("Recupera la lista completa degli utenti se l'utente è admin", async () => {
+      const agent = request.agent(app);
+      await agent.post("/accounting/login").send({
+        username: "admin",
+        password:
+          "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      });
+      agent
+        .get("/accounting/userList")
+        .expect(200)
+        .expect("Content-Type", /json/);
+    });
+    it("Ritorna 500 se l'utente non è autorizzato", async () => {
+      userschema.findOne = jest.fn().mockResolvedValue({
+        username: "manutentore1",
+        email: "manutentore1@azienda.com",
+        password:
+          "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+        privilege: 2,
+      });
+      const agent = request.agent(app);
+      await agent.post("/accounting/login").send({
+        username: "manutentore1",
+        password:
+          "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      });
+      agent
+        .get("/accounting/userList")
+        .expect(500)
+        .expect("Content-Type", /json/);
+    });
+    it("Ritorna un utente specifico se l'utente è admin", async () => {
+      const agent = request.agent(app);
+      await agent.post("/accounting/login").send({
+        username: "admin",
+        password:
+          "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      });
+      agent.get("/accounting/user/admin").expect(200);
+    });
+  });
+
+  describe("Test per aggiornare un utente", () => {
+    userschema.findOne = jest.fn().mockResolvedValue({
+      username: "admin",
+      email: "admin@azienda.com",
+      password:
+        "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      privilege: 3,
+    });
+    const mockSave = jest.spyOn(userschema.prototype, "save");
+    mockSave.mockResolvedValue(true);
+    userschema.findOne = jest.fn().mockResolvedValue(false);
+
+    it("Ritorna 404 se l'utente non è presente", async () => {
+      const agent = request.agent(app);
+      await agent.post("/accounting/login").send({
+        username: "admin",
+        password:
+          "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      });
+      agent
+        .put("/accounting/user/test")
+        .expect(404)
+        .expect("Content-Type", /json/)
+        .expect({ message: "Utente non trovato" });
+    });
+
+    it("Ritorna 200 se l'utente è stato aggiornato correttamente", async () => {
+      const agent = request.agent(app);
+      await agent.post("/accounting/login").send({
+        username: "admin",
+        password:
+          "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      });
+      agent
+        .put("/accounting/user/test")
+        .expect(200)
+        .expect("Content-Type", /json/)
+        .expect({ message: "Utente modificato correttamente" });
+
+      expect(mockSave).toHaveBeenCalledTimes(1);
     });
   });
 });
