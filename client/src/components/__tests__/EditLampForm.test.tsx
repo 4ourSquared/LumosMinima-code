@@ -33,8 +33,22 @@ test("Render della pagina EditLampForm", async () => {
     );
 
     expect(getByText("Loading...")).toBeInTheDocument();
-    await waitFor(()=>{
+    await waitFor(async ()=>{
         expect(screen.findAllByRole('textbox'));
+
+        const nome = screen.getByTestId("luogo");
+        fireEvent.change(nome, { target: { value: "t" } });
+
+        const button = screen.getByText("Modifica");
+        fireEvent.click(button);
+        await act(() => {
+          expect(screen.getByText("Inserisci almeno 2 caratteri"))
+        });
+
+        const mockedDateField = screen.getByTestId("luogo");
+        fireEvent.change(mockedDateField, { target: { value: "tset" } });
+
+        fireEvent.click(button);
     })
 
 })
