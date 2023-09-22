@@ -4,7 +4,11 @@ import { app } from "../server";
 
 describe("Account Routes", () => {
   describe("Test sul login", () => {
-    it("Effettua il login di un admin con successo", async () => {
+    it("Effettua il login di un utente con successo", async () => {
+      //Mock di un utente correttamente registrato: la password è "password" ma
+      //con un hash sha512 che viene effettuato dal client. Questo viene
+      //ripetuto ogni volta che è necessario avvalersi di un utente ben formato.
+
       userschema.findOne = jest.fn().mockResolvedValue({
         username: "admin",
         email: "admin@azienda.com",
@@ -20,12 +24,35 @@ describe("Account Routes", () => {
       });
       expect(response.status).toBe(200);
     });
+  });
 
-    it;
+  describe("Test sul logout", () => {
+    userschema.findOne = jest.fn().mockResolvedValue({
+      username: "admin",
+      email: "admin@azienda.com",
+      password:
+        "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      privilege: 3,
+    });
+
+    it("Ritorna 403 se non è stato passato un token valido", async () => {
+      const response = await request(app).post("/accounting/logout");
+      expect(response.status).toBe(403);
+    });
+    it("Ritorna 200 se è stato passato un token valido", async () => {
+      const agent = request.agent(app);
+      await agent.post("/accounting/login").send({
+        username: "admin",
+        password:
+          "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      });
+      const response = await agent.post("/accounting/logout");
+      expect(response.status).toBe(200);
+    });
   });
 
   describe("Test sul signup", () => {
-    it("Crea un nuovo utente", async () => {
+    it("Ritorna 200 e crea un nuovo utente con successo", async () => {
       const mockSave = jest.spyOn(userschema.prototype, "save");
       mockSave.mockResolvedValue(true);
       userschema.findOne = jest.fn().mockResolvedValue(false);
@@ -64,6 +91,33 @@ describe("Account Routes", () => {
         privilege: 3,
       });
       expect(response.status).toBe(409);
+    });
+  });
+
+  describe("Test sulla verifica del token", () => {
+    userschema.findOne = jest.fn().mockResolvedValue({
+      username: "admin",
+      email: "admin@azienda.com",
+      password:
+        "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      privilege: 3,
+    });
+
+    it("Ritorna 403 se non è stato passato un token valido", async () => {
+      const response = await request(app).get("/accounting/verify");
+      expect(response.status).toBe(403);
+    });
+
+    it("Ritorna 200 se è stato passato un token valido", async () => {
+      const agent = request.agent(app);
+      await agent.post("/accounting/login").send({
+        username: "admin",
+        password:
+          "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      });
+      console.log("agent partito");
+      const response = await request(app).get("/accounting/verify");
+      expect(response.status).toBe(200);
     });
   });
 });

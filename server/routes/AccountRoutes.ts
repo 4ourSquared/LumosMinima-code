@@ -19,13 +19,6 @@ accountRoutes.post(
     const token = req.cookies["auth-jwt"];
     console.log(token);
 
-    if (!token) {
-      return res.status(401).json({
-        status: "error",
-        error: "Unauthorized",
-      });
-    }
-
     console.log("Logout");
     return res
       .cookie("auth-jwt", token, {
