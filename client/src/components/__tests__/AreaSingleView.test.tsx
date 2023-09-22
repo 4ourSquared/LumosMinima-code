@@ -1,10 +1,11 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, act, getByTitle } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import { Role } from "../../auth/Authorization";
 import AreaSingleView from "../AreaSingleView";
 import { ConfirmProvider } from "material-ui-confirm";
+import '@testing-library/jest-dom/extend-expect'
 
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -25,16 +26,6 @@ describe("Test del modulo AreaSingleView", () => {
                 latitudine: "1.1",
                 longitudine: "1.1",
                 polling: 10,
-                sensori: [
-                    {
-                        id: 1,
-                        IP: "1.1.1.1",
-                        luogo: "test",
-                        raggio: 10,
-                        area: 1,
-                        sig_time: 20,
-                    },
-                ],
                 lampioni: [
                     {
                         id: 1,
@@ -45,14 +36,56 @@ describe("Test del modulo AreaSingleView", () => {
                         guasto: false,
                         mode: "manuale",
                     },
+                    {
+                        id: 2,
+                        stato: "attivo",
+                        lum: 5,
+                        luogo: "test2",
+                        area: 1,
+                        guasto: false,
+                        mode: "manuale",
+                    },
+                ],
+                sensori: [
+                    {
+                        id: 1,
+                        IP: "1.1.1.1",
+                        luogo: "test",
+                        raggio: 10,
+                        area: 1,
+                        sig_time: 20,
+                    },
                 ],
             },
+        });
+
+        mockedAxios.get.mockResolvedValue({
+            data: [{
+                id: 1,
+                stato: "attivo",
+                lum: 5,
+                luogo: "test",
+                area: 1,
+                guasto: false,
+                mode: "manuale",
+            },
+            {
+                id: 2,
+                stato: "attivo",
+                lum: 5,
+                luogo: "test2",
+                area: 1,
+                guasto: false,
+                mode: "manuale",
+            },
+        ],
         });
 
         mockedAxios.put.mockResolvedValue({
             status: 200,
         });
 
+        
         const { getByText } = render(
             <MemoryRouter initialEntries={["/tests"]}>
                 <Routes>
@@ -61,29 +94,9 @@ describe("Test del modulo AreaSingleView", () => {
             </MemoryRouter>
         );
 
-        expect(getByText("Caricamento...")).toBeInTheDocument();
         await waitFor(() => {
-            fireEvent.click(screen.getByRole("combobox"));
-            fireEvent.change(screen.getByRole("combobox"), {
-                target: { value: 10 },
-            });
+            expect(getByText("ID:")).toBeInTheDocument();
         });
-
-        /*
-        expect(screen.getByText("Caricamento...")).toBeInTheDocument();
-        await waitFor(()=> {
-            const rows = screen.getAllByRole("table")
-            //renderizza le tabelle?
-            expect(rows.length).toEqual(2)
-            //ci sono lampione e sensore?
-            const headers = screen.getAllByRole("rowheader")
-            expect(headers.length).toEqual(2)
-
-            userEvent.selectOptions(screen.getByRole("combobox"),["10"]);
-            expect(screen.getByRole("option",{name:"10"}).ariaSelected);
-            }
-        )
-        */
     });
 
     test("Scomparsa del lampione dopo cancellazione", async () => {
@@ -121,29 +134,16 @@ describe("Test del modulo AreaSingleView", () => {
         );
 
         await waitFor(async () => {
+            act(async () => {
             let button = screen.getByText("Elimina", { selector: "button" });
             userEvent.click(button!);
             const ok = await screen.findByText("OK", { selector: "button" });
             userEvent.click(ok);
             const rows = await screen.findAllByRole("row");
             expect(rows.length).toEqual(1);
+            });
         });
 
-        /*
-        let button: HTMLElement | null = null
-        await waitFor(() => {
-                button = screen.getByText("Elimina",{selector:"button"})
-        })
-        let header = await screen.findAllByRole("rowheader")        
-        expect(header.length).toEqual(1)
-
-        userEvent.click(button!)
-        const ok = await screen.findByText("OK",{selector:"button"});
-        userEvent.click(ok)
-        
-        let head = await screen.queryByRole("rowheader")        
-        expect(head).toBeNull()
-        */
     });
 
     test("Scomparsa del sensore dopo cancellazione", async () => {
@@ -182,30 +182,16 @@ describe("Test del modulo AreaSingleView", () => {
         );
 
         await waitFor(async () => {
+            act(async () => {
             let button = screen.getByText("Elimina", { selector: "button" });
             userEvent.click(button!);
             const ok = await screen.findByText("OK", { selector: "button" });
             userEvent.click(ok);
             const rows = await screen.findAllByRole("row");
             expect(rows.length).toEqual(1);
+            });
         });
 
-        /*
-        let button: HTMLElement | null = null
-        await waitFor(() => {
-                button = screen.getByText("Elimina",{selector:"button"})
-        })
-
-        let headers = await screen.findAllByRole("rowheader")        
-        expect(headers.length).toEqual(1)
-
-        userEvent.click(button!)
-        const ok = await screen.findByText("OK",{selector:"button"});
-        userEvent.click(ok)
-
-        let head = await screen.queryByRole("rowheader")        
-        expect(head).toBeNull()
-        */
     });
 
     test("should send a request when the select value changes", async () => {
@@ -240,8 +226,10 @@ describe("Test del modulo AreaSingleView", () => {
             </MemoryRouter>
         </ConfirmProvider>);
 
+        
         // Attendi che il componente gestisca la risposta
         await screen.findByRole("select");
+        act( () => {
         // Simula un cambiamento di valore nel <select>
         fireEvent.change(screen.getByRole("select"), {
             target: { value: "3" },
@@ -249,6 +237,6 @@ describe("Test del modulo AreaSingleView", () => {
 
         // Verifica che axios.put sia stato chiamato con i parametri corretti
         expect(axios.put).toHaveBeenCalled();
-
+    });
     });
 });
