@@ -1,4 +1,3 @@
-import { json } from "body-parser";
 import request from "supertest";
 import userschema from "../schemas/UserSchema";
 import { app } from "../server";
