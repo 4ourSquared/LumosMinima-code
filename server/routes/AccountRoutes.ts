@@ -59,7 +59,6 @@ accountRoutes.post("/login", async (req: Request, res: Response) => {
     );
 
     console.log("JWT firmato!");
-    console.log(token);
 
     return res
       .cookie("auth-jwt", token, {
@@ -113,7 +112,6 @@ accountRoutes.post("/signup", async (req: Request, res: Response) => {
 
 accountRoutes.get("/verify", async (req: Request, res: Response) => {
   let token = req.cookies["auth-jwt"];
-  console.log(token);
   if (!token) {
     res.status(403).json({ error: "Nessun token fornito!" });
     console.log("nessun token fornito");

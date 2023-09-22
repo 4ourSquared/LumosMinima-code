@@ -3,6 +3,24 @@ import userschema from "../schemas/UserSchema";
 import { app } from "../server";
 
 describe("Account Routes", () => {
+  let agentTest: request.SuperAgentTest;
+  beforeAll(async () => {
+    userschema.findOne = jest.fn().mockResolvedValue({
+      username: "admin",
+      email: "admin@azienda.com",
+      password:
+        "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      privilege: 3,
+    });
+
+    agentTest = request.agent(app);
+    await agentTest.post("/accounting/login").send({
+      username: "admin",
+      password:
+        "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+    });
+  });
+
   describe("Test sul login", () => {
     it("Effettua il login di un utente con successo", async () => {
       //Mock di un utente correttamente registrato: la password è "password" ma
@@ -106,17 +124,11 @@ describe("Account Routes", () => {
       const response = await request(app).get("/accounting/verify");
       expect(response.status).toBe(403);
     });
-    /*
     it("Ritorna 200 se è stato passato un token valido", async () => {
-      const agent = request.agent(app);
-      await agent.post("/accounting/login").send({
-        username: "admin",
-        password:
-          "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
-      });
-      const response = await agent.get("/accounting/verify");
+      const response = await agentTest.get("/accounting/verify");
       expect(response.status).toBe(200);
-    });*/
+      expect(response.body).toEqual({ role: 3 });
+    });
   });
 
   describe("Test per recuperare gli utenti", () => {
