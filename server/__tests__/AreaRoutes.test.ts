@@ -42,7 +42,7 @@ describe("Area Routes", () => {
 
     //Mock della funzione che individua tutte le aree
     areaschema.find = jest.fn().mockResolvedValue(area1);
-
+    //Mock della funzione che individua un'area singola
     areaschema.findOne = jest.fn().mockResolvedValue(area2);
 
     agent = request.agent(app);
@@ -73,6 +73,14 @@ describe("Area Routes", () => {
       });
     });
 
+    it("Ritorna 500 se non è possibile recuperare le aree", async () => {
+      areaschema.find = jest
+        .fn()
+        .mockRejectedValue(new Error("Errore indotto"));
+      const response = await agent.get("/api/aree/");
+      expect(response.status).toBe(500);
+    });
+
     it("Ritorna 200 e l'area in base all'id fornito", async () => {
       const response = await agent.get("/api/aree/1");
       expect(response.status).toBe(200);
@@ -87,16 +95,35 @@ describe("Area Routes", () => {
         sensori: [],
       });
     });
+
+    it("Ritorna 404 se l'area non è presente", async () => {
+      areaschema.findOne = jest.fn().mockResolvedValue(false);
+      const response = await agent.get("/api/aree/1");
+      expect(response.status).toBe(404);
+    });
+
+    it("Ritorna 500 se non è possibile recuperare l'area specificata dall'id fornito", async () => {
+      areaschema.findOne = jest
+        .fn()
+        .mockRejectedValue(new Error("Errore indotto"));
+      const response = await agent.get("/api/aree/1");
+      expect(response.status).toBe(500);
+    });
   });
-  /* Test della POST di un'area in pausa, causa: capire esattamente che cosa si
-    deve mockare
 
   describe("Test per la creazione di un'area (POST)", () => {
     const mockSave = jest.spyOn(areaschema.prototype, "save");
     mockSave.mockResolvedValue(true);
-    
 
     it("Ritorna 200 se l'area viene creata correttamente", async () => {
+      const mockSort = jest.fn();
+      const mockSelect = jest.fn();
+      const mockExec = jest.fn().mockResolvedValue(1);
+      (areaschema.findOne as jest.Mock).mockReturnValueOnce({
+        sort: mockSort.mockReturnThis(),
+        select: mockSelect.mockReturnThis(),
+        exec: mockExec,
+      });
       const response = await agent.post("/api/aree/").send({
         nome: "Area 3",
         descrizione: "Descrizione area 3",
@@ -107,56 +134,126 @@ describe("Area Routes", () => {
         sensori: [],
       });
       expect(response.status).toBe(200);
+      expect(mockSort).toHaveBeenCalledTimes(1);
+      expect(mockSelect).toHaveBeenCalledTimes(1);
+      expect(mockExec).toHaveBeenCalledTimes(1);
       expect(mockSave).toHaveBeenCalledTimes(1);
     });
-  });
-  */
 
-  describe("Test per l'aggiornamento di un'area (PUT)", () => {
-    const mockSave = jest.spyOn(areaschema.prototype, "save");
-    const mockSchedule = jest.spyOn(schedule, "updateSchedule");
-
-    it("Ritorna 404 se l'area non viene trovata", async () => {
-      areaschema.findOne = jest.fn().mockResolvedValue(false);
-      const response = await agent.put("/api/aree/edit/3").send({});
-      expect(response.status).toBe(404);
-      areaschema.findOne = jest.fn().mockReset();
-    });
-    /*
-    it("Ritorna 200 se l'area viene aggiornata correttamente", async () => {
-      areaschema.findById = jest.fn().mockResolvedValue(1);
-      const response = await agent.put("/api/aree/edit/1").send({
-        nome: "Area 1",
-        descrizione: "Descrizione area 1",
+    it("Ritorna 500 se l'area non viene creata correttamente", async () => {
+      mockSave.mockRejectedValueOnce(new Error("Errore indotto"));
+      const mockSort = jest.fn();
+      const mockSelect = jest.fn();
+      const mockExec = jest.fn().mockResolvedValue(1);
+      (areaschema.findOne as jest.Mock).mockReturnValueOnce({
+        sort: mockSort.mockReturnThis(),
+        select: mockSelect.mockReturnThis(),
+        exec: mockExec,
+      });
+      const response = await agent.post("/api/aree/").send({
+        nome: "Area 3",
+        descrizione: "Descrizione area 3",
         latitudine: "45.123456",
-        longitudine: "3.123456",
-        polling: 10,
+        longitudine: "9.123456",
+        polling: 60,
         lampioni: [],
         sensori: [],
       });
-      mockSchedule.mockResolvedValueOnce();
-      mockSave.mockResolvedValue(true);
+      expect(response.status).toBe(500);
+      expect(mockSave).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("Test per l'aggiornamento di un'area (PUT)", () => {
+    it("Ritorna 200 se l'area viene aggiornata correttamente", async () => {
+      const mockSaveArea = jest.spyOn(areaschema.prototype, "save");
+      (areaschema.findOne as jest.Mock).mockReturnValueOnce({
+        id: 2,
+        nome: "Area 2",
+        descrizione: "Descrizione area 2",
+        latitudine: "50.123456",
+        longitudine: "13.123456",
+        polling: 30,
+        lampioni: [],
+        sensori: [],
+        save: mockSaveArea,
+      });
+      const response = await agent.put("/api/aree/edit/2").send({
+        nome: "Area 3",
+        descrizione: "Descrizione area 3",
+        latitudine: "45.123456",
+        longitudine: "9.123456",
+        polling: 60,
+      });
       expect(response.status).toBe(200);
-      expect(mockSave).toHaveBeenCalledTimes(1);
-    });*/
+      expect(mockSaveArea).toHaveBeenCalledTimes(3);
+    });
+
+    it("Ritorna 404 se l'area non viene trovata", async () => {
+      const response = await agent.put("/api/aree/edit/").send({});
+      expect(response.status).toBe(404);
+    });
+
+    it("Ritorna 500 se l'area non viene aggiornata correttamente", async () => {
+      const mockSaveErr = jest.spyOn(areaschema.prototype, "save");
+      mockSaveErr.mockRejectedValueOnce(new Error("Errore indotto"));
+      const response = await agent.put("/api/aree/edit/2").send({});
+      expect(response.status).toBe(500);
+      expect(mockSaveErr).toHaveBeenCalledTimes(3);
+    });
   });
 
   describe("Test per l'eliminazione di un'area (DELETE)", () => {
-    areaschema.deleteOne = jest.fn().mockResolvedValue(true);
-    const mockSchedule = jest.spyOn(schedule, "updateSchedule");
+    it("Ritorna 200 se l'area viene eliminata correttamente", async () => {
+      const mockArea = {
+        id: 2,
+        nome: "Area 2",
+        descrizione: "Descrizione area 2",
+        latitudine: "50.123456",
+        longitudine: "13.123456",
+        polling: 30,
+        lampioni: [],
+        sensori: [],
+      };
+      const mockFindOne = jest.spyOn(areaschema, "findOne");
+      mockFindOne.mockResolvedValue(mockArea);
 
-    it("Ritorna 404 se l'area non viene trovata", async () => {
-      areaschema.findOne = jest.fn().mockResolvedValue(false);
-      const response = await agent.delete("/api/aree/delete/3");
-      expect(response.status).toBe(404);
-      areaschema.findOne = jest.fn().mockReset();
+      const mockDeleteOne = jest.spyOn(areaschema, "deleteOne");
+      mockDeleteOne.mockResolvedValue({ acknowledged: true, deletedCount: 1 });
+
+      const response = await agent.delete("/api/aree/2");
+      expect(response.status).toBe(200);
+      expect(mockFindOne).toHaveBeenCalledWith({ id: 2 });
+      expect(mockDeleteOne).toHaveBeenCalledWith({ id: 2 });
+
+      mockFindOne.mockRestore();
+      mockDeleteOne.mockRestore();
     });
 
-    it("Ritorna 200 se l'area viene eliminata correttamente", async () => {
-      areaschema.findById = jest.fn().mockResolvedValue(1);
-      const response = await agent.delete("/api/aree/delete/1");
-      mockSchedule.mockResolvedValueOnce();
-      expect(response.status).toBe(200);
+    it("Ritorna 404 l'area da eliminare non viene trovata", async () => {
+      const mockFindOne = jest.spyOn(areaschema, "findOne");
+      mockFindOne.mockResolvedValue(null);
+      const mockDeleteOne = jest.spyOn(areaschema, "deleteOne");
+      mockDeleteOne.mockResolvedValue({ acknowledged: true, deletedCount: 0 });
+
+      const response = await agent.delete("/api/aree/2");
+      expect(response.status).toBe(404);
+      expect(mockFindOne).toHaveBeenCalledWith({ id: 2 });
+
+      mockFindOne.mockRestore();
+    });
+
+    it("Ritorna 500 se avviene un errore nel processo di eliminazione dell'area", async () => {
+      const mockFindOne = jest.spyOn(areaschema, "findOne");
+      mockFindOne.mockRejectedValue(new Error("Errore indotto"));
+      const mockDeleteOne = jest.spyOn(areaschema, "deleteOne");
+      mockDeleteOne.mockResolvedValue({ acknowledged: true, deletedCount: 0 });
+
+      const response = await agent.delete("/api/aree/2");
+      expect(response.status).toBe(500);
+      expect(mockFindOne).toHaveBeenCalledWith({ id: 2 });
+
+      mockFindOne.mockRestore();
     });
   });
 });
