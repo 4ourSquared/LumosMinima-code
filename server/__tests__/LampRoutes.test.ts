@@ -24,7 +24,17 @@ describe("Lampione Routes", () => {
       latitudine: "45.123456",
       longitudine: "9.123456",
       polling: 60,
-      lampioni: [],
+      lampioni: [
+        {
+          id: 1,
+          stato: "Attivo",
+          lum: 5,
+          luogo: "Luogo Test",
+          area: 1,
+          guasto: false,
+          mode: "manuale",
+        },
+      ],
       sensori: [],
     };
 
@@ -41,5 +51,28 @@ describe("Lampione Routes", () => {
     server.close();
   });
 
-  describe("Test per il recupero dei lampioni (GET)", () => {});
+  describe("Test per il recupero dei lampioni (GET)", () => {
+    it("Ritorna 200 nel recupero del singolo lampione", async () => {
+      const response = await agent.get("/api/aree/1/lampioni/1");
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        area: 1,
+        guasto: false,
+        id: 1,
+        lum: 5,
+        luogo: "Luogo Test",
+        mode: "manuale",
+        stato: "Attivo",
+      });
+    });
+    it("Ritorna 404 nel recupero di un lampione non esistente", async () => {
+      const response = await agent.get("/api/aree/1/lampioni/2");
+      expect(response.status).toBe(404);
+    });
+    it("Ritorna 404 nel recupero di un lampione di un'area non esistente", async () => {
+      areaschema.findOne = jest.fn().mockResolvedValue(null);
+      const response = await agent.get("/api/aree/1/lampioni/2");
+      expect(response.status).toBe(404);
+    });
+  });
 });
