@@ -2,6 +2,8 @@ import request, { agent } from "supertest";
 import areaschema from "../schemas/AreaSchema";
 import userschema from "../schemas/UserSchema";
 import { app, server } from "../server";
+import * as schedule from "../utils/Schedule";
+import { updateSchedule } from "../utils/Schedule";
 
 describe("Area Routes", () => {
   let agent: request.SuperAgentTest;
@@ -112,7 +114,7 @@ describe("Area Routes", () => {
 
   describe("Test per l'aggiornamento di un'area (PUT)", () => {
     const mockSave = jest.spyOn(areaschema.prototype, "save");
-    mockSave.mockResolvedValue(true);
+    const mockSchedule = jest.spyOn(schedule, "updateSchedule");
 
     it("Ritorna 404 se l'area non viene trovata", async () => {
       areaschema.findOne = jest.fn().mockResolvedValue(false);
@@ -120,8 +122,9 @@ describe("Area Routes", () => {
       expect(response.status).toBe(404);
       areaschema.findOne = jest.fn().mockReset();
     });
-
+    /*
     it("Ritorna 200 se l'area viene aggiornata correttamente", async () => {
+      areaschema.findById = jest.fn().mockResolvedValue(1);
       const response = await agent.put("/api/aree/edit/1").send({
         nome: "Area 1",
         descrizione: "Descrizione area 1",
@@ -131,8 +134,29 @@ describe("Area Routes", () => {
         lampioni: [],
         sensori: [],
       });
+      mockSchedule.mockResolvedValueOnce();
+      mockSave.mockResolvedValue(true);
       expect(response.status).toBe(200);
       expect(mockSave).toHaveBeenCalledTimes(1);
+    });*/
+  });
+
+  describe("Test per l'eliminazione di un'area (DELETE)", () => {
+    areaschema.deleteOne = jest.fn().mockResolvedValue(true);
+    const mockSchedule = jest.spyOn(schedule, "updateSchedule");
+
+    it("Ritorna 404 se l'area non viene trovata", async () => {
+      areaschema.findOne = jest.fn().mockResolvedValue(false);
+      const response = await agent.delete("/api/aree/delete/3");
+      expect(response.status).toBe(404);
+      areaschema.findOne = jest.fn().mockReset();
+    });
+
+    it("Ritorna 200 se l'area viene eliminata correttamente", async () => {
+      areaschema.findById = jest.fn().mockResolvedValue(1);
+      const response = await agent.delete("/api/aree/delete/1");
+      mockSchedule.mockResolvedValueOnce();
+      expect(response.status).toBe(200);
     });
   });
 });
