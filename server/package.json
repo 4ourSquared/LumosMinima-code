@@ -13,6 +13,13 @@
     "testEnvironment": "node",
     "testMatch": [
       "**/__tests__/**/*.test.ts"
+    ],
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "**/*.{ts,tsx}",
+      "!**/node_modules/**",
+      "!**/vendor/**"
     ]
   },
   "keywords": [],

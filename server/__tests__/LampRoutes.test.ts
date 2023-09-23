@@ -1,5 +1,6 @@
 import request, { agent } from "supertest";
 import areaschema from "../schemas/AreaSchema";
+import lampschema from "../schemas/LampSchema";
 import userschema from "../schemas/UserSchema";
 import { app, server } from "../server";
 
@@ -15,6 +16,7 @@ describe("Lampione Routes", () => {
         "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
       privilege: 3,
     });
+
     const area1 = {
       id: 1,
       nome: "Area 1",
@@ -22,17 +24,7 @@ describe("Lampione Routes", () => {
       latitudine: "45.123456",
       longitudine: "9.123456",
       polling: 60,
-      lampioni: [
-        {
-          id: 1,
-          stato: "acceso",
-          lum: 5,
-          luogo: "Via Roma",
-          area: 1,
-          guasto: false,
-          mode: "manuale",
-        },
-      ],
+      lampioni: [],
       sensori: [],
     };
 
@@ -43,9 +35,11 @@ describe("Lampione Routes", () => {
       password:
         "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
     });
-
-    afterAll(async () => {
-      server.close();
-    });
   });
+
+  afterAll(async () => {
+    server.close();
+  });
+
+  describe("Test per il recupero dei lampioni (GET)", () => {});
 });
