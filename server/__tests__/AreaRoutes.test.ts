@@ -54,6 +54,7 @@ describe("Area Routes", () => {
   });
 
   afterAll(async () => {
+    jest.restoreAllMocks();
     server.close();
   });
 
