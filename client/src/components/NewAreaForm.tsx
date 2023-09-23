@@ -59,7 +59,7 @@ const NewAreaForm: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="descrizione">Descrizione</label>
-          <Field name="descrizione" type="text" className="form-control" />
+          <Field data-testid="descrizione" name="descrizione" type="text" className="form-control" />
           <ErrorMessage
             name="descrizione"
             component="div"
@@ -69,7 +69,7 @@ const NewAreaForm: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="latitudine">Latitudine</label>
-          <Field name="latitudine" type="text" className="form-control" />
+          <Field data-testid="latitudine" name="latitudine" type="text" className="form-control" />
           <ErrorMessage
             name="latitudine"
             component="div"
@@ -79,7 +79,7 @@ const NewAreaForm: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="longitudine">Longitudine</label>
-          <Field name="longitudine" type="text" className="form-control" />
+          <Field data-testid="longitudine" name="longitudine" type="text" className="form-control" />
           <ErrorMessage
             name="longitudine"
             component="div"
@@ -88,7 +88,7 @@ const NewAreaForm: React.FC = () => {
         </div>
         <div className="form-group">
           <label htmlFor="polling">Polling Time</label>
-          <Field name="polling" type="text" className="form-control" />
+          <Field data-testid="polling" name="polling" type="text" className="form-control" />
           <ErrorMessage
             name="polling"
             component="div"
