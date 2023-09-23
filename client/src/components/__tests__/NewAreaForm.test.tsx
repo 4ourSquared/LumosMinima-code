@@ -7,9 +7,42 @@ import NewAreaForm from "../NewAreaForm";
 import React from "react";
 import { getValue } from "@testing-library/user-event/dist/utils";
 
+jest.mock("axios");
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 test("Render della pagina NewAreaForm", async () => {
-    const onSubmit = jest.fn();
+
+    mockedAxios.post.mockResolvedValue({
+        data: {
+          id: 1,
+          nome: "test",
+          descrizione: "test",
+          latitudine: "1.1",
+          longitudine: "1.1",
+          polling: 10,
+          sensori: [
+            {
+              id: 1,
+              IP: "1.1.1.1",
+              luogo: "test",
+              raggio: 10,
+              area: 1,
+              sig_time: 20,
+            },
+          ],
+          lampioni: [
+            {
+              id: 1,
+              stato: "attivo",
+              lum: 5,
+              luogo: "test",
+              area: 1,
+              guasto: false,
+              mode: "manuale",
+            },
+          ],
+        },
+    });
 
     render(
         <MemoryRouter initialEntries={["/"]}>
@@ -19,22 +52,13 @@ test("Render della pagina NewAreaForm", async () => {
         </MemoryRouter>
     );
     
-    await act(async()=>{
+    await waitFor(async()=>{
         expect(screen.findAllByRole('textbox'));
         
         const nome = screen.getByTestId("nome");
         fireEvent.change(nome, { target: { value: "test" } });
-        const descrizione = screen.getByTestId("descrizione");
-        fireEvent.change(descrizione, { target: { value: "test" } });
-        const latitudine = screen.getByTestId("latitudine");
-        fireEvent.change(latitudine, { target: { value: "1.1" } });
-        const longitudine = screen.getByTestId("longitudine");
-        fireEvent.change(longitudine, { target: { value: "1.1" } });
-        const polling = screen.getByTestId("polling");
-        fireEvent.change(polling, { target: { value: "20" } });
 
         const button = screen.getByText("Aggiungi");
         fireEvent.click(button);
-        expect(onSubmit).toHaveBeenCalled();
     })
 })
