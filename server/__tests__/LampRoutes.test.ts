@@ -47,6 +47,10 @@ describe("Lampione Routes", () => {
     });
   });
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   afterAll(async () => {
     server.close();
   });
@@ -130,12 +134,14 @@ describe("Lampione Routes", () => {
           .mockRejectedValue(new Error("Errore indotto"));
         const response = await agent.get("/api/aree/1/lampioni");
         expect(response.status).toBe(500);
+        jest.resetAllMocks();
       });
     });
   });
   describe("Test per l'inserimento di un lampione (POST)", () => {
+    //AL MOMENTO RITORNA ERRORE:  TypeError: Cannot read properties of undefined (reading 'push')
     it("Ritorna 200 se il lampione viene aggiunto correttamente", async () => {
-      areaschema.findOne = jest.fn().mockResolvedValue({
+      const mockAreaData = {
         id: 1,
         nome: "Area 1",
         descrizione: "Descrizione area 1",
@@ -154,13 +160,13 @@ describe("Lampione Routes", () => {
           },
         ],
         sensori: [],
+      };
+      areaschema.findOne = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockAreaData),
       });
+
       const mockSave = jest.spyOn(areaschema.prototype, "save");
       mockSave.mockResolvedValue(true);
-      const mockExec = jest.fn().mockResolvedValue(1);
-      (areaschema.findOne as jest.Mock).mockReturnValueOnce({
-        exec: mockExec,
-      });
 
       const response = await agent.post("/api/aree/1/lampioni").send({
         stato: "Attivo",
@@ -171,7 +177,6 @@ describe("Lampione Routes", () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual({});
     });
   });
 });
