@@ -171,8 +171,26 @@ describe("Sensor Routes", () => {
         })
     })
 
-       
-    describe("Test per la cancellazione di un sensore (DELETE)",()=>{
+  describe("Test per la modifica di un sensore (PUT)", () => {
+    const mockSave = jest.spyOn(areaschema.prototype, "save");
+    mockSave.mockResolvedValue(true);
+    it("Il sensore che si cerca di modificare esiste", async () => {
+      const response = await agent
+        .put("/api/aree/test/sensori/edit/1")
+        .send({ IP: 1 });
+      expect(response.status).toBe(200);
+      expect(mockSave).toHaveBeenCalledTimes(1);
+    });
+    it("Il sensore che si cerca di modificare non esiste", async () => {
+      const response = await agent
+        .put("/api/aree/test/sensori/edit/2")
+        .send({ IP: 2 });
+      expect(response.status).toBe(404);
+      expect(mockSave).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe("Test per la cancellazione di un sensore (DELETE)", ()=> {
 
         it("Il sensore che si cerca di cancellare esiste", async () => {
             const mockSave = jest.fn()
