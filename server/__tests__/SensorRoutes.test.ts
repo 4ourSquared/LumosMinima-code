@@ -61,7 +61,7 @@ describe("Sensor Routes", () => {
 
   describe("Test per il recupero dei sensori di un'area (GET)", () => {
     it("L'area esiste: ritorna 200 e la lista di tutti i sensori presenti", async () => {
-      const response = await agent.get("/api/aree/test/sensori");
+      const response = await agent.get("/api/aree/1/sensori");
       expect(response.status).toBe(200);
       expect(response.body).toEqual([
         {
@@ -87,7 +87,7 @@ describe("Sensor Routes", () => {
 
     it("Ritorna 404 se l'area non è presente", async () => {
       areaschema.findOne = jest.fn().mockResolvedValue(false);
-      const response = await agent.get("/api/aree/test/sensori");
+      const response = await agent.get("/api/aree/1/sensori");
       expect(response.status).toBe(404);
     });
 
@@ -95,23 +95,23 @@ describe("Sensor Routes", () => {
       areaschema.findOne = jest
         .fn()
         .mockRejectedValue(new Error("Errore indotto"));
-      const response = await agent.get("/api/aree/test/sensori");
+      const response = await agent.get("/api/aree/1/sensori");
       expect(response.status).toBe(500);
     });
   });
 
   describe("Test per il recupero di un singolo sensore (GET)", () => {
     it("L'area e il sensore richiesti esistono", async () => {
-      const response = await agent.get("/api/aree/test/sensori/1");
+      const response = await agent.get("/api/aree/1/sensori/1");
       expect(response.status).toBe(200);
     });
     it("L'area esiste, ma non il sensore", async () => {
-      const response = await agent.get("/api/aree/test/sensori/3");
+      const response = await agent.get("/api/aree/1/sensori/3");
       expect(response.status).toBe(404);
     });
     it("L'area non esiste", async () => {
       areaschema.findOne = jest.fn().mockResolvedValue(false);
-      const response = await agent.get("/api/aree/test/sensori/1");
+      const response = await agent.get("/api/aree/1/sensori/1");
       expect(response.status).toBe(404);
     });
   });

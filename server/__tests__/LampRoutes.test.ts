@@ -52,27 +52,126 @@ describe("Lampione Routes", () => {
   });
 
   describe("Test per il recupero dei lampioni (GET)", () => {
-    it("Ritorna 200 nel recupero del singolo lampione", async () => {
-      const response = await agent.get("/api/aree/1/lampioni/1");
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        area: 1,
-        guasto: false,
-        id: 1,
-        lum: 5,
-        luogo: "Luogo Test",
-        mode: "manuale",
-        stato: "Attivo",
+    describe("Test per il ritorno di un singolo lampione", () => {
+      it("Ritorna 200 nel recupero del singolo lampione", async () => {
+        const response = await agent.get("/api/aree/1/lampioni/1");
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+          area: 1,
+          guasto: false,
+          id: 1,
+          lum: 5,
+          luogo: "Luogo Test",
+          mode: "manuale",
+          stato: "Attivo",
+        });
+      });
+      it("Ritorna 404 nel recupero di un lampione non esistente", async () => {
+        const response = await agent.get("/api/aree/1/lampioni/2");
+        expect(response.status).toBe(404);
+      });
+      it("Ritorna 404 nel recupero di un lampione di un'area non esistente", async () => {
+        areaschema.findOne = jest.fn().mockResolvedValue(null);
+        const response = await agent.get("/api/aree/1/lampioni/2");
+        expect(response.status).toBe(404);
+      });
+      it("Ritorna 500 nel caso di un errore durante il recupero del lampione", async () => {
+        areaschema.findOne = jest
+          .fn()
+          .mockRejectedValue(new Error("Errore indotto"));
+        const response = await agent.get("/api/aree/1/lampioni/2");
+        expect(response.status).toBe(500);
       });
     });
-    it("Ritorna 404 nel recupero di un lampione non esistente", async () => {
-      const response = await agent.get("/api/aree/1/lampioni/2");
-      expect(response.status).toBe(404);
+    describe("Test per il recupero di tutti i lampioni", () => {
+      it("Ritorna 200 se recupera correttamente tutti i lampioni", async () => {
+        areaschema.findOne = jest.fn().mockResolvedValue({
+          id: 1,
+          nome: "Area 1",
+          descrizione: "Descrizione area 1",
+          latitudine: "45.123456",
+          longitudine: "9.123456",
+          polling: 60,
+          lampioni: [
+            {
+              id: 1,
+              stato: "Attivo",
+              lum: 5,
+              luogo: "Luogo Test",
+              area: 1,
+              guasto: false,
+              mode: "manuale",
+            },
+          ],
+          sensori: [],
+        });
+        const response = await agent.get("/api/aree/1/lampioni");
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual([
+          {
+            id: 1,
+            stato: "Attivo",
+            lum: 5,
+            luogo: "Luogo Test",
+            area: 1,
+            guasto: false,
+            mode: "manuale",
+          },
+        ]);
+      });
+      it("Ritorna 404 se non viene trovata l'area specificata", async () => {
+        areaschema.findOne = jest.fn().mockResolvedValue(null);
+        const response = await agent.get("/api/aree/1/lampioni");
+        expect(response.status).toBe(404);
+      });
+      it("Ritorna 500 se avviene un errore durante il recupero", async () => {
+        areaschema.findOne = jest
+          .fn()
+          .mockRejectedValue(new Error("Errore indotto"));
+        const response = await agent.get("/api/aree/1/lampioni");
+        expect(response.status).toBe(500);
+      });
     });
-    it("Ritorna 404 nel recupero di un lampione di un'area non esistente", async () => {
-      areaschema.findOne = jest.fn().mockResolvedValue(null);
-      const response = await agent.get("/api/aree/1/lampioni/2");
-      expect(response.status).toBe(404);
+  });
+  describe("Test per l'inserimento di un lampione (POST)", () => {
+    it("Ritorna 200 se il lampione viene aggiunto correttamente", async () => {
+      areaschema.findOne = jest.fn().mockResolvedValue({
+        id: 1,
+        nome: "Area 1",
+        descrizione: "Descrizione area 1",
+        latitudine: "45.123456",
+        longitudine: "9.123456",
+        polling: 60,
+        lampioni: [
+          {
+            id: 1,
+            stato: "Attivo",
+            lum: 5,
+            luogo: "Luogo Test",
+            area: 1,
+            guasto: false,
+            mode: "manuale",
+          },
+        ],
+        sensori: [],
+      });
+      const mockSave = jest.spyOn(areaschema.prototype, "save");
+      mockSave.mockResolvedValue(true);
+      const mockExec = jest.fn().mockResolvedValue(1);
+      (areaschema.findOne as jest.Mock).mockReturnValueOnce({
+        exec: mockExec,
+      });
+
+      const response = await agent.post("/api/aree/1/lampioni").send({
+        stato: "Attivo",
+        lum: 9,
+        luogo: "TestPost",
+        area: 1,
+        mode: "manuale",
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({});
     });
   });
 });
