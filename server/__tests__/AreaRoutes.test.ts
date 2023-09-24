@@ -1,14 +1,22 @@
-import request, { agent } from "supertest";
+import request from "supertest";
 import areaschema from "../schemas/AreaSchema";
 import userschema from "../schemas/UserSchema";
-import { app, server } from "../server";
-import * as schedule from "../utils/Schedule";
-import { updateSchedule } from "../utils/Schedule";
+import { app } from "../server";
+jest.mock("mongoose",()=>({
+  ...jest.requireActual("mongoose"),
+  connect: jest.fn(),
+  connection: {
+    on: jest.fn(),
+    once: jest.fn(),
+    close: jest.fn()
+  },
+}))
 
 describe("Area Routes", () => {
   let agent: request.SuperAgentTest;
 
   beforeAll(async () => {
+
     //Mock di un utente correttamente registrato: la password è "password" ma
     //con un hash sha512 che viene effettuato dal client.
     userschema.findOne = jest.fn().mockResolvedValue({
@@ -55,7 +63,6 @@ describe("Area Routes", () => {
 
   afterAll(async () => {
     jest.restoreAllMocks();
-    server.close();
   });
 
   describe("Test per il recupero delle aree (GET)", () => {

@@ -38,17 +38,15 @@ sensRouter.get("/:id/sensori", async (req: Request, res: Response) => {
 sensRouter.get("/:idA/sensori/:idS", async (req: Request, res: Response) => {
     const idA = req.params.idA;
     const idS = req.params.idS;
-    parseInt(idA, 10);
-    parseInt(idS, 10);
     console.log(
         `Ricevuta richiesta GET su /api/aree/${idA}/sensori/${idS}/ -> ID: ${idS}`
     );
 
     try {
-        const area = await AreaSchema.findOne({ id: idA });
+        const area = await AreaSchema.findOne({ id: parseInt(idA, 10) });
         if (area) {
             const sensore = area.sensori.find(
-                (sens: any) => sens.id === parseInt(idS)
+                (sens: any) => sens.id === parseInt(idS,10)
             );
             if (sensore) {
                 res.status(200).json(sensore);
@@ -133,14 +131,13 @@ sensRouter.put("/:idA/sensori/edit/:idS",
         const idA = req.params.idA;
         const idS = req.params.idS;
 
-        parseInt(idA, 10);
         parseInt(idS, 10);
         console.log(
             `Ricevuta richiesta PUT su /api/aree/${idA}/sensori/${idS}/edit -> ID: ${idS}`
         );
 
         try {
-            const area = await AreaSchema.findOne({ id: idA });
+            const area = await AreaSchema.findOne({ id: parseInt(idA, 10) });
             if (area) {
                 const sensore = area.sensori.find(
                     (sens: ISensorSchema) => sens.id === parseInt(idS)
@@ -180,7 +177,6 @@ sensRouter.put("/:idA/sensori/edit/:idS",
 sensRouter.delete("/:idA/sensori/:idS",
     async (req: Request, res: Response) => {
         const { idA, idS } = req.params;
-        parseInt(idA, 10);
         parseInt(idS, 10);
 
         console.log(
@@ -188,7 +184,7 @@ sensRouter.delete("/:idA/sensori/:idS",
         );
 
         try {
-            const area = await AreaSchema.findOne({ id: idA });
+            const area = await AreaSchema.findOne({ id: parseInt(idA, 10) });
 
             if (!area) {
                 res.status(404).send(

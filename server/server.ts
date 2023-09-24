@@ -71,5 +71,6 @@ export const server = app.listen(port, () => {
 });
 
 server.close(() => {
+  db.close()
   console.log("Il server è stato chiuso");
 });
