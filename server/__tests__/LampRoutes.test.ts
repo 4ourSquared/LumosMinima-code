@@ -278,10 +278,203 @@ describe("Lampione Routes", () => {
         expect(response.status).toBe(500);
       });
     });
+    describe("Test per la modifica di un lampione", () => {
+      it("Ritorna 200 se il lampione viene modificato correttamente", async () => {
+        const areaMock = {
+          id: 1,
+          nome: "Area 1",
+          descrizione: "Descrizione area 1",
+          latitudine: "45.123456",
+          longitudine: "9.123456",
+          polling: 60,
+          lampioni: [
+            {
+              id: 1,
+              stato: "Attivo",
+              lum: 5,
+              luogo: "Luogo Test",
+              area: 1,
+              guasto: false,
+              mode: "manuale",
+            },
+          ],
+          sensori: [],
+          save: jest.fn(),
+        };
+
+        jest.spyOn(areaschema, "findOne").mockResolvedValue(areaMock);
+        areaMock.lampioni.find = jest.fn().mockReturnValue({
+          id: 1,
+        });
+
+        const response = await agent.put("/api/aree/1/lampioni/edit/1").send({
+          stato: "Attivo",
+          lum: 9,
+          luogo: "Test Modifica",
+          mode: "manuale",
+        });
+        expect(response.status).toBe(200);
+      });
+      it("Ritorna 404 se non è presente il lampione", async () => {
+        const areaMock = {
+          id: 1,
+          nome: "Area 1",
+          descrizione: "Descrizione area 1",
+          latitudine: "45.123456",
+          longitudine: "9.123456",
+          polling: 60,
+          lampioni: [
+            {
+              id: 1,
+              stato: "Attivo",
+              lum: 5,
+              luogo: "Luogo Test",
+              area: 1,
+              guasto: false,
+              mode: "manuale",
+            },
+          ],
+          sensori: [],
+          save: jest.fn(),
+        };
+
+        jest.spyOn(areaschema, "findOne").mockResolvedValue(areaMock);
+        areaMock.lampioni.find = jest.fn().mockReturnValue(undefined);
+
+        const response = await agent.put("/api/aree/1/lampioni/edit/2").send({
+          stato: "Attivo",
+          lum: 9,
+          luogo: "Test Modifica",
+          mode: "manuale",
+        });
+        expect(response.status).toBe(404);
+      });
+      it("Ritorna 404 se non esiste l'area", async () => {
+        jest.spyOn(areaschema, "findOne").mockResolvedValue(null);
+        const response = await agent.put("/api/aree/1/lampioni/edit/2").send({
+          stato: "Attivo",
+          lum: 9,
+          luogo: "Test Modifica",
+          mode: "manuale",
+        });
+        expect(response.status).toBe(404);
+      });
+      it("Ritorna 500 se avviene un errore durante la modifica", async () => {
+        jest
+          .spyOn(areaschema, "findOne")
+          .mockRejectedValue(new Error("Errore indotto"));
+        const response = await agent.put("/api/aree/1/lampioni/edit/2").send({
+          stato: "Attivo",
+          lum: 9,
+          luogo: "Test Modifica",
+          mode: "manuale",
+        });
+        expect(response.status).toBe(500);
+      });
+    });
+  });
+  describe("Test per la richiesta di supporto alla modifica della luminosità dei lampioni", () => {
+    it("Ritorna 200 se la richiesta di supporto è stata effettuata correttamente", async () => {
+      const areaMock = {
+        id: 1,
+        nome: "Area 1",
+        descrizione: "Descrizione area 1",
+        latitudine: "45.123456",
+        longitudine: "9.123456",
+        polling: 60,
+        lampioni: [
+          {
+            id: 1,
+            stato: "Attivo",
+            lum: 5,
+            luogo: "Luogo Test",
+            area: 1,
+            guasto: false,
+            mode: "manuale",
+          },
+        ],
+        sensori: [],
+        save: jest.fn(),
+      };
+
+      jest.spyOn(areaschema, "findOne").mockResolvedValue(areaMock);
+      areaMock.lampioni.find = jest.fn().mockReturnValue({
+        id: 1,
+      });
+      areaMock.lampioni.forEach = jest.fn().mockReturnValue({
+        lum: 5,
+      });
+
+      const response = await agent
+        .put("/api/aree/1/lampioni/lum")
+        .send({ lum: 5 });
+      expect(response.status).toBe(200);
+    });
+    it("Ritorna 404 se non è presente l'area", async () => {
+      jest.spyOn(areaschema, "findOne").mockResolvedValue(null);
+      const response = await agent
+        .put("/api/aree/1/lampioni/lum")
+        .send({ lum: 5 });
+      expect(response.status).toBe(404);
+    });
+    it("Ritorna 500 se avviene un errore durante la modifica", async () => {
+      jest
+        .spyOn(areaschema, "findOne")
+        .mockRejectedValue(new Error("Errore indotto"));
+      const response = await agent
+        .put("/api/aree/1/lampioni/lum")
+        .send({ lum: 5 });
+      expect(response.status).toBe(500);
+    });
+  });
+  describe("Test per la cancellazione di un lampione (DELETE)", () => {
+    it("Ritorna 200 se il lampione viene cancellato correttamente", async () => {
+      const areaMock = {
+        id: 1,
+        nome: "Area 1",
+        descrizione: "Descrizione area 1",
+        latitudine: "45.123456",
+        longitudine: "9.123456",
+        polling: 60,
+        lampioni: [
+          {
+            id: 1,
+            stato: "Attivo",
+            lum: 5,
+            luogo: "Luogo Test",
+            area: 1,
+            guasto: false,
+            mode: "manuale",
+          },
+        ],
+        sensori: [],
+        save: jest.fn(),
+      };
+
+      jest.spyOn(areaschema, "findOne").mockResolvedValue(areaMock);
+      areaMock.lampioni.find = jest.fn().mockReturnValue({
+        id: 1,
+      });
+
+      const response = await agent.delete("/api/aree/1/lampioni/1");
+      expect(response.status).toBe(200);
+    });
+    it("Ritorna 404 se non è presente l'area con il lampione da rimuovere", async () => {
+      jest.spyOn(areaschema, "findOne").mockResolvedValue(null);
+      const response = await agent.delete("/api/aree/1/lampioni/1");
+      expect(response.status).toBe(404);
+    });
+    it("Ritorna 500 in caso di errore durante la cancellazione", async () => {
+      jest
+        .spyOn(areaschema, "findOne")
+        .mockRejectedValue(new Error("Errore indotto"));
+      const response = await agent.delete("/api/aree/1/lampioni/1");
+      expect(response.status).toBe(500);
+    });
   });
 });
 
-describe("Test per rimuovere un lampione dai guasti", () => {
+describe("Test per i lampioni guasti con utente manutentore", () => {
   let agent: request.SuperAgentTest;
   beforeAll(async () => {
     userschema.findOne = jest.fn().mockResolvedValue({
@@ -388,5 +581,47 @@ describe("Test per rimuovere un lampione dai guasti", () => {
       .put("/api/aree/1/lampioni/guasti/remove/1")
       .send();
     expect(response.status).toBe(500);
+  });
+  describe("Test per il recupero dei lampioni guasti", () => {
+    it("Ritorna 200 se recupera correttamente tutti i lampioni guasti", async () => {
+      areaschema.findOne = jest.fn().mockResolvedValue({
+        id: 1,
+        nome: "Area 1",
+        descrizione: "Descrizione area 1",
+        latitudine: "45.123456",
+        longitudine: "9.123456",
+        polling: 60,
+        lampioni: [
+          {
+            id: 1,
+            stato: "Attivo",
+            lum: 5,
+            luogo: "Luogo Test",
+            area: 1,
+            guasto: true,
+            mode: "manuale",
+          },
+        ],
+        sensori: [],
+      });
+      const response = await agent.get("/api/aree/1/lampioni/guasti");
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual([
+        {
+          id: 1,
+          stato: "Attivo",
+          lum: 5,
+          luogo: "Luogo Test",
+          area: 1,
+          guasto: true,
+          mode: "manuale",
+        },
+      ]);
+    });
+    it("Ritorna 404 se non viene trovata l'area specificata", async () => {
+      areaschema.findOne = jest.fn().mockResolvedValue(null);
+      const response = await agent.get("/api/aree/1/lampioni/guasti");
+      expect(response.status).toBe(404);
+    });
   });
 });
