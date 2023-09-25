@@ -83,12 +83,10 @@ lampRouter.put(
 
     try {
       const area = await AreaSchema.findOne({ id: idA });
-
       if (area) {
         const lampione = area.lampioni.find(
           (lamp: ILampSchema) => lamp.id === parseInt(idL)
         );
-
         if (lampione) {
           if (lampione.guasto) {
             lampione.guasto = false;
