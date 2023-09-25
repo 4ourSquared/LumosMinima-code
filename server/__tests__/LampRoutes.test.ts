@@ -1,6 +1,6 @@
 import request, { agent } from "supertest";
+import * as lamproutes from "../routes/LampRoutes";
 import areaschema from "../schemas/AreaSchema";
-import lampschema from "../schemas/LampSchema";
 import userschema from "../schemas/UserSchema";
 import { app, server } from "../server";
 
@@ -141,7 +141,7 @@ describe("Lampione Routes", () => {
   describe("Test per l'inserimento di un lampione (POST)", () => {
     //AL MOMENTO RITORNA ERRORE:  TypeError: Cannot read properties of undefined (reading 'push')
     it("Ritorna 200 se il lampione viene aggiunto correttamente", async () => {
-      const mockAreaData = {
+      const areaMock = {
         id: 1,
         nome: "Area 1",
         descrizione: "Descrizione area 1",
@@ -160,15 +160,19 @@ describe("Lampione Routes", () => {
           },
         ],
         sensori: [],
+        exec: jest.fn(),
       };
-      areaschema.findOne = jest.fn().mockReturnValue({
-        exec: jest.fn().mockResolvedValue(mockAreaData),
-      });
 
+      jest.spyOn(areaschema, "findOne").mockResolvedValue(areaMock);
       const mockSave = jest.spyOn(areaschema.prototype, "save");
       mockSave.mockResolvedValue(true);
+      const mockExec = jest.fn().mockResolvedValue(3);
+      (areaschema.findOne as jest.Mock).mockReturnValueOnce({
+        exec: mockExec,
+      });
 
       const response = await agent.post("/api/aree/1/lampioni").send({
+        id: 2,
         stato: "Attivo",
         lum: 9,
         luogo: "TestPost",
