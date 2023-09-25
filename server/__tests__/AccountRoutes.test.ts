@@ -45,6 +45,20 @@ describe("Account Routes", () => {
       });
       expect(response.status).toBe(200);
     });
+    it("Ritorna 401 se l'username non è presente", async () => {
+      const response = await request(app).post("/accounting/login").send({
+        username: "test",
+        password: "password",
+      });
+      expect(response.status).toBe(401);
+    });
+    it("Ritorna 401 se la password è errata", async () => {
+      const response = await request(app).post("/accounting/login").send({
+        username: "admin",
+        password: "test",
+      });
+      expect(response.status).toBe(401);
+    });
   });
 
   describe("Test sul logout", () => {
@@ -190,6 +204,16 @@ describe("Account Routes", () => {
           "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
       });
       agent.get("/accounting/user/admin").expect(200);
+    });
+    it("Ritorna 500 se si verifica un errore", async () => {
+      userschema.findOne = jest.fn().mockRejectedValue({});
+      const agent = request.agent(app);
+      await agent.post("/accounting/login").send({
+        username: "admin",
+        password:
+          "b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86",
+      });
+      agent.get("/accounting/user/admin").expect(500);
     });
   });
 
