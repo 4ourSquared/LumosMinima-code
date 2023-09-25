@@ -1,9 +1,9 @@
 import axios from "axios";
-import { advanceTo, clear } from "jest-date-mock";
 import request from "supertest";
 import areaschema from "../schemas/AreaSchema";
 import tokenschema from "../schemas/TokenSchema";
 import * as generatetokenid from "../utils/LightManagement";
+import * as turnofflamps from "../utils/LightManagement";
 
 import { app } from "../server";
 jest.mock("mongoose", () => ({
@@ -295,13 +295,23 @@ describe("Area Routes", () => {
       const res = await agent.get("/api/segnale/area/1/token");
       expect(res.status).toBe(218);
     });
-
-    it.only("Ritorna 200 se il token è valido ed è stato utilizzato ma vanno spenti i lampioni", async () => {
+    it("Ritorna 200 se il token è valido ed è stato utilizzato ma vanno spenti i lampioni", async () => {
       const tokenMock1 = {
         id: 3,
         area: 1,
         expiring: new Date(),
         used: true,
+      };
+
+      const tokenDocumentMock = {
+        ...tokenMock1,
+        save: jest.fn().mockResolvedValue(tokenMock1),
+      };
+
+      const tokenSchemaMock = {
+        sort: jest.fn(() => ({
+          exec: jest.fn().mockResolvedValue(tokenDocumentMock),
+        })),
       };
 
       const areaMock = {
@@ -325,13 +335,69 @@ describe("Area Routes", () => {
         sensori: [],
       };
 
+      jest.spyOn(turnofflamps, "turnOffLamps").mockImplementation(async () => {
+        for (let i = 0; i < areaMock.lampioni.length; i++) {
+          areaMock.lampioni[i].lum = 0;
+        }
+      });
+
       jest.spyOn(areaschema, "findOne").mockResolvedValue(areaMock);
+
+      jest
+        .spyOn(tokenschema, "findOne")
+        .mockReturnValue(tokenSchemaMock as any);
+
+      const res = await agent.get("/api/segnale/area/1/token");
+      expect(res.status).toBe(200);
+    });
+    it("Ritorna 200 se il token deve ancora terminare e non è stato utilizzato", async () => {
+      const tokenMock1 = {
+        id: 3,
+        area: 1,
+        expiring: new Date(2023, 9, 27, 12, 0, 0, 0),
+        used: false,
+      };
+
+      const tokenDocumentMock = {
+        ...tokenMock1,
+        save: jest.fn().mockResolvedValue(tokenMock1),
+      };
 
       const tokenSchemaMock = {
         sort: jest.fn(() => ({
-          exec: jest.fn().mockResolvedValue(tokenMock1),
+          exec: jest.fn().mockResolvedValue(tokenDocumentMock),
         })),
       };
+
+      const areaMock = {
+        id: 1,
+        nome: "Area 1",
+        descrizione: "Descrizione area 1",
+        latitudine: "45.123456",
+        longitudine: "9.123456",
+        polling: 60,
+        lampioni: [
+          {
+            id: 1,
+            stato: "Attivo",
+            lum: 5,
+            luogo: "Luogo Test",
+            area: 1,
+            guasto: false,
+            mode: "manuale",
+          },
+        ],
+        sensori: [],
+        save: jest.fn(),
+      };
+
+      jest.spyOn(areaschema, "findOne").mockResolvedValue(areaMock);
+
+      areaMock.lampioni.forEach((lamp) => {
+        if (lamp.mode === "manuale" && lamp.stato === "Attivo") {
+          lamp.lum = 10;
+        }
+      });
 
       jest
         .spyOn(tokenschema, "findOne")

@@ -129,17 +129,12 @@ signalRoutes.get("/area/:id/token", async (req: Request, res: Response) => {
     }
 
     const now = new Date();
-    console.log("Token:", token);
-    console.log(token.expiring);
-    console.log("now:", now);
-    console.log(token.expiring < now);
 
     if (token.expiring < now) {
       if (token.used === false) {
         return res.status(218).json("This is fine");
       } else {
         token.used = false;
-        console.log("Inizio Save spegnimento lampioni");
         await token.save();
         await turnOffLamps(startingLum[areaMod.id], areaMod, res);
         return res.status(200).json("Spegnimento lampioni");

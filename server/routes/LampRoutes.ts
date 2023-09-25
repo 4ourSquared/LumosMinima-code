@@ -7,6 +7,7 @@ import authByRole, { Role } from "../middleware/AuthByRole";
 import verifyToken from "../middleware/VerifyToken";
 import AreaSchema from "../schemas/AreaSchema";
 import LampioneSchema, { ILampSchema } from "../schemas/LampSchema";
+import { generateLampId } from "../utils/IdGeneration";
 
 const lampRouter = Router();
 
@@ -397,23 +398,5 @@ lampRouter.delete(
     }
   }
 );
-
-// GENERAZIONE ID INCREMENTALE PER LAMPIONI
-async function generateLampId(areaId: number): Promise<number> {
-  try {
-    const area = await AreaSchema.findOne({ id: areaId }).exec();
-
-    if (!area) {
-      throw new Error(`Area con ID ${areaId} non trovata.`);
-    }
-
-    const newLampId = area.lampioni.length + 1;
-
-    return newLampId;
-  } catch (error) {
-    console.error("Errore durante la generazione dell'ID del lampione:", error);
-    throw error;
-  }
-}
 
 export default lampRouter;
