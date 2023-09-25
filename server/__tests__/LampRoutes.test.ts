@@ -4,7 +4,6 @@ import lampschema from "../schemas/LampSchema";
 import userschema from "../schemas/UserSchema";
 import { app, server } from "../server";
 
-/*
 describe("Lampione Routes", () => {
   let agent: request.SuperAgentTest;
   beforeAll(async () => {
@@ -181,4 +180,3 @@ describe("Lampione Routes", () => {
     });
   });
 });
-*/
