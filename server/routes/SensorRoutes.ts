@@ -7,6 +7,7 @@ import authByRole, { Role } from "../middleware/AuthByRole";
 import verifyToken from "../middleware/VerifyToken";
 import AreaSchema from "../schemas/AreaSchema";
 import SensoreSchema, { ISensorSchema } from "../schemas/SensorSchema";
+import { generateSensId } from "../utils/IdGeneration";
 
 const sensRouter = Router();
 
@@ -127,23 +128,6 @@ sensRouter.post(
     }
   }
 );
-
-async function generateSensId(areaId: number): Promise<number> {
-  try {
-    const area = await AreaSchema.findOne({ id: areaId }).exec();
-
-    if (!area) {
-      throw new Error(`Area con ID ${areaId} non trovata.`);
-    }
-
-    const newSensId = area.sensori.length + 1;
-
-    return newSensId;
-  } catch (error) {
-    console.error("Errore durante la generazione dell'ID del sensore:", error);
-    throw error;
-  }
-}
 
 sensRouter.put(
   "/:idA/sensori/edit/:idS",
