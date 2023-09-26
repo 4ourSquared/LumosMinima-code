@@ -347,7 +347,7 @@ lampRouter.put(
       }
 
       await area.save();
-      res.status(200).json(`Lampione con id = ${idL} modificato con successo`);
+      res.status(200);
     } catch (error) {
       console.error("Errore nel processo di modifica di un lampione:", error);
       res.status(500).send("Errore nel processo di modifica di un lampione");
