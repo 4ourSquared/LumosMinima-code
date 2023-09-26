@@ -72,6 +72,7 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
                 <div className="form-group">
                     <label htmlFor="luogo">Luogo di Installazione</label>
                     <Field
+                        data-testid="luogo"
                         name="luogo"
                         type="text"
                         className="form-control"

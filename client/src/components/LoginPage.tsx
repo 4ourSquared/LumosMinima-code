@@ -25,7 +25,7 @@ export default function LoginPage() {
         }
     };
     return (
-        <div>
+        <div id="root">
             <h1>Lumos Minima</h1>
             <h2>Login</h2>
             <form className="container">

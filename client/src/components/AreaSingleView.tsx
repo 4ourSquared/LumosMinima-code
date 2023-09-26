@@ -79,6 +79,7 @@ const AreaSingleView: React.FC = () => {
             <select
               value={this}
               name="edit-lum"
+              role="select"
               className="form-group"
               onChange={(e) => getValueAndSend(e)}
             >

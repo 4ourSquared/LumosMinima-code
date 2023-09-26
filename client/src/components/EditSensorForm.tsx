@@ -95,11 +95,11 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
 
                 <div className="form-group">
                     <label htmlFor="luogo">Luogo di Installazione</label>
-                    <Field name="luogo" type="text" className="form-control" />
+                    <Field data-testid="luogo" name="luogo" type="text" className="form-control" />
                     <small id="locazioneHelp" className="form-text text-muted">
                         Indica il luogo in cui è situato il sensore.
                     </small>
-                    <ErrorMessage name="luogo" />
+                    <ErrorMessage name="luogo" data-testid="erroreLuogo"/>
                 </div>
 
                 <div className="form-group">

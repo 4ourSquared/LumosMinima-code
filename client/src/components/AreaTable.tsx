@@ -43,8 +43,6 @@ export const AreaTable: React.FC = () => {
       console.log("Annullata cancellazione dell'area.")
     });
   };
-  console.log(typeof(userData.role))
-  console.log(typeof(Role.Amministratore))
 
   return (
     <>

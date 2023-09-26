@@ -110,6 +110,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                 <div className="form-group">
                     <label htmlFor="luogo">Luogo di Installazione</label>
                     <Field
+                        data-testid="luogo"
                         name="luogo"
                         type="text"
                         className="form-control"
@@ -120,7 +121,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                     <small id="luogoHelp" className="form-text text-muted">
                         Indica il luogo in cui è situato il lampione.
                     </small>
-                    <ErrorMessage name="luogo" />
+                    <ErrorMessage name="luogo" data-testid="erroreLuogo"/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="mode">Interazione</label>

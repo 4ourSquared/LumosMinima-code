@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
+import '@testing-library/jest-dom'
 import Footer from "../Footer";
-import { BrowserRouter as Router } from "react-router-dom";
 
 test("Render del footer", () => {
     render(
