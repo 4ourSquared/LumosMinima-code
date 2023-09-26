@@ -1,11 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useOutletContext } from "react-router-dom";
 import AreaItem from "../types/AreaItem";
 import { useConfirm } from "material-ui-confirm";
+import {UserData,Role} from "../auth/Authorization";
 
 export const AreaTable: React.FC = () => {
   const [aree, setAree] = useState<AreaItem[]>([]);
+  const userData = useOutletContext<UserData>();
   const navigate = useNavigate();
   const confirm = useConfirm();
 
@@ -44,10 +46,13 @@ export const AreaTable: React.FC = () => {
 
   return (
     <>
-      <div className="table-responsive row justify-content-center">
+      <div className="table-responsive row ">
+      {
+        userData.role === Role.Amministratore && 
         <Link to="/api/aree/add" type="button" className="btn btn-primary">
-          Aggiungi Area
-        </Link>
+            Aggiungi Area
+          </Link>
+      }
         <table className="table table-hover align-middle caption-top">
           <caption>Lista delle aree</caption>
           <thead>
@@ -58,8 +63,13 @@ export const AreaTable: React.FC = () => {
               <th scope="col">Latitudine</th>
               <th scope="col">Longitudine</th>
               <th scope="col">Informazioni</th>
-              <th scope="col">Modifica</th>
-              <th scope="col">Elimina</th>
+              {
+                  userData.role === Role.Amministratore &&
+                  <> 
+                  <th scope="col">Modifica</th>
+                  <th scope="col">Elimina</th>
+                  </>
+              }
             </tr>
           </thead>
           <tbody id="tableBody">
@@ -78,22 +88,27 @@ export const AreaTable: React.FC = () => {
                     Informazioni
                   </button>
                 </td>
-                <td>
-                  <button
-                    className="btn btn-outline-warning"
-                    onClick={() => navigate(`/api/aree/edit/${area.id}`)}
-                  >
-                    Modifica
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-outline-danger"
-                    onClick={() => deleteArea(area.id)}
-                  >
-                    Elimina
-                  </button>
-                </td>
+                {
+                  userData.role === Role.Amministratore &&
+                  <> 
+                  <td>
+                    <button
+                      className="btn btn-outline-warning"
+                      onClick={() => navigate(`/api/aree/edit/${area.id}`)}
+                    >
+                      Modifica
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-outline-danger"
+                      onClick={() => deleteArea(area.id)}
+                    >
+                      Elimina
+                    </button>
+                  </td>
+                  </>
+                }
               </tr>
             ))}
           </tbody>

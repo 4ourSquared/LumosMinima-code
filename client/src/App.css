@@ -24,7 +24,7 @@ h1 {
 /* SEZIONE NAV */
 .breadcrumb {
   font-size: 1.5em;
-  border: solid 1px black;
+  align-items: center;
 }
 
 .breadcrumb li {
@@ -38,7 +38,7 @@ main {
 
 h2 {
   padding: 0.2em 0 0.2em 0.5em;
-  border-bottom: 1px dashed black;
+  /*border-bottom: 1px dashed black;*/
 }
 
 /* TABELLA */
@@ -67,4 +67,41 @@ footer {
   left: 0;
   bottom: 0;
   width: 100%;
+  margin-top: 1em;
+}
+
+/* SEZIONE STILE BOTTONI E ALERT */
+.alert-danger {
+  margin-top: 0.5em;
+}
+.logout {
+  margin-left: auto;
+  margin-right: 1em;
+}
+
+.aggiunta{
+  margin-left: auto;
+  margin-right: 1em;
+}
+
+.modifica{
+  margin-left: auto;
+  margin-right: 1em;
+}
+
+/* SEZIONE BOTTONI DI CREAZIONE, RESET E INDIETRO*/
+.add,
+.back,
+.reset {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-right: 1.5em;
+}
+
+form {
+  margin-left: 1em;
+}
+
+.form-group {
+  margin-bottom: 1em;
 }

@@ -8,8 +8,6 @@ import * as Yup from "yup"; //Libreria per la validazione del form: si può usar
   CLASSE NEWLAMPFORM: classe che renderizza automaticamente la struttura HTML della pagina di aggiunta di un lampione, definendo anche il metodo per la trasmissione dei dati al server. Stile associato a Bootstrap.
 */
 
-// TODO - Sistemare le routes
-
 const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
     axios.defaults.baseURL = "http://localhost:5000/api"; //URL base, così una volta in produzione basta cambiare questo
     const navigate = useNavigate();
@@ -40,17 +38,8 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
         >
             <Form>
                 <div className="form-group">
-                    <label htmlFor="id">ID (Automatico)</label>
-                    <Field
-                        name="id"
-                        type="text"
-                        className="form-control"
-                        readOnly
-                    />
-                </div>
-
-                <div className="form-group">
                     <label htmlFor="stato">Stato</label>
+                    <br/>
                     <Field name="stato" as="select">
                         <option value="Attivo">Attivo</option>
                         <option value="Disattivo">Disattivo</option>
@@ -59,6 +48,7 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
 
                 <div className="form-group">
                     <label htmlFor="lum">Intensit&agrave;</label>
+                    <br/>
                     <Field name="lum" as="select" className="form-group">
                         <option value="0">0</option>
                         <option value="1">1</option>
@@ -72,6 +62,7 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
                         <option value="9">9</option>
                         <option value="10">10</option>
                     </Field>
+                    <br/>
                     <small id="intensityHelp" className="form-text text-muted">
                         Indica l'intensit&agrave; luminosa del lampione qualora
                         fosse importato lo stato di attivazione.
@@ -81,6 +72,7 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
                 <div className="form-group">
                     <label htmlFor="luogo">Luogo di Installazione</label>
                     <Field
+                        data-testid="luogo"
                         name="luogo"
                         type="text"
                         className="form-control"
@@ -95,24 +87,17 @@ const NewLampForm: React.FC<{ areaId: number }> = ({ areaId }) => {
                 </div>
                 <div className="form-group">
                     <label htmlFor="mode">Interazione</label>
+                    <br/>
                     <Field name="mode" as="select">
                         <option value="manuale">Manuale</option>
                         <option value="automatico">Automatico</option>
                     </Field>
+                    <br/>
                     <small id="statusHelp" className="form-text text-muted">
                         Indica se il sensore ha un controllo sui lampioni
                         (automatico) o se i lampioni saranno modificati
                         manualmente da un utente
                     </small>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="area">ID Area di Riferimento</label>
-                    <Field
-                        name="area"
-                        type="number"
-                        className="form-control"
-                        readOnly
-                    />
                 </div>
                 <button type="submit" className="btn btn-primary">
                     Crea

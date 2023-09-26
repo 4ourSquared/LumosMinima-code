@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import SensorItem from "../types/SensorItem";
+import {UserData,Role} from "../auth/Authorization"
 import { useConfirm } from "material-ui-confirm";
 
 interface SensorTableProps {
@@ -9,6 +10,7 @@ interface SensorTableProps {
 }
 const SensorTable: React.FC<SensorTableProps> = ({areaId}) => {
     const [sensori, setSensori] = useState<SensorItem[]>([]);
+    const userData = useOutletContext<UserData>();
     const navigate = useNavigate();
     const confirm = useConfirm();
 
@@ -46,14 +48,16 @@ const SensorTable: React.FC<SensorTableProps> = ({areaId}) => {
     };
 
     return (
-        <div className="row justify-content-center">
-            <Link
-                to={`/api/aree/${areaId}/sensori/add`}
-                type="button"
-                className="btn btn-primary"
-            >
-                Aggiungi Sensore
-            </Link>
+        <div className="row ">
+            {userData.role === Role.Amministratore &&
+                <Link
+                    to={`/api/aree/${areaId}/sensori/add`}
+                    type="button"
+                    className="btn btn-primary"
+                >
+                    Aggiungi Sensore
+                </Link>
+            }
             <table
                 className="table table-hover align-middle"
                 style={{ width: "90%" }}
@@ -65,8 +69,13 @@ const SensorTable: React.FC<SensorTableProps> = ({areaId}) => {
                         <th scope="col">Zona Illuminata</th>
                         <th scope="col">Raggio d'azione</th>
                         <th scope="col">Info</th>
-                        <th scope="col">Modifica</th>
-                        <th scope="col">Elimina</th>
+                        {userData.role === Role.Amministratore &&
+                            <>
+                            <th scope="col">Modifica</th>
+
+                            <th scope="col">Elimina</th>
+                            </>
+                        }
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -88,26 +97,30 @@ const SensorTable: React.FC<SensorTableProps> = ({areaId}) => {
                                     Info
                                 </button>
                             </td>
-                            <td>
-                                <button
-                                    className="btn btn-outline-warning"
-                                    onClick={() => {
-                                        navigate(
-                                            `/api/aree/${areaId}/sensori/edit/${sensore.id}`
-                                        );
-                                    }}
-                                >
-                                    Modifica
-                                </button>
-                            </td>
-                            <td>
-                                <button
-                                    className="btn btn-outline-danger"
-                                    onClick={() => deleteSensore(sensore.id)}
-                                >
-                                    Elimina
-                                </button>
-                            </td>
+                            {userData.role === Role.Amministratore &&
+                            <>
+                                <td>
+                                    <button
+                                        className="btn btn-outline-warning"
+                                        onClick={() => {
+                                            navigate(
+                                                `/api/aree/${areaId}/sensori/edit/${sensore.id}`
+                                            );
+                                        }}
+                                    >
+                                        Modifica
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        className="btn btn-outline-danger"
+                                        onClick={() => deleteSensore(sensore.id)}
+                                    >
+                                        Elimina
+                                    </button>
+                                </td>
+                            </>
+                            }
                         </tr>
                     ))}
                 </tbody>

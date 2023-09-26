@@ -6,7 +6,7 @@ export interface IUserSchema extends Document {
     username: string;
     email: string;
     password: string;
-    privilege: string;
+    privilege: number;
 }
 
 const userSchema: Schema = new mongoose.Schema({
@@ -22,7 +22,7 @@ const userSchema: Schema = new mongoose.Schema({
     privilege: {
         required: true,
         default: "none",
-        type: String,
+        type: Number,
     }
 })
 

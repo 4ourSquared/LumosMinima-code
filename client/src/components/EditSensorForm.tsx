@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import SensorItem from "../types/SensorItem";
+import Footer from "./Footer";
+import Header from "./Header";
 
 interface EditSensorFormProps {
     areaId: number;
@@ -44,6 +46,8 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
     }
 
     return (
+        <>
+        <Header/>
         <Formik
             initialValues={{
                 id: sens.id || 0,
@@ -81,16 +85,6 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
         >
             <Form>
                 <div className="form-group">
-                    <label htmlFor="id">ID (Automatico)</label>
-                    <Field
-                        name="id"
-                        type="text"
-                        className="form-control"
-                        readOnly
-                    />
-                </div>
-
-                <div className="form-group">
                     <label htmlFor="IP">Indirizzo IP</label>
                     <Field name="IP" type="text" className="form-control" />
                     <small id="IPHelp" className="form-text text-muted">
@@ -101,11 +95,11 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
 
                 <div className="form-group">
                     <label htmlFor="luogo">Luogo di Installazione</label>
-                    <Field name="luogo" type="text" className="form-control" />
+                    <Field data-testid="luogo" name="luogo" type="text" className="form-control" />
                     <small id="locazioneHelp" className="form-text text-muted">
                         Indica il luogo in cui è situato il sensore.
                     </small>
-                    <ErrorMessage name="luogo" />
+                    <ErrorMessage name="luogo" data-testid="erroreLuogo"/>
                 </div>
 
                 <div className="form-group">
@@ -148,15 +142,6 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
                         zona interagisca in modalità pull.
                     </small>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="area">ID Area di Riferimento</label>
-                    <Field
-                        name="area"
-                        type="text"
-                        className="form-control"
-                        readOnly
-                    />
-                </div>
 
                 <button type="submit" className="btn btn-primary">
                     Modifica
@@ -170,6 +155,8 @@ const EditSensorForm: React.FC<EditSensorFormProps> = ({
                 </Link>
             </Form>
         </Formik>
+        <Footer/>
+        </>
     );
 };
 

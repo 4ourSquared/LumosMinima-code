@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import LampItem from "../types/LampItem";
+import Footer from "./Footer";
+import Header from "./Header";
 
 interface EditLampFormProps {
     areaId: number;
@@ -42,6 +44,8 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
     }
 
     return (
+        <>
+        <Header/>
         <Formik
             initialValues={{
                 id: lampioneData.id || 0,
@@ -72,17 +76,8 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
         >
             <Form>
                 <div className="form-group">
-                    <label htmlFor="id">ID (Automatico)</label>
-                    <Field
-                        name="id"
-                        type="text"
-                        className="form-control"
-                        readOnly
-                    />
-                </div>
-
-                <div className="form-group">
                     <label htmlFor="stato">Stato</label>
+                    <br/>
                     <Field name="stato" as="select">
                         <option value="Attivo">Attivo</option>
                         <option value="Disattivo">Disattivo</option>
@@ -91,6 +86,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
 
                 <div className="form-group">
                     <label htmlFor="lum">Intensit&agrave;</label>
+                    <br/>
                     <Field name="lum" as="select" className="form-group">
                         <option value="0">0</option>
                         <option value="1">1</option>
@@ -104,6 +100,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                         <option value="9">9</option>
                         <option value="10">10</option>
                     </Field>
+                    <br/>
                     <small id="intensityHelp" className="form-text text-muted">
                         Indica l'intensit&agrave; luminosa del lampione qualora
                         fosse importato lo stato di attivazione.
@@ -113,6 +110,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                 <div className="form-group">
                     <label htmlFor="luogo">Luogo di Installazione</label>
                     <Field
+                        data-testid="luogo"
                         name="luogo"
                         type="text"
                         className="form-control"
@@ -123,7 +121,7 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                     <small id="luogoHelp" className="form-text text-muted">
                         Indica il luogo in cui è situato il lampione.
                     </small>
-                    <ErrorMessage name="luogo" />
+                    <ErrorMessage name="luogo" data-testid="erroreLuogo"/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="mode">Interazione</label>
@@ -163,6 +161,8 @@ const EditLampForm: React.FC<EditLampFormProps> = ({ areaId, lampioneId }) => {
                 </Link>
             </Form>
         </Formik>
+        <Footer/>
+        </>
     );
 };
 
