@@ -164,11 +164,9 @@ sensRouter.put(
           }
 
           await area.save();
-          res
-            .status(200);
+          res.status(200).json("Sensore modificato con successo");
         } else {
-          res
-            .status(404);
+          res.status(404);
         }
       }
     } catch (error) {

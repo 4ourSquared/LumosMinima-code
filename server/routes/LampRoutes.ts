@@ -315,14 +315,11 @@ lampRouter.put(
 
     try {
       const area = await AreaSchema.findOne({ id: idA });
-
       if (!area) {
         res.status(404).send(`Area non trovata`);
         return;
       }
-
       const lampione = area.lampioni.find((lamp) => lamp.id === parseInt(idL));
-
       if (!lampione) {
         res.status(404).send(`Lampione non trovato`);
         return;
@@ -345,9 +342,8 @@ lampRouter.put(
       if (mode !== undefined) {
         lampione.mode = mode;
       }
-
       await area.save();
-      res.status(200);
+      res.status(200).json("Modifica effettuata con successo");
     } catch (error) {
       console.error("Errore nel processo di modifica di un lampione:", error);
       res.status(500).send("Errore nel processo di modifica di un lampione");

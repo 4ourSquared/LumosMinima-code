@@ -308,10 +308,7 @@ describe("Lampione Routes", () => {
         });
 
         const response = await agent.put("/api/aree/1/lampioni/edit/1").send({
-          stato: "Attivo",
-          lum: 9,
           luogo: "Test Modifica",
-          mode: "manuale",
         });
         expect(response.status).toBe(200);
       });
