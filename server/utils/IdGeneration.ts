@@ -3,7 +3,8 @@ import AreaSchema from "../schemas/AreaSchema";
 // GENERAZIONE ID INCREMENTALE PER LAMPIONI
 export async function generateLampId(areaId: number): Promise<number> {
   try {
-    const area = await AreaSchema.findOne({ id: areaId }).exec();
+    const query = {id: areaId.toString()}
+    const area = await AreaSchema.findOne(query).exec();
 
     if (!area) {
       throw new Error(`Area con ID ${areaId} non trovata.`);
@@ -21,7 +22,8 @@ export async function generateLampId(areaId: number): Promise<number> {
 // GENERAZIONE ID INCREMENTALE PER SENSORI
 export async function generateSensId(areaId: number): Promise<number> {
   try {
-    const area = await AreaSchema.findOne({ id: areaId }).exec();
+    const query = {id: areaId.toString()}
+    const area = await AreaSchema.findOne(query).exec();
 
     if (!area) {
       throw new Error(`Area con ID ${areaId} non trovata.`);
