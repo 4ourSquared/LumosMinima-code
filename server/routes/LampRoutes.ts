@@ -38,18 +38,18 @@ lampRouter.put(
           if (!lampione.guasto) {
             lampione.guasto = true;
           } else {
-            res.status(409).send(`Lampione già presente nella lista guasti!`);
+            res.status(409).json(`Lampione già presente nella lista guasti!`);
             return;
           }
           await area.save();
           res
             .status(200)
-            .send(`Lampione con id = ${idL} segnalato come guasto`);
+            .json(`Lampione con id = ${idL} segnalato come guasto`);
           return;
         } else {
           res
             .status(404)
-            .send(
+            .json(
               `Errore nel processo di segnalazione dei guasti di un lampione: lampione non trovato`
             );
         }
@@ -61,7 +61,7 @@ lampRouter.put(
       );
       res
         .status(500)
-        .send("Errore nel processo di segnalazione dei guasti di un lampione");
+        .json("Errore nel processo di segnalazione dei guasti di un lampione");
     }
   }
 );
@@ -347,7 +347,7 @@ lampRouter.put(
       }
 
       await area.save();
-      res.status(200).send(`Lampione con id = ${idL} modificato con successo`);
+      res.status(200).json(`Lampione con id = ${idL} modificato con successo`);
     } catch (error) {
       console.error("Errore nel processo di modifica di un lampione:", error);
       res.status(500).send("Errore nel processo di modifica di un lampione");
